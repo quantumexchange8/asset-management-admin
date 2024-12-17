@@ -42,7 +42,7 @@ const Tag = !props.external ? Link : 'a'
             },
         ]"
     >
-        <div class="max-w-5">
+        <div class="max-w-5 text-primary">
             <slot name="icon">
                 <IconCircle
                     size="20"
@@ -77,11 +77,13 @@ const Tag = !props.external ? Link : 'a'
             },
         ]"
     >
-        <slot name="icon">
-            <IconCircle
-                size="20"
-            />
-        </slot>
+        <div class="max-w-5 text-primary">
+            <slot name="icon">
+                <IconCircle
+                    size="20"
+                />
+            </slot>
+        </div>
 
         <span
             class="text-sm font-medium dark:text-white"

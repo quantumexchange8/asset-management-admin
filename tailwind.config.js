@@ -17,6 +17,11 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                surface: {
+                    ground: '#09090b'
+                }
+            }
         },
     },
 

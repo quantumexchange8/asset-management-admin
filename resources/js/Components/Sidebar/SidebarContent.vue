@@ -17,9 +17,12 @@ import ScrollPanel from 'primevue/scrollpanel';
 <template>
     <ScrollPanel style="flex: 1; width: 100%;" class="h-full">
         <!-- Dashboard -->
-        <SidebarLink :title="'Dashboard'">
+        <SidebarLink
+            :title="'Dashboard'"
+            :href="route('dashboard')"
+        >
             <template #icon>
-                <IconLayoutDashboard :size="20" stroke-width="1.5" class="text-green-500"/>
+                <IconLayoutDashboard :size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 
@@ -27,7 +30,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarCategoryLabel :title="'Customer'" />
         <SidebarCollapsible :title="'Customer'">
             <template #icon>
-                <IconUsers :size="20" stroke-width="1.5" class="text-green-500"/>
+                <IconUsers :size="20" stroke-width="1.5" />
             </template>
 
             <SidebarCollapsibleItem :title="'Customer List'" />
@@ -38,7 +41,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarCategoryLabel :title="'Ranks'" />
         <SidebarLink :title="'Ranks'">
             <template #icon>
-                <IconBadges :size="20" stroke-width="1.5" class="text-green-500"/>
+                <IconBadges :size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 
@@ -46,7 +49,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarCategoryLabel :title="'Transaction'" />
         <SidebarCollapsible :title="'Transaction'">
             <template #icon>
-                <IconClockDollar :size="20" stroke-width="1.5" class="text-green-500"/>
+                <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
 
             <SidebarCollapsibleItem :title="'Transaction List'" />
@@ -59,7 +62,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <!-- Deposit Profile -->
         <SidebarLink :title="'Deposit Profile'">
             <template #icon>
-                <IconReportMoney :size="20" stroke-width="1.5" class="text-green-500"/>
+                <IconReportMoney :size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
     </ScrollPanel>
