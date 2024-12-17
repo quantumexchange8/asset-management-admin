@@ -17,33 +17,20 @@ import ScrollPanel from 'primevue/scrollpanel';
 <template>
     <ScrollPanel style="flex: 1; width: 100%;" class="h-full">
         <!-- Dashboard -->
-        <SidebarLink
-            :title="'Dashboard'"
-            :href="route('dashboard')"
-        >
+        <SidebarLink :title="'Dashboard'" :href="route('dashboard')">
             <template #icon>
                 <IconLayoutDashboard :size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 
         <!-- Customer -->
-        <SidebarCategoryLabel :title="'Customer'" />
-        <SidebarCollapsible :title="'Customer'">
+        <SidebarCategoryLabel :title="'Group'" />
+        <SidebarCollapsible :title="'Group'">
             <template #icon>
                 <IconUsers :size="20" stroke-width="1.5" />
             </template>
-
-            <SidebarCollapsibleItem :title="'Customer List'" />
-
+            <SidebarCollapsibleItem :title="'Group Listing'" />
         </SidebarCollapsible>
-
-        <!-- Ranks -->
-        <SidebarCategoryLabel :title="'Ranks'" />
-        <SidebarLink :title="'Ranks'">
-            <template #icon>
-                <IconBadges :size="20" stroke-width="1.5" />
-            </template>
-        </SidebarLink>
 
         <!-- Transaction -->
         <SidebarCategoryLabel :title="'Transaction'" />
@@ -51,14 +38,10 @@ import ScrollPanel from 'primevue/scrollpanel';
             <template #icon>
                 <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
-
             <SidebarCollapsibleItem :title="'Transaction List'" />
-
         </SidebarCollapsible>
 
-        <SidebarCategoryLabel
-            :title="'Settings'"
-        />
+        <SidebarCategoryLabel :title="'Settings'" />
         <!-- Deposit Profile -->
         <SidebarLink :title="'Deposit Profile'">
             <template #icon>

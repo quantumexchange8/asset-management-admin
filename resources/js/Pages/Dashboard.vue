@@ -12,7 +12,7 @@ const cards = [
 
 <template>
     <AuthenticatedLayout :title="'Dashboard'">
-        <div class="py-12">
+        <div class="py-4">
             <div class="layout-content">
                 <div class="grid grid-cols-12 gap-6">
                     <!-- Cards -->
@@ -23,7 +23,6 @@ const cards = [
                         <template #content>{{ card.value }}</template>
                     </Card>
                 </div>
-
             </div>
         </div>
     </AuthenticatedLayout>
