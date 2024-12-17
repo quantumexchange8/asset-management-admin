@@ -20,6 +20,8 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "@tabler/icons-vue": "^3.24.0",
+        "@vueuse/core": "^12.0.0",
         "primevue": "^4.0.5",
         "tailwindcss-primeui": "^0.3.4"
     }
