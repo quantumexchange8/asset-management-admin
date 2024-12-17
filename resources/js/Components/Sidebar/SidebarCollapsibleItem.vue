@@ -24,7 +24,7 @@ const Tag = external ? 'a' : Link
 <template>
     <li
         :class="[
-            'text-sm rounded-lg hover:cursor-pointer hover:bg-primary-50 dark:hover:bg-transparent mt-1',
+            'text-sm hover:cursor-pointer hover:bg-primary-50 dark:hover:bg-transparent mt-1',
         ]"
     >
         <component
@@ -35,7 +35,7 @@ const Tag = external ? 'a' : Link
                 'p-2.5 flex gap-3 items-center hover:text-primary-500 dark:hover:text-primary-300 w-full',
                 {
                     'text-primary-500 dark:text-primary-300': active,
-                    'text-surface-500': !active,
+                    'text-surface-700': !active,
                 },
             ]"
         >
@@ -44,7 +44,7 @@ const Tag = external ? 'a' : Link
                     size="10"
                 />
             </div>
-            <div v-show="sidebarState.isOpen" class="font-medium text-white">
+            <div v-show="sidebarState.isOpen" class="font-medium dark:text-white">
                 {{ title }}
             </div>
         </component>

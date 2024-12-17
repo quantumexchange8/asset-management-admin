@@ -6,7 +6,7 @@ export default {
 
             //Shape
             'rounded-[12px]',
-            'shadow-md',
+            'shadow-toast',
 
             //Color
             'bg-surface-0 dark:bg-surface-900',

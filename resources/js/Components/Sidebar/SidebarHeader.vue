@@ -11,9 +11,9 @@ import { IconX } from '@tabler/icons-vue';
         <Link :href="route('dashboard')" class="w-full flex items-center">
         <div class="flex items-center self-stretch gap-2">
             <div v-show="sidebarState.isOpen || sidebarState.isHovered" class="px-2">
-                <ApplicationLogo class="block h-9 w-auto fill-current text-green-500" />
+                <ApplicationLogo class="block h-9 w-auto fill-current text-primary" />
             </div>
-            <div v-show="sidebarState.isOpen || sidebarState.isHovered" class="text-green-500">
+            <div v-show="sidebarState.isOpen || sidebarState.isHovered" class="text-primary">
                 Asset-CN
             </div>
         </div>

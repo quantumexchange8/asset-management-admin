@@ -21,7 +21,7 @@ const handleLogOut = () => {
 
 <template>
     <nav aria-label="secondary"
-        class="sticky top-0 z-30 py-2 px-3 md:px-5 bg-primary-50 dark:bg-surface-950 flex items-center gap-3">
+        class="sticky top-0 z-30 py-2 px-3 md:px-5 bg-surface-50 dark:bg-surface-ground flex items-center gap-3">
         <Button type="button" variant="gray-text" icon-only pill @click="sidebarState.isOpen = !sidebarState.isOpen">
             <IconMenu2 size="20" stroke-width="1.25" />
         </Button>

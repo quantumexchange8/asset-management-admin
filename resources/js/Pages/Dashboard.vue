@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Card from '@/Components/Card.vue';
+import Card from 'primevue/card';
 
 const cards = [
     { title: 'Sales', value: 120 },
@@ -14,29 +14,16 @@ const cards = [
     <AuthenticatedLayout :title="'Dashboard'">
         <div class="py-12">
             <div class="layout-content">
-                <div
-                    class="overflow-hidden bg-white shadow-lg sm:rounded-lg border-solid border dark:border-gray-400 dark:bg-gray-800 mb-6">
-                    <div class="p-6 text-gray-950 dark:text-gray-100">
-                        You're logged in!
-                    </div>
-                </div>
-                <div class="grid grid-cols-12 gap-8">
-                    <Card v-for="(card, index) in cards" :key="index" :title="card.title" :value="card.value">
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Cards -->
+                    <Card v-for="(card, index) in cards" :key="index"
+                        class="col-span-12 md:col-span-6 xl:col-span-3 border dark:border-surface-600 bg-white dark:bg-surface-900 p-6"
+                        :title="card.title" :value="card.value">
+                        <template #title>{{ card.title }}</template>
+                        <template #content>{{ card.value }}</template>
                     </Card>
-                    <div
-                        class="col-span-12 xl:col-span-9 shadow-lg sm:rounded-lg border-solid border dark:border-gray-400 bg-white dark:bg-gray-800 p-6">
-                        <div class="card h-full">
-                            <div class="flex items-start justify-between mb-12">
-                                <span class="text-surface-900 dark:text-surface-0 text-xl font-semibold">
-                                    Revenue Overview
-                                </span>
-                            </div>
-                            <div class="p-chart text-surface-900 dark:text-surface-0" style="position: relative;">
-                                Chart/Graph
-                            </div>
-                        </div>
-                    </div>
                 </div>
+
             </div>
         </div>
     </AuthenticatedLayout>

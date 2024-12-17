@@ -53,7 +53,7 @@ const leave = (el) => {
                 <span
                     v-show="sidebarState.isOpen"
                     aria-hidden="true"
-                    class="relative block w-5 h-5 ml-auto text-white"
+                    class="relative block w-5 h-5 ml-auto dark:text-white"
                 >
                     <IconChevronDown
                         :class="[
