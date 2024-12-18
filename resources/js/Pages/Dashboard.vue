@@ -17,7 +17,7 @@ const cards = [
                 <div class="grid grid-cols-12 gap-6">
                     <!-- Cards -->
                     <Card v-for="(card, index) in cards" :key="index"
-                        class="col-span-12 md:col-span-6 xl:col-span-3 border dark:border-surface-600 bg-white dark:bg-surface-900 p-6"
+                        class="col-span-12 md:col-span-6 xl:col-span-3 border dark:border-surface-600 bg-white dark:bg-surface-900"
                         :title="card.title" :value="card.value">
                         <template #title>{{ card.title }}</template>
                         <template #content>{{ card.value }}</template>

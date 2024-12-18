@@ -32,7 +32,7 @@ onMounted(() => {
         ]">
         <SidebarHeader />
 
-        <div class="flex-1 flex flex-col overflow-hidden p-4">
+        <div class="flex-1 flex flex-col overflow-hidden">
             <SidebarContent />
         </div>
 

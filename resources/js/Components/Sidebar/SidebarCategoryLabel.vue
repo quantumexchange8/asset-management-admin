@@ -8,7 +8,7 @@ defineProps({
 
 <template>
     <div
-        class="pt-4 text-xs text-left w-full text-primary uppercase truncate font-bold"
+        class="pt-5 px-7 text-xs text-left w-full text-primary uppercase truncate font-bold"
         :class="{
             'translate-x-0 w-[252px] px-3':
                 sidebarState.isOpen,

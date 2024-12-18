@@ -38,7 +38,7 @@ import ScrollPanel from 'primevue/scrollpanel';
             <template #icon>
                 <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Transaction List'" />
+            <SidebarCollapsibleItem :title="'Transaction Listing'" />
         </SidebarCollapsible>
 
         <SidebarCategoryLabel :title="'Settings'" />
