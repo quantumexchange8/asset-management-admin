@@ -3,8 +3,9 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
 
 const form = useForm({
     name: '',
@@ -28,14 +29,14 @@ const submit = () => {
             <div>
                 <InputLabel for="name" value="Name" />
 
-                <TextInput
+                <InputText
                     id="name"
                     type="text"
                     class="mt-1 block w-full"
                     v-model="form.name"
-                    required
                     autofocus
                     autocomplete="name"
+                    :invalid="form.errors.name"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
@@ -44,13 +45,13 @@ const submit = () => {
             <div class="mt-4">
                 <InputLabel for="email" value="Email" />
 
-                <TextInput
+                <InputText
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
-                    required
                     autocomplete="username"
+                    :invalid="form.errors.email"
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
@@ -59,13 +60,12 @@ const submit = () => {
             <div class="mt-4">
                 <InputLabel for="password" value="Password" />
 
-                <TextInput
+                <Password
                     id="password"
-                    type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
-                    required
                     autocomplete="new-password"
+                    :invalid="form.errors.password"
                 />
 
                 <InputError class="mt-2" :message="form.errors.password" />
@@ -77,13 +77,12 @@ const submit = () => {
                     value="Confirm Password"
                 />
 
-                <TextInput
+                <Password
                     id="password_confirmation"
-                    type="password"
                     class="mt-1 block w-full"
                     v-model="form.password_confirmation"
-                    required
                     autocomplete="new-password"
+                    :invalid="form.errors.password_confirmation"
                 />
 
                 <InputError

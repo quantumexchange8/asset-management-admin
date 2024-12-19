@@ -11,17 +11,15 @@ export default {
             { 'first:ml-0 ml-[-1px]': parent.instance.$name == 'InputGroup' && !props.showButtons },
 
             // Color and Background
-            { 'bg-surface-0 dark:bg-surface-950': !props.disabled },
+            { 'bg-surface-0 dark:bg-surface-ground': !props.disabled },
 
             'border',
             { 'dark:border-surface-700': parent.instance.$name != 'InputGroup' },
             { 'dark:border-surface-600': parent.instance.$name == 'InputGroup' },
-            { 'border-surface-300 dark:border-surface-600': !props.invalid },
+            { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
             // Invalid State
-            'invalid:focus:ring-red-200',
-            'invalid:hover:border-red-500',
-            { 'border-red-500 dark:border-red-400': props.invalid },
+            { 'border-red-500 dark:border-red-500': props.invalid },
 
             // Transitions
             'transition-all',
@@ -29,12 +27,12 @@ export default {
 
             // States
             { 'hover:border-surface-400 dark:hover:border-surface-600': !props.invalid },
-            { 'outline-none outline-offset-0 ring-1 ring-primary-500 dark:ring-primary-400 z-10': state.focused },
-
+            { 'outline-none outline-offset-0 z-10 ring-1 ring-primary-500 dark:ring-primary-500': state.focused },
+            
             // Misc
             'cursor-pointer',
             'select-none',
-            { 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': props.disabled }
+            { 'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default dark:border-surface-500 disabled:text-surface-500 dark:disabled:text-surface-400': props.disabled }
         ]
     }),
     label: ({ props, parent }) => ({
@@ -49,7 +47,7 @@ export default {
             // Color and Background
             'bg-transparent',
             'border-0',
-            { 'text-surface-800 dark:text-white/80': props.modelValue != undefined, 'text-surface-400 dark:text-surface-500': props.modelValue == undefined },
+            { 'text-surface-800 dark:text-white/80': props.modelValue != undefined, 'text-surface-500 dark:text-surface-400': props.modelValue == undefined },
             'placeholder:text-surface-400 dark:placeholder:text-surface-500',
 
             // Sizing and Spacing
@@ -86,7 +84,8 @@ export default {
 
             // Color and Background
             'bg-transparent',
-            'text-surface-500',
+            'dark:text-surface-400',
+            'text-surface-400',
 
             // Size
             'w-12',

@@ -2,8 +2,14 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import InputText from 'primevue/inputtext';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import InputNumber from 'primevue/inputnumber';
+import DatePicker from 'primevue/datepicker';
+import { ref } from "vue";
+import Select from 'primevue/select';
+import MultiSelect from 'primevue/multiselect';
+import Checkbox from 'primevue/checkbox';
 
 defineProps({
     mustVerifyEmail: {
@@ -20,6 +26,20 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
+
+const date = ref()
+
+const selectedCity = ref();
+const selectedCities = ref();
+const cities = ref([
+    { name: 'New York', code: 'NY' },
+    { name: 'Rome', code: 'RM' },
+    { name: 'London', code: 'LDN' },
+    { name: 'Istanbul', code: 'IST' },
+    { name: 'Paris', code: 'PRS' }
+]);
+
+const pizza = ref();
 </script>
 
 <template>
@@ -41,14 +61,14 @@ const form = useForm({
             <div>
                 <InputLabel for="name" value="Name" />
 
-                <TextInput
+                <InputText
                     id="name"
                     type="text"
                     class="mt-1 block w-full"
                     v-model="form.name"
-                    required
                     autofocus
                     autocomplete="name"
+                    :invalid="form.errors.name"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
@@ -57,16 +77,78 @@ const form = useForm({
             <div>
                 <InputLabel for="email" value="Email" />
 
-                <TextInput
+                <InputText
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
-                    required
+                    disabled
+                    :invalid="form.errors.email"
                     autocomplete="username"
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div>
+                <InputLabel for="test" value="Input Number" />
+
+                <InputNumber
+                    class="mt-1 block w-full"
+                    showButtons 
+                    :min="0"
+                    :invalid="form.errors.name"
+                />
+
+            </div>
+
+            <div>
+                <InputLabel for="date" value="Date Picker" />
+
+                <DatePicker
+                    class="mt-1 block w-full"
+                    :invalid="form.errors.name"
+                    showButtonBar 
+                    v-model="date"
+                />
+
+            </div>
+
+            <div>
+                <InputLabel for="selects" value="Select" />
+                <Select 
+                    v-model="selectedCity" 
+                    :invalid="form.errors.name"
+                    :options="cities" 
+                    optionLabel="name" 
+                    placeholder="Select a City" 
+                    class="mt-1 block w-full" 
+                    showClear
+                />
+            </div>
+
+            <div>
+                <InputLabel for="multiselect" value="Multi-Select" />
+                <MultiSelect 
+                    v-model="selectedCities" 
+                    :invalid="form.errors.name"
+                    :options="cities" 
+                    optionLabel="name" 
+                    filter 
+                    placeholder="Select Cities"
+                    :maxSelectedLabels="3" 
+                    class="mt-1 block w-full"  
+                />
+            </div>
+
+            <div class="flex items-center gap-2">
+                <Checkbox 
+                v-model="pizza" 
+                inputId="ingredient1" 
+                name="pizza" 
+                value="Cheese" 
+                />
+                <InputLabel for="box" value="Checkbox" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

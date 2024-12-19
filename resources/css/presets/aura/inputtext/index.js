@@ -27,20 +27,18 @@ export default {
             // Colors
             'text-surface-800 dark:text-white/80',
             'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-            { 'bg-surface-0 dark:bg-surface-950': !context.disabled },
+            { 'bg-surface-0 dark:bg-surface-ground': !context.disabled },
             'border',
             { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
             // Invalid State
-            'invalid:focus:ring-red-200',
-            'invalid:hover:border-red-500',
-            { 'border-red-500 dark:border-red-400': props.invalid },
+            { 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-0': props.invalid },
 
             // States
             {
-                'hover:border-surface-400 dark:hover:border-surface-600': !context.disabled && !props.invalid,
-                'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10': !context.disabled,
-                'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default': context.disabled
+                'hover:border-surface-400 dark:hover:border-surface-600 focus:border-primary-500 dark:focus:border-primary-500 focus:ring-0 dark:focus:ring-0': !context.disabled && !props.invalid,
+                'focus:outline-none focus:outline-offset-0 focus:z-10': !context.disabled,
+                'bg-surface-200 dark:bg-surface-700 select-none pointer-events-none cursor-default dark:border-surface-500 disabled:text-surface-500 dark:disabled:text-surface-500': context.disabled
             },
 
             // Filled State *for FloatLabel

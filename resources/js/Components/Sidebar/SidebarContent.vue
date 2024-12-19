@@ -17,7 +17,10 @@ import ScrollPanel from 'primevue/scrollpanel';
 <template>
     <ScrollPanel style="flex: 1; width: 100%;" class="h-full">
         <!-- Dashboard -->
-        <SidebarLink :title="'Dashboard'" :href="route('dashboard')">
+        <SidebarLink 
+            :title="'Dashboard'" 
+            :href="route('dashboard')"
+        >
             <template #icon>
                 <IconLayoutDashboard :size="20" stroke-width="1.5" />
             </template>
@@ -29,7 +32,7 @@ import ScrollPanel from 'primevue/scrollpanel';
             <template #icon>
                 <IconUsers :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Group Listing'" />
+            <SidebarCollapsibleItem :title="'Group Listing'" href="#" />
         </SidebarCollapsible>
 
         <!-- Transaction -->
@@ -38,12 +41,15 @@ import ScrollPanel from 'primevue/scrollpanel';
             <template #icon>
                 <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Transaction Listing'" />
+            <SidebarCollapsibleItem :title="'Transaction Listing'"  href="#"/>
         </SidebarCollapsible>
 
         <SidebarCategoryLabel :title="'Settings'" />
         <!-- Deposit Profile -->
-        <SidebarLink :title="'Deposit Profile'">
+        <SidebarLink 
+            :title="'Deposit Profile'"
+            href="#"
+        >
             <template #icon>
                 <IconReportMoney :size="20" stroke-width="1.5" />
             </template>
