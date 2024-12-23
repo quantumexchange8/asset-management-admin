@@ -39,6 +39,7 @@ export default {
     label: ({ props, parent }) => ({
         class: [
             'text-base leading-2',
+            'text-sm',
 
             // Spacing
             {
@@ -139,6 +140,7 @@ export default {
 
             // Font
             'leading-none',
+            'text-sm',
 
             // Spacing
             'm-0 px-3 py-2 gap-2',

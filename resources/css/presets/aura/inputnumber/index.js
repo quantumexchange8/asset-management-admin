@@ -22,6 +22,7 @@ export default {
             class: [
                 // Font
                 'leading-none',
+                'text-sm',
 
                 // Display
                 'flex-auto',

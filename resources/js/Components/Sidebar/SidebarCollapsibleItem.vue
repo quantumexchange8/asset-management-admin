@@ -39,7 +39,7 @@ const Tag = external ? 'a' : Link
                 },
             ]"
         >
-            <div class="p-1 flex items-center justify-center">
+            <div class="pl-8 flex items-center justify-center">
                 <IconCircle
                     size="10"
                 />

@@ -63,7 +63,8 @@ export default {
     thead: ({ context }) => ({
         class: [
             {
-                'bg-surface-0 dark:bg-surface-900 top-0 z-40 sticky': context.scrollable
+                'bg-surface-0 dark:bg-surface-900 top-0 z-40 sticky': context.scrollable,
+                'text-sm':!context.scrollable
             }
         ]
     }),
@@ -120,7 +121,7 @@ export default {
                 context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
 
                 // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-highlight' : 'bg-surface-50 text-surface-700 dark:text-white/80 dark:bg-surface-800',
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-100 text-surface-900 dark:bg-highlight' : 'bg-surface-50 text-surface-700 dark:text-white/80 dark:bg-surface-800',
                 'border-surface-200 dark:border-surface-700 ',
 
                 // States

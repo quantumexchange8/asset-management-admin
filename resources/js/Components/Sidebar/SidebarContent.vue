@@ -20,6 +20,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarLink 
             :title="'Dashboard'" 
             :href="route('dashboard')"
+            :active="route().current('dashboard')"
         >
             <template #icon>
                 <IconLayoutDashboard :size="20" stroke-width="1.5" />
@@ -37,11 +38,32 @@ import ScrollPanel from 'primevue/scrollpanel';
 
         <!-- Transaction -->
         <SidebarCategoryLabel :title="'Transaction'" />
-        <SidebarCollapsible :title="'Transaction'">
+
+        <!-- Pending -->
+        <SidebarCollapsible :title="'Pending'">
             <template #icon>
                 <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Transaction Listing'"  href="#"/>
+            <SidebarCollapsibleItem :title="'Deposit'"  href="#"/>
+            <SidebarCollapsibleItem :title="'Withdrawal'"  href="#"/>
+        </SidebarCollapsible>
+
+        <!-- History -->
+        <SidebarCollapsible 
+            :title="'History'"
+            :active="route().current('transaction.history.*')"
+        >
+            <template #icon>
+                <IconClockDollar :size="20" stroke-width="1.5" />
+            </template>
+
+            <SidebarCollapsibleItem 
+                :title="'Deposit'"  
+                :href="route('transaction.history.getDepositHistory')"
+                :active="route().current('transaction.history.getDepositHistory')"
+            />
+            
+            <SidebarCollapsibleItem :title="'Withdrawal'"  href="#"/>
         </SidebarCollapsible>
 
         <SidebarCategoryLabel :title="'Settings'" />

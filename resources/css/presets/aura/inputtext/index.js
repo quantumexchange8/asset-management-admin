@@ -3,6 +3,7 @@ export default {
         class: [
             // Font
             'leading-none',
+            'text-sm',
 
             // Flex
             { 'flex-1 w-[1%]': parent.instance.$name == 'InputGroup' },

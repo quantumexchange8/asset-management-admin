@@ -18,6 +18,7 @@ export default {
 
                 // Font
                 'leading-none',
+                'text-sm',
 
                 // Colors
                 'text-surface-800 dark:text-surface-200',
@@ -114,6 +115,7 @@ export default {
         class: [
             //Font
             'font-medium',
+            'text-sm',
 
             // Flexbox and Alignment
             'flex items-center justify-between',
@@ -136,7 +138,7 @@ export default {
         class: [
             // Text
             'leading-7',
-            'mx-auto my-0'
+            'mx-auto my-0',
         ]
     },
     selectMonth: {
@@ -144,6 +146,7 @@ export default {
             // Font
             'text-base leading-[normal]',
             'font-medium',
+            'text-sm',
 
             //shape
             'rounded-md',
@@ -171,6 +174,7 @@ export default {
             // Font
             'text-base leading-[normal]',
             'font-medium',
+            'text-sm',
 
             //shape
             'rounded-md',
@@ -209,7 +213,8 @@ export default {
         class: [
             // Spacing
             'p-1',
-            'font-medium'
+            'font-medium',
+            'text-sm',
         ]
     },
     weekHeader: {
@@ -228,7 +233,8 @@ export default {
     dayCell: {
         class: [
             // Spacing
-            'p-1'
+            'p-1',
+            'text-sm',
         ]
     },
     weekLabelContainer: {
@@ -281,7 +287,8 @@ export default {
     monthView: {
         class: [
             // Spacing
-            'mt-2'
+            'mt-2',
+            'text-sm',
         ]
     },
     month: ({ context }) => ({
@@ -315,7 +322,8 @@ export default {
     yearView: {
         class: [
             // Spacing
-            'mt-2'
+            'mt-2',
+            'text-sm',
         ]
     },
     year: ({ context }) => ({
