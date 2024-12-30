@@ -16,7 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('category')->nullable();
             $table->string('transaction_type')->nullable();
-            $table->unsignedBigInteger('wallet_id')->nullable();
+            $table->unsignedBigInteger('from_wallet_id')->nullable();
+            $table->unsignedBigInteger('to_wallet_id')->nullable();
+            $table->unsignedInteger('from_meta_login')->nullable();
+            $table->unsignedInteger('to_meta_login')->nullable();
+            $table->string('ticket')->nullable();
             $table->string('transaction_number')->nullable();
             $table->string('to_payment_account_name')->nullable();
             $table->string('to_payment_platform')->nullable();
@@ -39,15 +43,33 @@ return new class extends Migration
             $table->string('comment')->nullable();
             $table->string('remarks')->nullable();
             $table->timestamp('approval_at')->nullable();
+            $table->unsignedBigInteger('handle_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('wallet_id')
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('from_wallet_id')
                 ->references('id')
                 ->on('wallets')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
+            $table->foreign('to_wallet_id')
+                ->references('id')
+                ->on('wallets')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreign('handle_by')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
         });
     }
 

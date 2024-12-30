@@ -121,6 +121,7 @@ const pizza = ref();
                     :invalid="form.errors.name"
                     :options="cities" 
                     optionLabel="name" 
+                    filter
                     placeholder="Select a City" 
                     class="mt-1 block w-full" 
                     showClear

@@ -50,7 +50,7 @@ export default {
                 { 'border-surface-300 dark:border-surface-700': !parent.props.invalid },
 
                 // Invalid State
-                { 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-0': parent.props.invalid },
+                { 'border-red-500 dark:border-red-600 focus:border-red-500 focus:ring-0': parent.props.invalid },
 
                 // States
                 { 'hover:border-surface-400 dark:hover:border-surface-600 focus:border-primary-500 dark:focus:border-primary-500 focus:ring-0 dark:focus:ring-0': !parent.props.invalid },

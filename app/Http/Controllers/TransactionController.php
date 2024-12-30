@@ -24,6 +24,18 @@ class TransactionController extends Controller
             'depositHistory' => $depositHistory,
         ]);
     }
+    
+    public function getWithdrawalHistory()
+    {
+        $withdrawalHistory = Transaction::where('transaction_type', 'withdrawal')
+            ->where('status', 'success')
+            ->with('user')
+            ->get();
+
+        return Inertia::render('Transaction/History/WithdrawalHistory', [
+            'withdrawalHistory' => $withdrawalHistory,
+        ]);
+    }
 
     public function importDepositHistory(Request $request)
     {

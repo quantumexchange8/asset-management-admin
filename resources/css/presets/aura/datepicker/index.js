@@ -28,7 +28,7 @@ export default {
                 { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
                 // Invalid State
-                { 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-0': props.invalid },
+                { 'border-red-500 dark:border-red-600 focus:border-red-500 focus:ring-0': props.invalid },
 
                 // Spacing
                 'm-0 py-2 px-3',

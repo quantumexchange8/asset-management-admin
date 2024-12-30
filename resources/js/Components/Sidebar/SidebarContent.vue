@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
+import { IconUsersGroup } from '@tabler/icons-vue';
 
 </script>
 
@@ -28,13 +29,30 @@ import ScrollPanel from 'primevue/scrollpanel';
         </SidebarLink>
 
         <!-- Customer -->
-        <SidebarCategoryLabel :title="'Group'" />
-        <SidebarCollapsible :title="'Group'">
+        <SidebarCategoryLabel :title="'Member'" />
+        <SidebarCollapsible 
+            :title="'Member'"
+            :active="route().current('member.*')"
+        >
             <template #icon>
                 <IconUsers :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Group Listing'" href="#" />
+            <SidebarCollapsibleItem 
+                :title="'Member Listing'" 
+                :href="route('member.getMemberList')"
+                :active="route().current('member.getMemberList')"
+            />
         </SidebarCollapsible>
+
+        <!-- Group -->
+        <SidebarLink 
+            :title="'Group'" 
+            href="#"
+        >
+            <template #icon>
+                <IconUsersGroup :size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
 
         <!-- Transaction -->
         <SidebarCategoryLabel :title="'Transaction'" />
@@ -63,7 +81,11 @@ import ScrollPanel from 'primevue/scrollpanel';
                 :active="route().current('transaction.history.getDepositHistory')"
             />
             
-            <SidebarCollapsibleItem :title="'Withdrawal'"  href="#"/>
+            <SidebarCollapsibleItem 
+                :title="'Withdrawal'"  
+                :href="route('transaction.history.getWithdrawalHistory')"
+                :active="route().current('transaction.history.getWithdrawalHistory')"
+            />
         </SidebarCollapsible>
 
         <SidebarCategoryLabel :title="'Settings'" />

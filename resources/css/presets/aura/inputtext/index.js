@@ -10,8 +10,8 @@ export default {
 
             // Spacing
             'm-0',
-            { 'w-full': props.fluid },
-
+            'w-full',
+            
             // Size
             {
                 'py-3 px-3.5': props.size == 'large',
@@ -33,7 +33,7 @@ export default {
             { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
             // Invalid State
-            { 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-0': props.invalid },
+            { 'border-red-500 dark:border-red-600 focus:border-red-500 focus:ring-0': props.invalid },
 
             // States
             {

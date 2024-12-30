@@ -20,7 +20,7 @@ import { ref } from 'vue';
 import dayjs from 'dayjs';
 
 const props = defineProps({
-  depositHistory: {
+withdrawalHistory: {
     type: Array,
     required: true
   }
@@ -28,30 +28,6 @@ const props = defineProps({
 
 const visible = ref(false);
 const fileupload = ref(null);   
-
-const upload = () => {
-    if (fileupload.value) {
-        const file = fileupload.value.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            // Send the file to the server
-            router.post('/transaction/history/import-deposit-history', formData, {
-                onSuccess: () => {
-                    console.log('File uploaded successfully');
-                },
-                onError: (error) => {
-                    console.error('Error uploading file:', error);
-                },
-            });
-        }
-    }
-};
-
-const onFileUpload = (event) => {
-    console.log('File uploaded:', event);
-};
 
 //filteration
 const filters = ref();
@@ -81,10 +57,10 @@ const getSeverity = (status) => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Deposit History'">
+    <AuthenticatedLayout :title="'Withdrawal History'">
         <div class="card">
             <DataTable 
-                :value="props.depositHistory" 
+                :value="props.withdrawalHistory" 
                 paginator 
                 :rows="10" 
                 dataKey="id"
@@ -97,27 +73,6 @@ const getSeverity = (status) => {
                     <div class="flex justify-between items-center">
                         <Button type="button" label="Clear" outlined @click="clearFilter()" />
                         <div class="flex items-center space-x-4">
-
-                            <!-- Export button -->
-                            <a :href="route('transaction.history.exportDepositHistory')">
-                                <Button 
-                                    class="w-full md:w-auto"
-                                  
-                                >
-                                    <span class="pr-1">Export</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
-                            </a>
-                          
-                            <!-- Import button -->
-                            <Button 
-                                class="w-full md:w-auto"
-                                @click="visible = true"
-                            >
-                                <span class="pr-1">Import</span>
-                                <IconTransferIn size="16" stroke-width="1.5"/>
-                            </Button>
-
                             <!-- Search bar -->
                             <IconField>
                                 <InputIcon>
@@ -126,40 +81,12 @@ const getSeverity = (status) => {
                                 <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                             </IconField>
                         </div>
-                       
-                        <!-- Modal -->
-                        <Dialog v-model:visible="visible" modal header="Import Deposit History" :style="{ width: '25rem' }">
-
-                            <span class="text-surface-500 dark:text-surface-400 block mb-3 text-sm font-medium">
-                                Excel file only. Supported formats: .xlsx, .xls, .csv
-                            </span>
-
-                            <div class="flex items-center gap-4 mb-8">
-                                <!-- File upload aligned to the left with more spacing -->
-                                <FileUpload 
-                                    ref="fileupload" 
-                                    mode="basic" 
-                                    name="file"                                        
-                                    accept=".xlsx, .xls, .csv" 
-                                    :maxFileSize="25000"         
-                                    :customUpload="true" 
-                                    @upload="onFileUpload" 
-                                    class="w-full" 
-                                />
-                            </div>
-
-                            <div class="flex justify-end gap-2">
-                                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" />
-                                <Button label="Upload" @click="upload" />
-                            </div>
-                         
-                        </Dialog>
                     </div>
                 </template>
 
-                <template #empty><span class="dark:text-white">No deposit found. </span></template>
+                <template #empty><span class="dark:text-white">No withdrawal found. </span></template>
 
-                <template #loading> Loading deposit history. Please wait. </template>
+                <template #loading> Loading withdrawal history. Please wait. </template>
 
                 <Column 
                     field="transaction_number"

@@ -20,4 +20,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function approval_by(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function to_wallet(): BelongsTo
+    {
+        return $this->belongsTo(Wallet::class, 'to_wallet_id', 'id');
+    }
 }
