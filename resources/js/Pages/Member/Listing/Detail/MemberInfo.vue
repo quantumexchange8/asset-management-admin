@@ -136,7 +136,7 @@ const getSeverity = (status) => {
                                 Rank
                             </div>
                             <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                Member
+                                {{ props.user.rank.rank_name }}
                             </div>
                         </div>
 

@@ -17,7 +17,7 @@ const getWalletData = async () => {
     try{
         const response = await axios.get(`/member/detail/${props.user.id_number}/getWalletData`);
         wallets.value = response.data;
-    }catch(error){
+    } catch(error){
         console.error('Error fetching wallet data:', error);
     } finally {
         isLoading.value = false;

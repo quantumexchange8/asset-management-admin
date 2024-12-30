@@ -221,7 +221,7 @@ const statuses = ref(['unverified', 'verified']);
                 frozen
                 alignFrozen="right"
                 header=""
-                style="width: 15%"
+                style="width: 5%"
                 class="hidden md:table-cell"
             >
                 <template #body="{data}">

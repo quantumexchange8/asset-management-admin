@@ -106,6 +106,8 @@ class MemberController extends Controller
             ->with([
                 'country:id,name,emoji',
                 'upline:id,name,email,upline_id',
+                'rank:id,rank_name',
+
             ])
             ->withCount('wallets')
             ->first();
