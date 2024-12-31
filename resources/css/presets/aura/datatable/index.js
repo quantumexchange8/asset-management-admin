@@ -104,6 +104,7 @@ export default {
             class: [
                 'font-semibold',
                 'leading-[normal]',
+                'uppercase',
 
                 // Position
                 { 'sticky z-20 border-b': props.frozen || props.frozen === '' },

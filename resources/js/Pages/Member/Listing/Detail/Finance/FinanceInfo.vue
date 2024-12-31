@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref } from 'vue';
 import Card from 'primevue/card';
 import Skeleton from 'primevue/skeleton';
 import WalletAdjustment from './WalletAdjustment.vue';
@@ -24,7 +24,14 @@ const getWalletData = async () => {
     }
 }
 
-getWalletData();
+onMounted(() => {
+    getWalletData();
+});
+
+//fetch the called initiative in walletAdjustment.vue
+const refreshWalletData = () => {
+    getWalletData();  // Refetch wallet data when the form submission is successful
+};
 </script>
 
 <template>
@@ -65,6 +72,7 @@ getWalletData();
                                 <WalletAdjustment
                                     :user="user"
                                     :wallet="wallet"
+                                    @refreshWalletData="refreshWalletData" 
                                 />
                             </div>
 

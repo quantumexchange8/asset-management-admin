@@ -32,7 +32,7 @@ const handleLogOut = () => {
             <Link
                 class="w-11 h-11 p-1 flex items-center justify-center rounded-full hover:cursor-pointer dark:hover:bg-gray-800 md:block"
                 :href="route('profile.edit')">
-            <img class="w-full h-full object-cover rounded-full" :src="('storage/pictures/mountain.jpg')"
+            <img class="w-full h-full object-cover rounded-full" :src="('/storage/pictures/mountain.jpg')"
                 alt="Profile" />
             </Link>
 

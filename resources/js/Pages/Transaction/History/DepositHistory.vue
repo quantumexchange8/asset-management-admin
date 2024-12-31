@@ -159,7 +159,7 @@ const getSeverity = (status) => {
 
                 <template #empty><span class="dark:text-white">No deposit found. </span></template>
 
-                <template #loading> Loading deposit history. Please wait. </template>
+                <template #loading><span class="dark:text-white">Loading deposit history. Please wait.</span></template>
 
                 <Column 
                     field="transaction_number"

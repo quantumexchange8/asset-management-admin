@@ -38,7 +38,6 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('role')->default('user');
             $table->unsignedBigInteger('setting_rank_id')->default(1);
-            $table->unsignedBigInteger('display_rank_id')->default(1);
             $table->string('rank_up_status')->default('auto');
             $table->string('status')->default('active');
             $table->string('remarks')->nullable();

@@ -8,7 +8,6 @@ import Password from 'primevue/password';
 import Select from 'primevue/select';
 import { onMounted, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Toast from 'primevue/toast';
 import { useToast } from "primevue/usetoast";
 
 const visible = ref(false);
@@ -99,7 +98,6 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Toast/>
     <Button class="w-full md:w-auto" @click="visible = true">
         <span class="pr-1">Add Member</span>
     </Button>

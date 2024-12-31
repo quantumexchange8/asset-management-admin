@@ -65,6 +65,13 @@ const items = ref([
    
 ]);
 
+const emit = defineEmits();
+
+//catch the rankUpgraded event
+const handleRankUpgraded = () => {
+    emit('refreshTable'); // Emit an new event to parent (membertable.vue) to refresh the table
+};
+
 const toggle = (event) => {
     menu.value.toggle(event);
 };
@@ -102,13 +109,14 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-        header="Upgrade Rank"
+        :header="dialogType"
         :style="{ width: '20rem' }"
     >
         <template v-if="dialogType === 'upgrade_rank'">
             <UpgradeRank
                 :member="member"
                 @update:visible="visible = false"
+                @rankUpgraded="handleRankUpgraded"
             />
 
         </template>

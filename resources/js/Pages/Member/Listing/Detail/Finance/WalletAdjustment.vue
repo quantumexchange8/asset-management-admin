@@ -1,5 +1,4 @@
 <script setup>
-import Toast from 'primevue/toast';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
@@ -21,7 +20,7 @@ const props = defineProps({
         type: Object,
     }
 });
-console.log(props.wallet);
+
 const visible = ref(false);
 const amount = ref(0);
 
@@ -35,6 +34,9 @@ const form = useForm({
 });
 
 const toast = useToast();
+
+//initiate the auto refresh for wallet after submission of depo/withdrawal
+const emit = defineEmits(['refreshWalletData']);  
 
 const submitForm = () => {
     if(props.wallet){
@@ -55,6 +57,7 @@ const submitForm = () => {
                 detail: 'Wallet adjust successfully!',
                 life: 3000,
             });
+            emit('refreshWalletData'); //call the initiative,
         },
         onError: (errors) => {
             console.error(errors);
@@ -64,7 +67,6 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Toast />
     <Button @click="visible = true" type="button">
         <IconCreditCard size="20" stroke-width="1.5" />
     </Button>
@@ -74,7 +76,7 @@ const submitForm = () => {
             <div class="flex flex-col gap-5">
                 <div
                     class="flex flex-col justify-center items-center px-8 py-4 gap-2 self-stretch bg-surface-100 dark:bg-surface-800">
-                    <div class="text-surface-100 text-center text-xs font-medium">
+                    <div class="dark:text-surface-100 text-center text-xs font-medium">
                         {{ wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
                     </div>
                     <div class="text-xl text-primary-500 font-semibold">

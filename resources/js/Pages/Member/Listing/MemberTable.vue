@@ -9,16 +9,35 @@ import Tag from 'primevue/tag';
 import Select from 'primevue/select';
 import { IconSearch } from '@tabler/icons-vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import dayjs from 'dayjs';
 import MemberTableAction from './MemberTableAction.vue';
+import ProgressSpinner from 'primevue/progressspinner';
 
-const props = defineProps({
-  user: {
-    type: Array,
-    required: true
-  },
+const isLoading = ref(false);
+
+//fetch user
+const users = ref([]);
+const fetchUsers = async () => {
+    isLoading.value = true;
+    try {
+        const response = await axios.get('/member/get_member_data');
+        users.value = response.data.user;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+onMounted(() => {
+    fetchUsers();
 });
+
+//catch the emitted new event(refreshTable) from membertableaction.vue
+const handleRefreshTable = () => {
+    fetchUsers();  // Refresh the data when the event is caught
+};
 
 //filteration
 const filters = ref();
@@ -48,25 +67,33 @@ const getSeverity = (status) => {
 
         case 'unverified':
             return 'danger';
+
+        case 'pending':
+            return 'info';
+
+        case 'rejected':
+            return 'danger';
     }
 };
 
-const statuses = ref(['unverified', 'verified']);
-
+const statuses = ref(['unverified', 'verified', 'pending']);
 </script>
+
 <template>
     <div class="card">
         <DataTable
-            :value="$props.user" 
+            :value="users" 
             paginator 
             :rows="10" 
             dataKey="id"
             filterDisplay="menu"
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             :rowsPerPageOptions="[10, 20, 50, 100]"
-            :globalFilterFields="['name', 'email']"
+            :globalFilterFields="['name', 'email', 'username']"
             v-model:filters="filters"
             removableSort
+            ref="dt"
+            :loading="isLoading"
         >
             <template #header>
                 <div class="flex justify-between items-center">
@@ -83,13 +110,20 @@ const statuses = ref(['unverified', 'verified']);
                     </div>
             </template>
 
-            <template #empty> No user found. </template>
+            <template #empty><span class="dark:text-white">No user found. </span></template>
 
-            <template #loading> Loading user data. Please wait. </template>
+            <template #loading>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                    <ProgressSpinner
+                        strokeWidth="4"
+                    />
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
+                </div>
+            </template>
 
             <Column
                 field="created_at"
-                header="JOINED"
+                header="joined"
                 style="min-width: 9rem"
                 sortable
             >
@@ -100,7 +134,7 @@ const statuses = ref(['unverified', 'verified']);
             
             <Column
                 field="name"
-                header="NAME" 
+                header="name" 
                 style="min-width: 12rem"
                 sortable
                 frozen
@@ -116,7 +150,7 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="email"
-                header="EMAIL" 
+                header="email" 
                 style="min-width: 12rem"
                 sortable
             >
@@ -131,7 +165,7 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="upline.name"
-                header="REFERER"
+                header="referer"
                 style="min-width: 12rem"
                 sortable
             >
@@ -160,7 +194,7 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="rank.rank_name"
-                header="RANK"
+                header="rank"
                 style="min-width: 10rem"
                 sortable
             >
@@ -169,14 +203,13 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="country.name"
-                header="COUNTRY"
+                header="country"
                 style="min-width: 12rem"
                 sortable
             >
                 <template #body="{data}">
                     <div class="flex flex-col items-start">
                         <div class="flex items-center gap-1">
-                            <span>{{ data.country.emoji }}</span>
                             <span>{{ data.country.name }}</span>
                         </div>
                     </div>
@@ -189,7 +222,7 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="role"
-                header="ROLE"
+                header="role"
                 style="min-width: 10rem"
                 sortable
             >
@@ -200,7 +233,7 @@ const statuses = ref(['unverified', 'verified']);
 
             <Column
                 field="kyc_status"
-                header="STATUS"
+                header="status"
                 sortable
             >
                 <template #body="{ data }">
@@ -225,7 +258,7 @@ const statuses = ref(['unverified', 'verified']);
                 class="hidden md:table-cell"
             >
                 <template #body="{data}">
-                   <MemberTableAction :member="data" />
+                   <MemberTableAction :member="data" @refreshTable="handleRefreshTable" />
                 </template>
             </Column>
         </DataTable>

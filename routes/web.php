@@ -5,16 +5,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SelectOptionController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Redirect::route('login');
 });
 
 Route::get('/dashboard', function () {
@@ -34,9 +30,16 @@ Route::middleware('auth')->group(function () {
     //Customer
     Route::prefix('member')->group(function(){
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
+        Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
         
+        //kyc status
+        Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');
+        Route::get('/get_pending_kyc_data', [MemberController::class, 'getPendingKycData'])->name('member.getPendingKycData');
+        Route::put('/{id_number}/kycApprove', [MemberController::class, 'kycApprove'])->name('member.kycApprove');
+        Route::put('/{id_number}/kycReject', [MemberController::class, 'kycReject'])->name('member.kycReject');
+
         Route::prefix('detail')->group(function(){
             Route::get('/{id_number}', [MemberController::class, 'memberDetail'])->name('member.detail.memberDetail');
             Route::put('/{id_number}/updateMemberProfile', [MemberController::class, 'updateMemberProfile'])->name('member.detail.updateMemberProfile');

@@ -8,7 +8,6 @@ import InputLabel from '@/Components/InputLabel.vue';
 import Select from 'primevue/select';
 import { onMounted, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Toast from 'primevue/toast';
 import { useToast } from "primevue/usetoast";
 
 const props = defineProps({
@@ -82,7 +81,6 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Toast/>
     <Button 
         @click="visible = true" 
         type="button"

@@ -20,17 +20,68 @@ class MemberController extends Controller
 {
     public function getMemberList()
     {
-        $user = User::with([
+        return Inertia::render('Member/Listing/MemberListing');
+    }
+
+    public function getMemberData(){
+        $user = User::select([
+            'id',
+            'name',
+            'email',
+            'username',
+            'upline_id',
+            'country_id',
+            'setting_rank_id',
+            'role',
+            'id_number',
+            'kyc_status',
+            'created_at'
+        ])
+        ->with([
             'country:id,name,emoji',
             'rank:id,rank_name',
             'upline:id,name,email,upline_id',
-        ])->get();
+        ])
+        ->orderBy('id', 'DESC')
+        ->latest()
+        ->get();
 
-        $userCount = User::count();
-
-        return Inertia::render('Member/Listing/MemberListing', [
+        return response()->json([
             'user' => $user,
-            'userCount' => $userCount,
+        ]);
+    }
+
+    public function getPendingKyc()
+    {
+        return Inertia::render('Member/KycPending');
+    }
+
+    public function getPendingKycData() {
+        $user = User::select([
+            'id',
+            'name',
+            'email',
+            'username',
+            'upline_id',
+            'country_id',
+            'setting_rank_id',
+            'role',
+            'id_number',
+            'kyc_status',
+            'created_at'
+        ])
+        ->with([
+            'country:id,name,emoji',
+            'rank:id,rank_name',
+            'upline:id,name,email,upline_id',
+        ])
+        ->where('kyc_status', '=', 'pending')
+        ->orderBy('id', 'DESC')
+        ->latest()
+        ->get();
+
+        return response()->json([
+            'user' => $user,
         ]);
     }
 
@@ -112,8 +163,14 @@ class MemberController extends Controller
             ->withCount('wallets')
             ->first();
 
+        $currentImage = $user->getFirstMediaUrl('kyc_image') ?? null;
+
+        $refereeCount = User::where('upline_id', $user->id)->count();
+
         return Inertia::render('Member/Listing/Detail/MemberDetail', [
             'user' => $user,
+            'refereeCount' => $refereeCount,
+            'currentImage' => $currentImage,
         ]);
     }
 
@@ -151,11 +208,6 @@ class MemberController extends Controller
         $user->nationality = $country->nationality;
 
         $user->update();
-        return back()->with('toast', [
-            'title' => trans("public.success"),
-            'message' => trans("public.toast_create_customer_success_message"),
-            'type' => 'success',
-        ]);
     }
 
     public function walletAdjustment(Request $request)
@@ -224,9 +276,25 @@ class MemberController extends Controller
         $wallet->update();
     }
 
-    public function upgradeRank(Request $request){
+    public function upgradeRank(Request $request)
+    {
         $user = User::find($request->user_id);
         $user->setting_rank_id = $request->rank['id'];
+        $user->rank_up_status = 'manual';
+        $user->update();
+    }
+
+    public function kycApprove($id)
+    {
+        $user = User::find($id);
+        $user->kyc_status = 'verified';
+        $user->update();
+    }
+
+    public function kycReject($id)
+    {
+        $user = User::find($id);
+        $user->kyc_status = 'rejected';
         $user->update();
     }
 }

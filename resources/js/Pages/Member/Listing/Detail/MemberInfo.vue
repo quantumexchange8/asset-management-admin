@@ -7,6 +7,7 @@ import EditContactInfo from './EditContactInfo.vue';
 
 const props = defineProps({
     user: Object,
+    refereeCount: Number,
 });
 
 const getSeverity = (status) => {
@@ -14,14 +15,15 @@ const getSeverity = (status) => {
         case 'unverified':
             return 'danger';
 
+        case 'verified':
+            return 'success';
+
         case 'active':
             return 'success';
 
         case 'pending':
             return 'info';
 
-        case 'renewal':
-            return null;
     }
 }
 </script>
@@ -102,7 +104,6 @@ const getSeverity = (status) => {
                                 Country
                             </div>
                             <div class="flex gap-1 items-center">
-                                <span>{{ props.user.country.emoji }}</span>
                                 <span class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">{{
                                     props.user.country.name }}</span>
                             </div>
@@ -146,7 +147,7 @@ const getSeverity = (status) => {
                                 Referee
                             </div>
                             <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                -
+                               {{ props.refereeCount }}
                             </div>
                         </div>
                     </div>

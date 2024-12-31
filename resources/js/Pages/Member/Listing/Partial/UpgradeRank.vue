@@ -7,7 +7,7 @@ import Button from 'primevue/button';
 import { onMounted, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
-import Toast from 'primevue/toast';
+
 
 const props = defineProps({
     member: {
@@ -22,7 +22,8 @@ const selectedRank = ref(props.member.rank);
 
 const loadingRanks = ref(false);
 
-const emit = defineEmits(['update:visible']);
+//close dialog after save and refresh rank after save
+const emit = defineEmits();
 
 const getRanks = async () => {
     loadingRanks.value = true;
@@ -53,6 +54,7 @@ const submitForm = () => {
     form.put(route('member.upgradeRank'), {
         onSuccess:() => {
             emit('update:visible', false);
+            emit('rankUpgraded');
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -68,14 +70,11 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Toast/>
     <form @submit.prevent="submitForm">
         <div class="flex flex-col gap-5 items-center self-stretch">
             <div class="flex items-center gap-3 self-stretch">
                 <div class="w-8 h-8 rounded-full overflow-hidden grow-0 shrink-0">
-                    <template>
-                        <DefaultProfilePhoto />
-                    </template>
+                    <DefaultProfilePhoto />
                 </div>
                 <div class="flex flex-col items-start">
                     <div class="text-sm font-medium">

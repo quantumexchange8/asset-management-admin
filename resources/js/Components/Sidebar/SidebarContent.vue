@@ -42,7 +42,14 @@ import { IconUsersGroup } from '@tabler/icons-vue';
                 :href="route('member.getMemberList')"
                 :active="route().current('member.getMemberList')"
             />
+
+            <SidebarCollapsibleItem 
+                :title="'Pending Kyc'" 
+                :href="route('member.getPendingKyc')"
+                :active="route().current('member.getPendingKyc')"
+            />
         </SidebarCollapsible>
+        
 
         <!-- Group -->
         <SidebarLink 

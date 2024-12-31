@@ -10,10 +10,12 @@ import TabList from 'primevue/tablist';
 import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 import FinanceInfo from './Finance/FinanceInfo.vue';
+import KycProfile from './KycProfile.vue';
 
 const props = defineProps({
     user: Object,
-    required: true,
+    refereeCount: Number,
+    currentImage: String,
 });
 
 const home = ref({
@@ -63,7 +65,15 @@ const tabs = ref([
             <!-- Customer Info -->
 
             <div class="flex flex-col lg:flex-row items-center w-full gap-5 self-stretch">
-                <MemberInfo :user="user" />
+                <MemberInfo 
+                    :user="user" 
+                    :refereeCount="refereeCount"
+                />
+
+                <KycProfile
+                    :user="user" 
+                    :currentImage="currentImage"
+                />
                
             </div>
 

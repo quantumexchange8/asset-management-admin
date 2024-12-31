@@ -3,15 +3,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AddMember from './AddMember.vue';
 import MemberTable from './MemberTable.vue';
 
-defineProps({
-    user: {
-        type: Array,
-        required: true
-    },
-    userCount: {
-        type: Number,
-    }
-});
 </script>
 
 <template>
@@ -23,10 +14,7 @@ defineProps({
             </div>
 
             <!-- User Table -->
-            <MemberTable 
-                :user="user"
-                :userCount="userCount"
-            />
+            <MemberTable />
         </div>
     </AuthenticatedLayout>
 </template>

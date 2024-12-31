@@ -3,7 +3,7 @@ import { Head, usePage } from '@inertiajs/vue3'
 import Sidebar from '@/Components/Sidebar/Sidebar.vue'
 import { sidebarState } from '@/Composables'
 import Navbar from '@/Components/Navbar.vue';
-
+import Toast from 'primevue/toast';
 defineProps({
     title: String
 })
@@ -29,6 +29,7 @@ defineProps({
             <!-- Page Content -->
             <main class="flex flex-1 justify-center items-start px-3 pt-3 pb-12 md:px-5 md:pt-5">
                 <div class="w-full">
+                    <Toast/>
                     <slot />
                 </div>
             </main>
