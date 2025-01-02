@@ -15,15 +15,13 @@ const props = defineProps({
     }
 });
 
-console.log(props.member.rank);
-
 const ranks = ref([]);
 const selectedRank = ref(props.member.rank);
 
 const loadingRanks = ref(false);
 
 //close dialog after save and refresh rank after save
-const emit = defineEmits();
+const emit = defineEmits(['update:visible', 'rankUpgraded']);
 
 const getRanks = async () => {
     loadingRanks.value = true;

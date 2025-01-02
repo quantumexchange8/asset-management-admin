@@ -23,7 +23,8 @@ class MemberController extends Controller
         return Inertia::render('Member/Listing/MemberListing');
     }
 
-    public function getMemberData(){
+    public function getMemberData()
+    {
         $user = User::select([
             'id',
             'name',
@@ -37,14 +38,14 @@ class MemberController extends Controller
             'kyc_status',
             'created_at'
         ])
-        ->with([
-            'country:id,name,emoji',
-            'rank:id,rank_name',
-            'upline:id,name,email,upline_id',
-        ])
-        ->orderBy('id', 'DESC')
-        ->latest()
-        ->get();
+            ->with([
+                'country:id,name,emoji',
+                'rank:id,rank_name',
+                'upline:id,name,email,upline_id',
+            ])
+            ->orderBy('id', 'DESC')
+            ->latest()
+            ->get();
 
         return response()->json([
             'user' => $user,
@@ -53,10 +54,11 @@ class MemberController extends Controller
 
     public function getPendingKyc()
     {
-        return Inertia::render('Member/KycPending');
+        return Inertia::render('Member/Listing/KycPending');
     }
 
-    public function getPendingKycData() {
+    public function getPendingKycData()
+    {
         $user = User::select([
             'id',
             'name',
@@ -70,15 +72,15 @@ class MemberController extends Controller
             'kyc_status',
             'created_at'
         ])
-        ->with([
-            'country:id,name,emoji',
-            'rank:id,rank_name',
-            'upline:id,name,email,upline_id',
-        ])
-        ->where('kyc_status', '=', 'pending')
-        ->orderBy('id', 'DESC')
-        ->latest()
-        ->get();
+            ->with([
+                'country:id,name,emoji',
+                'rank:id,rank_name',
+                'upline:id,name,email,upline_id',
+            ])
+            ->where('kyc_status', '=', 'pending')
+            ->orderBy('id', 'DESC')
+            ->latest()
+            ->get();
 
         return response()->json([
             'user' => $user,
@@ -130,7 +132,6 @@ class MemberController extends Controller
 
         $id_no = 'LID' . Str::padLeft($user->id - 1, 6, "0");
         $user->id_number = $id_no;
-
         $user->save();
 
         $wallet = new Wallet();
@@ -147,8 +148,9 @@ class MemberController extends Controller
         $wallet->address = RunningNumberService::getID('bonus_wallet');
         $wallet->currency = 'CNY';
         $wallet->currency_symbol = '¥';
-
         $wallet->save();
+
+      
     }
 
     public function memberDetail($id_number)

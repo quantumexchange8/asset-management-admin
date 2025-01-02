@@ -13,6 +13,11 @@ import { onMounted, ref } from 'vue';
 import dayjs from 'dayjs';
 import MemberTableAction from './MemberTableAction.vue';
 import ProgressSpinner from 'primevue/progressspinner';
+import Empty from "@/Components/Empty.vue";
+
+const props = defineProps({
+    memberCounts: Number
+})
 
 const isLoading = ref(false);
 
@@ -88,8 +93,10 @@ const statuses = ref(['unverified', 'verified', 'pending']);
             dataKey="id"
             filterDisplay="menu"
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             :rowsPerPageOptions="[10, 20, 50, 100]"
             :globalFilterFields="['name', 'email', 'username']"
+            tableStyle="md:min-width: 50rem"
             v-model:filters="filters"
             removableSort
             ref="dt"
@@ -110,7 +117,12 @@ const statuses = ref(['unverified', 'verified', 'pending']);
                     </div>
             </template>
 
-            <template #empty><span class="dark:text-white">No user found. </span></template>
+            <template #empty>
+                <Empty
+                    :title="'Member Listing'"
+                    :message="'No member found'"
+                />
+            </template>
 
             <template #loading>
                 <div class="flex flex-col gap-2 items-center justify-center">
@@ -121,146 +133,146 @@ const statuses = ref(['unverified', 'verified', 'pending']);
                 </div>
             </template>
 
-            <Column
-                field="created_at"
-                header="joined"
-                style="min-width: 9rem"
-                sortable
-            >
-                <template #body="{ data }">
-                    {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                </template>
-            </Column>
-            
-            <Column
-                field="name"
-                header="name" 
-                style="min-width: 12rem"
-                sortable
-                frozen
-            >
-                <template #body="{ data }">
-                    {{ data.name }}
+            <template v-if="users?.length > 0">
+                <Column
+                    field="created_at"
+                    header="joined"
+                    style="min-width: 9rem"
+                    sortable
+                >
+                    <template #body="{ data }">
+                        {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                    </template>
+                </Column>
+                
+                <Column
+                    field="name"
+                    header="name" 
+                    style="min-width: 12rem"
+                    sortable
+                    frozen
+                >
+                    <template #body="{ data }">
+                        {{ data.name }}
+                    </template>
+
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
+                    </template>
+                </Column>
+
+                <Column
+                    field="email"
+                    header="email" 
+                    style="min-width: 12rem"
+                    sortable
+                >
+                    <template #body="{ data }">
+                        {{ data.email }}
+                    </template>
+
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by email" />
+                    </template>
+                </Column>
+
+                <Column
+                    field="upline.name"
+                    header="referer"
+                    style="min-width: 12rem"
+                    sortable
+                >
+                <template #body="{data}">
+                    <div
+                        v-if="data.upline"
+                        class="flex flex-col items-start"
+                    >
+                        <div class="font-medium max-w-[180px] truncate">
+                            {{ data.upline.name }}
+                        </div>
+                        <div class="text-gray-500 text-xs max-w-[180px] truncate">
+                            {{ data.upline.email }}
+                        </div>
+                    </div>
+                    <div v-else>
+                        -
+                    </div>
                 </template>
 
                 <template #filter="{ filterModel }">
                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                 </template>
-            </Column>
-
-            <Column
-                field="email"
-                header="email" 
-                style="min-width: 12rem"
-                sortable
-            >
-                <template #body="{ data }">
-                    {{ data.email }}
-                </template>
-
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" placeholder="Search by email" />
-                </template>
-            </Column>
-
-            <Column
-                field="upline.name"
-                header="referer"
-                style="min-width: 12rem"
-                sortable
-            >
-            <template #body="{data}">
-                <div
-                    v-if="data.upline"
-                    class="flex flex-col items-start"
-                >
-                    <div class="font-medium max-w-[180px] truncate">
-                        {{ data.upline.name }}
-                    </div>
-                    <div class="text-gray-500 text-xs max-w-[180px] truncate">
-                        {{ data.upline.email }}
-                    </div>
-                </div>
-                <div v-else>
-                    -
-                </div>
-            </template>
-
-            <template #filter="{ filterModel }">
-                <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
-            </template>
-              
-            </Column>
-
-            <Column
-                field="rank.rank_name"
-                header="rank"
-                style="min-width: 10rem"
-                sortable
-            >
                 
-            </Column>
+                </Column>
 
-            <Column
-                field="country.name"
-                header="country"
-                style="min-width: 12rem"
-                sortable
-            >
-                <template #body="{data}">
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-1">
-                            <span>{{ data.country.name }}</span>
-                        </div>
-                    </div>
-                </template>
+                <Column
+                    field="rank.rank_name"
+                    header="rank"
+                    style="min-width: 10rem"
+                    sortable
+                >
+                    <template #body="{ data }">
+                        {{ data.rank.rank_name }}
+                    </template>
+                </Column>
 
-                <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" placeholder="Search by country" />
-                </template>
-            </Column>
+                <Column
+                    field="role"
+                    header="role"
+                    style="min-width: 10rem"
+                    sortable
+                >
+                    <template #body="{ data }">
+                        {{ data.role }}
+                    </template>
+                </Column>
 
-            <Column
-                field="role"
-                header="role"
-                style="min-width: 10rem"
-                sortable
-            >
-                <template #body="{ data }">
-                    {{ data.role }}
-                </template>
-            </Column>
+                <Column
+                    field="country.name"
+                    header="country"
+                    style="min-width: 12rem"
+                    sortable
+                >
+                    <template #body="{data}">
+                        <span>{{ data.country.name }}</span>             
+                    </template>
 
-            <Column
-                field="kyc_status"
-                header="status"
-                sortable
-            >
-                <template #body="{ data }">
-                    <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
-                </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by country" />
+                    </template>
+                </Column>
 
-                <template #filter="{ filterModel }">
-                    <Select v-model="filterModel.value" :options="statuses" placeholder="Select One" showClear>
-                        <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                        </template>
-                    </Select>
-                </template>
-            </Column>
+                <Column
+                    field="kyc_status"
+                    header="status"
+                    sortable
+                >
+                    <template #body="{ data }">
+                        <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
+                    </template>
 
-            <Column
-                field="action"
-                frozen
-                alignFrozen="right"
-                header=""
-                style="width: 5%"
-                class="hidden md:table-cell"
-            >
-                <template #body="{data}">
-                   <MemberTableAction :member="data" @refreshTable="handleRefreshTable" />
-                </template>
-            </Column>
+                    <template #filter="{ filterModel }">
+                        <Select v-model="filterModel.value" :options="statuses" placeholder="Select One" showClear>
+                            <template #option="slotProps">
+                                <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                            </template>
+                        </Select>
+                    </template>
+                </Column>
+
+                <Column
+                    field="action"
+                    frozen
+                    alignFrozen="right"
+                    header=""
+                    style="width: 5%"
+                    class="hidden md:table-cell"
+                >
+                    <template #body="{data}">
+                    <MemberTableAction :member="data" @refreshTable="handleRefreshTable"/>
+                    </template>
+                </Column>
+            </template>
         </DataTable>
     </div>
 </template>

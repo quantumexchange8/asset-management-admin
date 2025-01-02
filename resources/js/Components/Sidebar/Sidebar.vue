@@ -22,7 +22,7 @@ onMounted(() => {
             transition-property: width, transform;
             transition-duration: 150ms;
         " :class="[
-            'fixed inset-y-0 z-2 bg-white dark:bg-surface-900 flex flex-col border-r border-transparent dark:border-surface-700 shadow-[0_4px_16px_rgba(110,231,183,0.2)] dark:shadow-none',
+            'fixed inset-y-0 z-30 bg-white dark:bg-surface-900 flex flex-col border-r border-transparent dark:border-surface-700 shadow-[0_4px_16px_rgba(110,231,183,0.2)] dark:shadow-none',
             {
                 'translate-x-0 w-[252px]':
                     sidebarState.isOpen,

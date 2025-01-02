@@ -65,7 +65,7 @@ const items = ref([
    
 ]);
 
-const emit = defineEmits();
+const emit = defineEmits(['refreshTable']);
 
 //catch the rankUpgraded event
 const handleRankUpgraded = () => {

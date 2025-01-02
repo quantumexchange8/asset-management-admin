@@ -18,6 +18,8 @@ import { IconSearch } from '@tabler/icons-vue';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import dayjs from 'dayjs';
+import Empty from "@/Components/Empty.vue";
+import ProgressSpinner from 'primevue/progressspinner';
 
 const props = defineProps({
   depositHistory: {
@@ -157,85 +159,99 @@ const getSeverity = (status) => {
                     </div>
                 </template>
 
-                <template #empty><span class="dark:text-white">No deposit found. </span></template>
-
-                <template #loading><span class="dark:text-white">Loading deposit history. Please wait.</span></template>
-
-                <Column 
-                    field="transaction_number"
-                    header="Transaction Number" 
-                    style="min-width: 12rem"
-                    sortable
-                >
-                   
-                </Column>
-
-                <Column 
-                    field="user.name"
-                    header="Name" 
-                    style="min-width: 12rem"
-                    sortable
-                >
-                    <template #body="{ data }">
-                        {{ data.user.name }}
+                <template #empty>
+                        <Empty
+                            :title="'Deposit History'"
+                            :message="'No deposit history found'"
+                        />
                     </template>
 
-                    <template #filter="{ filterModel }">
-                        <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
-                    </template>
-                </Column>
+                <template #loading>
+                    <div class="flex flex-col gap-2 items-center justify-center">
+                        <ProgressSpinner
+                            strokeWidth="4"
+                        />
+                        <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
+                    </div>
+                </template>
 
-                <Column 
-                    field="amount"
-                    header="Amount" 
-                    style="min-width: 12rem"
-                    dataType="numeric"
-                    sortable
-                >
-                    <template #body="{ data }">
-                        {{ data.amount }}
-                    </template>
+                <template v-if="props.depositHistory?.length > 0">
+                    <Column 
+                        field="transaction_number"
+                        header="Transaction Number" 
+                        style="min-width: 12rem"
+                        sortable
+                    >
+                    
+                    </Column>
 
-                    <template #filter="{ filterModel }">
-                        <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />
-                    </template>
-                </Column>
+                    <Column 
+                        field="user.name"
+                        header="Name" 
+                        style="min-width: 12rem"
+                        sortable
+                    >
+                        <template #body="{ data }">
+                            {{ data.user.name }}
+                        </template>
 
-                <Column 
-                    field="fund_type"
-                    header="Fund Type" 
-                    style="min-width: 12rem"
-                    sortable
-                >
-                   
-                </Column>
+                        <template #filter="{ filterModel }">
+                            <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
+                        </template>
+                    </Column>
 
-                <Column 
-                    field="status"
-                    header="Status" 
-                    style="min-width: 12rem"
-                    sortable
-                >
-                    <template #body="{ data }">
-                        <Tag :value="data.status" :severity="getSeverity(data.status)" />
-                    </template>
-                </Column>
+                    <Column 
+                        field="amount"
+                        header="Amount" 
+                        style="min-width: 12rem"
+                        dataType="numeric"
+                        sortable
+                    >
+                        <template #body="{ data }">
+                            {{ data.amount }}
+                        </template>
 
-                <Column 
-                    field="approval_at"
-                    header="ApprovalAt" 
-                    style="min-width: 12rem"
-                    dataType="date"
-                   
-                    sortable
-                >
-                    <template #body="{ data }">
-                        {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
-                    </template>
-                    <!-- <template #filter="{ filterModel }">
-                        <DatePicker v-model="filterModel.value" dateFormat="yy-mm-dd" placeholder="yy-mm-dd" />
-                    </template> -->
-                </Column>
+                        <template #filter="{ filterModel }">
+                            <InputNumber v-model="filterModel.value" mode="currency" currency="USD" locale="en-US" />
+                        </template>
+                    </Column>
+
+                    <Column 
+                        field="fund_type"
+                        header="Fund Type" 
+                        style="min-width: 12rem"
+                        sortable
+                    >
+                    
+                    </Column>
+
+                    <Column 
+                        field="status"
+                        header="Status" 
+                        style="min-width: 12rem"
+                        sortable
+                    >
+                        <template #body="{ data }">
+                            <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                        </template>
+                    </Column>
+
+                    <Column 
+                        field="approval_at"
+                        header="ApprovalAt" 
+                        style="min-width: 12rem"
+                        dataType="date"
+                    
+                        sortable
+                    >
+                        <template #body="{ data }">
+                            {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
+                        </template>
+                        <!-- <template #filter="{ filterModel }">
+                            <DatePicker v-model="filterModel.value" dateFormat="yy-mm-dd" placeholder="yy-mm-dd" />
+                        </template> -->
+                    </Column>
+                </template>
             </DataTable>
         </div>
     </AuthenticatedLayout>

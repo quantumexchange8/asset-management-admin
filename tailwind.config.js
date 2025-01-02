@@ -30,6 +30,15 @@ export default {
                 'table': '0 2px 8px 0 rgba(12, 17, 29, 0.05)',
                 'dropdown': '0px 8px 16px -4px rgba(12, 17, 29, 0.08)',
             },
+            screens: {
+                'xs': '320px',
+                'sm': '640px',
+                'md': '768px',
+                'lg': '1024px',
+                'xl': '1280px',
+                '2xl': '1536px',
+                '3xl': '1792px',
+            },
         },
     },
 
