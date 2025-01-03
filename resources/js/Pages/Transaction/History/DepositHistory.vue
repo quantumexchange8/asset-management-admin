@@ -42,6 +42,7 @@ const upload = () => {
             router.post('/transaction/history/import-deposit-history', formData, {
                 onSuccess: () => {
                     console.log('File uploaded successfully');
+                    visible.value = false;
                 },
                 onError: (error) => {
                     console.error('Error uploading file:', error);
@@ -92,70 +93,71 @@ const getSeverity = (status) => {
                 dataKey="id"
                 filterDisplay="menu"
                 :globalFilterFields="['user.name', 'transaction_number', 'amount', 'fund_type', 'status', 'approval_at']"
+                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 v-model:filters="filters"
                 removableSort
             >
                 <template #header>
-                    <div class="flex justify-between items-center">
-                        <Button type="button" label="Clear" outlined @click="clearFilter()" />
-                        <div class="flex items-center space-x-4">
-
-                            <!-- Export button -->
-                            <a :href="route('transaction.history.exportDepositHistory')">
-                                <Button 
-                                    class="w-full md:w-auto"
-                                  
-                                >
-                                    <span class="pr-1">Export</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
-                            </a>
-                          
-                            <!-- Import button -->
-                            <Button 
-                                class="w-full md:w-auto"
-                                @click="visible = true"
-                            >
-                                <span class="pr-1">Import</span>
-                                <IconTransferIn size="16" stroke-width="1.5"/>
-                            </Button>
+                   <div class="flex flex-wrap justify-between items-center">
+                        <!-- Left side (Clear button + Search bar) -->
+                        <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <!-- Clear Button -->
+                            <Button type="button" label="Clear" outlined @click="clearFilter()" />
 
                             <!-- Search bar -->
                             <IconField>
                                 <InputIcon>
                                     <IconSearch size="16" stroke-width="1.5"/>
                                 </InputIcon>
+
                                 <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                             </IconField>
                         </div>
-                       
-                        <!-- Modal -->
-                        <Dialog v-model:visible="visible" modal header="Import Deposit History" :style="{ width: '25rem' }">
 
-                            <span class="text-surface-500 dark:text-surface-400 block mb-3 text-sm font-medium">
-                                Excel file only. Supported formats: .xlsx, .xls, .csv
-                            </span>
+                        <!-- Right side (Export + Import buttons) -->
+                        <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
+                            <!-- Export button -->
+                            <a :href="route('transaction.history.exportDepositHistory')" class="w-full md:w-auto">
+                                <Button class="flex justify-center items-center w-full">
+                                    <span class="pr-1">Export</span>
+                                    <IconDownload size="16" stroke-width="1.5"/>
+                                </Button>
+                            </a>
 
-                            <div class="flex items-center gap-4 mb-8">
-                                <!-- File upload aligned to the left with more spacing -->
-                                <FileUpload 
-                                    ref="fileupload" 
-                                    mode="basic" 
-                                    name="file"                                        
-                                    accept=".xlsx, .xls, .csv" 
-                                    :maxFileSize="25000"         
-                                    :customUpload="true" 
-                                    @upload="onFileUpload" 
-                                    class="w-full" 
-                                />
-                            </div>
+                            <!-- Import button -->
+                            <Button class="w-full md:w-auto flex justify-center items-center" @click="visible = true">
+                                <span class="pr-1">Import</span>
+                                <IconTransferIn size="16" stroke-width="1.5"/>
+                            </Button>
 
-                            <div class="flex justify-end gap-2">
-                                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" />
-                                <Button label="Upload" @click="upload" />
-                            </div>
-                         
-                        </Dialog>
+                            <!-- Modal -->
+                             
+                            <Dialog v-model:visible="visible" modal header="Import Deposit History" :style="{ width: '25rem' }">
+
+                                <span class="text-surface-500 dark:text-surface-400 block mb-3 text-sm font-medium">
+                                    Excel file only. Supported formats: .xlsx, .xls, .csv
+                                </span>
+
+                                <div class="flex items-center gap-4 mb-8">
+                                    <!-- File upload aligned to the left with more spacing -->
+                                    <FileUpload 
+                                        ref="fileupload" 
+                                        mode="basic" 
+                                        name="file"                                        
+                                        accept=".xlsx, .xls, .csv" 
+                                        :maxFileSize="25000"         
+                                        :customUpload="true" 
+                                        @upload="onFileUpload" 
+                                        class="w-full" 
+                                    />
+                                </div>
+
+                                <div class="flex justify-end gap-2">
+                                    <Button type="button" label="Cancel" severity="secondary" @click="visible = false" />
+                                    <Button label="Upload" @click="upload" />
+                                </div>
+                            </Dialog>
+                        </div>
                     </div>
                 </template>
 

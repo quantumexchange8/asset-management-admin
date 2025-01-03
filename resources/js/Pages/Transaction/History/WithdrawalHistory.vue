@@ -68,13 +68,15 @@ const getSeverity = (status) => {
                 dataKey="id"
                 filterDisplay="menu"
                 :globalFilterFields="['user.name', 'transaction_number', 'amount', 'fund_type', 'status', 'approval_at']"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 v-model:filters="filters"
                 removableSort
             >
                 <template #header>
-                    <div class="flex justify-between items-center">
-                        <Button type="button" label="Clear" outlined @click="clearFilter()" />
-                        <div class="flex items-center space-x-4">
+                    <div class="flex flex-wrap justify-between items-center">
+                        <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <Button type="button" label="Clear" outlined @click="clearFilter()" />
+                        
                             <!-- Search bar -->
                             <IconField>
                                 <InputIcon>

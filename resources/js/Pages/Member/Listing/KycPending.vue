@@ -108,7 +108,7 @@ const submitReject = async (userId) => {
                     dataKey="id"
                     filterDisplay="menu"
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                    currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                     :rowsPerPageOptions="[10, 20, 50, 100]"
                     :globalFilterFields="['name', 'email']"
                     v-model:filters="filters"
@@ -117,18 +117,19 @@ const submitReject = async (userId) => {
                    :loading="isLoading"
                 >
                     <template #header>
-                        <div class="flex justify-between items-center">
+                        <div class="flex flex-wrap justify-between items-center">
+                            <div class="flex items-center space-x-4 w-full md:w-auto">
                                 <Button type="button" label="Clear" outlined @click="clearFilter()" />
-                                <div class="flex items-center space-x-4">
-                                    <!-- Search bar -->
-                                    <IconField>
-                                        <InputIcon>
-                                            <IconSearch size="16" stroke-width="1.5"/>
-                                        </InputIcon>
-                                        <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
-                                    </IconField>
-                                </div>
+                            
+                                <!-- Search bar -->
+                                <IconField>
+                                    <InputIcon>
+                                        <IconSearch size="16" stroke-width="1.5"/>
+                                    </InputIcon>
+                                    <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                                </IconField>
                             </div>
+                        </div>
                     </template>
 
                     <template #empty>
@@ -293,18 +294,6 @@ const submitReject = async (userId) => {
                             </template>
                         </Column>
 
-                        <Column
-                            field="action"
-                            frozen
-                            alignFrozen="right"
-                            header=""
-                            style="width: 5%"
-                            class="hidden md:table-cell"
-                        >
-                            <template #body="{data}">
-                                <MemberTableAction :member="data" />
-                            </template>
-                        </Column>
                     </template>
                 </DataTable>
             </div>

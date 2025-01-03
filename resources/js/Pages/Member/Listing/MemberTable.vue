@@ -15,10 +15,6 @@ import MemberTableAction from './MemberTableAction.vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import Empty from "@/Components/Empty.vue";
 
-const props = defineProps({
-    memberCounts: Number
-})
-
 const isLoading = ref(false);
 
 //fetch user
@@ -103,18 +99,19 @@ const statuses = ref(['unverified', 'verified', 'pending']);
             :loading="isLoading"
         >
             <template #header>
-                <div class="flex justify-between items-center">
+                <div class="flex flex-wrap justify-between items-center">
+                    <div class="flex items-center space-x-4 w-full md:w-auto">
                         <Button type="button" label="Clear" outlined @click="clearFilter()" />
-                        <div class="flex items-center space-x-4">
-                            <!-- Search bar -->
-                            <IconField>
-                                <InputIcon>
-                                    <IconSearch size="16" stroke-width="1.5"/>
-                                </InputIcon>
-                                <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
-                            </IconField>
-                        </div>
+                      
+                        <!-- Search bar -->
+                        <IconField>
+                            <InputIcon>
+                                <IconSearch size="16" stroke-width="1.5"/>
+                            </InputIcon>
+                            <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                        </IconField>
                     </div>
+                </div>
             </template>
 
             <template #empty>
@@ -132,7 +129,7 @@ const statuses = ref(['unverified', 'verified', 'pending']);
                     <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
                 </div>
             </template>
-
+            
             <template v-if="users?.length > 0">
                 <Column
                     field="created_at"
