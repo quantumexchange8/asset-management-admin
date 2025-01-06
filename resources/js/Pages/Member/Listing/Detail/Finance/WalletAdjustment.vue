@@ -35,9 +35,6 @@ const form = useForm({
 
 const toast = useToast();
 
-//initiate the auto refresh for wallet after submission of depo/withdrawal
-const emit = defineEmits(['refreshWalletData']);  
-
 const submitForm = () => {
     if(props.wallet){
         form.wallet_id = props.wallet.id;
@@ -57,7 +54,6 @@ const submitForm = () => {
                 detail: 'Wallet adjust successfully!',
                 life: 3000,
             });
-            emit('refreshWalletData'); //call the initiative,
         },
         onError: (errors) => {
             console.error(errors);

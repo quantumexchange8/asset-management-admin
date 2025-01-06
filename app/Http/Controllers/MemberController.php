@@ -20,7 +20,9 @@ class MemberController extends Controller
 {
     public function getMemberList()
     {
-        return Inertia::render('Member/Listing/MemberListing');
+        return Inertia::render('Member/Listing/MemberListing', [
+            'memberCounts' => User::count(),
+        ]);
     }
 
     public function getMemberData()
@@ -150,7 +152,7 @@ class MemberController extends Controller
         $wallet->currency_symbol = '¥';
         $wallet->save();
 
-      
+        return back()->with('toast');
     }
 
     public function memberDetail($id_number)
@@ -276,6 +278,8 @@ class MemberController extends Controller
         //update wallet balance
         $wallet->balance = $new_balance;
         $wallet->update();
+
+        return back()->with('toast');
     }
 
     public function upgradeRank(Request $request)
@@ -284,6 +288,8 @@ class MemberController extends Controller
         $user->setting_rank_id = $request->rank['id'];
         $user->rank_up_status = 'manual';
         $user->update();
+
+        return back()->with('toast');
     }
 
     public function kycApprove($id)
@@ -298,5 +304,26 @@ class MemberController extends Controller
         $user = User::find($id);
         $user->kyc_status = 'rejected';
         $user->update();
+    }
+
+    public function getMemberOverview()
+    {
+        $userQuery = User::query();
+
+        $memberCounts = User::count();
+
+        $verified_user = (clone $userQuery)
+            ->where('kyc_status', 'verified')
+            ->count();
+
+        $unverified_user = (clone $userQuery)
+            ->where('kyc_status', 'unverified')
+            ->count();
+
+        return response()->json([
+            'memberCounts' => $memberCounts,
+            'verifiedUser' => $verified_user,
+            'unverifiedUser' => $unverified_user,
+        ]);
     }
 }

@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     //Customer
     Route::prefix('member')->group(function(){
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
+        Route::get('/get_member_overview', [MemberController::class, 'getMemberOverview'])->name('member.getMemberOverview');
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');

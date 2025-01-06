@@ -63,7 +63,6 @@ const initFilters = () => {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         'user.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
         amount: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-        approval_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
     };
 };
 
@@ -89,13 +88,16 @@ const getSeverity = (status) => {
             <DataTable 
                 :value="props.depositHistory" 
                 paginator 
-                :rows="10" 
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                :rows="10"
+                :rowsPerPageOptions="[10, 20, 50, 100]" 
                 dataKey="id"
                 filterDisplay="menu"
                 :globalFilterFields="['user.name', 'transaction_number', 'amount', 'fund_type', 'status', 'approval_at']"
-                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 v-model:filters="filters"
                 removableSort
+                tableStyle="md:min-width: 50rem"
             >
                 <template #header>
                    <div class="flex flex-wrap justify-between items-center">
@@ -180,7 +182,7 @@ const getSeverity = (status) => {
                 <template v-if="props.depositHistory?.length > 0">
                     <Column 
                         field="transaction_number"
-                        header="Transaction Number" 
+                        header="transaction number" 
                         style="min-width: 12rem"
                         sortable
                     >
@@ -189,7 +191,7 @@ const getSeverity = (status) => {
 
                     <Column 
                         field="user.name"
-                        header="Name" 
+                        header="name" 
                         style="min-width: 12rem"
                         sortable
                     >
@@ -204,7 +206,7 @@ const getSeverity = (status) => {
 
                     <Column 
                         field="amount"
-                        header="Amount" 
+                        header="amount" 
                         style="min-width: 12rem"
                         dataType="numeric"
                         sortable
@@ -220,7 +222,7 @@ const getSeverity = (status) => {
 
                     <Column 
                         field="fund_type"
-                        header="Fund Type" 
+                        header="fund type" 
                         style="min-width: 12rem"
                         sortable
                     >
@@ -229,7 +231,7 @@ const getSeverity = (status) => {
 
                     <Column 
                         field="status"
-                        header="Status" 
+                        header="status" 
                         style="min-width: 12rem"
                         sortable
                     >
@@ -240,7 +242,7 @@ const getSeverity = (status) => {
 
                     <Column 
                         field="approval_at"
-                        header="ApprovalAt" 
+                        header="approval at" 
                         style="min-width: 12rem"
                         dataType="date"
                     

@@ -1,5 +1,5 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
+import Checkbox from 'primevue/checkbox';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -71,10 +71,8 @@ const submit = () => {
 
             <div class="mt-4 block">
                 <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-                        >Remember me</span
-                    >
+                    <Checkbox name="remember" v-model="form.remember" :binary="true" />
+                    <InputLabel class="ms-2 text-sm text-gray-600 dark:text-gray-400" value="Remember Me"/>
                 </label>
             </div>
 

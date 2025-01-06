@@ -13,7 +13,6 @@ import { IconX } from '@tabler/icons-vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { onMounted, ref } from 'vue';
 import dayjs from 'dayjs';
-import MemberTableAction from './MemberTableAction.vue';
 import { useToast } from 'primevue/usetoast';
 import ProgressSpinner from 'primevue/progressspinner';
 import Empty from "@/Components/Empty.vue";
@@ -114,6 +113,7 @@ const submitReject = async (userId) => {
                     v-model:filters="filters"
                     removableSort
                     ref="dt"
+                    tableStyle="md:min-width: 50rem"
                    :loading="isLoading"
                 >
                     <template #header>
@@ -182,7 +182,7 @@ const submitReject = async (userId) => {
                             style="min-width: 12rem"
                             sortable
                         >
-                            <template #body="{ data }">
+                        <template #body="{ data }">
                                 {{ data.email }}
                             </template>
 
@@ -193,7 +193,7 @@ const submitReject = async (userId) => {
 
                         <Column
                             field="upline.name"
-                            header="referer"
+                            header="referrer"
                             style="min-width: 12rem"
                             sortable
                         >

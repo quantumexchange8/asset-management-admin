@@ -17,7 +17,7 @@ import Button from "@/Components/Button.vue"
         <div class="flex flex-1 flex-col justify-center items-center pb-12 md:px-8 xs:gap-y-[60px]">
             <div class="w-full flex md:flex-1 justify-center">
                 <div class="w-full max-w-xs md:max-w-none md:w-[360px] flex flex-col justify-center items-center mx-5">
-                    <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+                    <ApplicationLogo class="h-16 w-32 fill-current text-gray-500" />
                     <div
                         class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg dark:bg-surface-900">
                         <slot />

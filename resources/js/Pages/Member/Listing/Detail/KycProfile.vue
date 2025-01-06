@@ -17,7 +17,7 @@ const props = defineProps({
                     <div class="text-lg text-surface-950 dark:text-white mb-4">
                         IC/Passport (Front)
                     </div>
-                    <div class="w-[350px] h-auto rounded-lg shadow-lg overflow-hidden">
+                    <div class="w-[350px] h-[195px] rounded-lg overflow-hidden">
                         <Image 
                             :src="currentImage || '/storage/pictures/mountain.jpg'" 
                             alt="IC/Passport Front" 
@@ -32,7 +32,7 @@ const props = defineProps({
                     <div class="text-lg text-surface-950 dark:text-white mb-4">
                         IC/Passport (Back)
                     </div>
-                    <div class="w-[350px] h-auto rounded-lg shadow-lg overflow-hidden">
+                    <div class="w-[350px] h-[195px] rounded-lg overflow-hidden">
                         <Image 
                             :src="currentImage || '/storage/pictures/mountain.jpg'" 
                             alt="IC/Passport Back" 

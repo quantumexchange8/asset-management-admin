@@ -109,10 +109,10 @@ const getSeverity = (status) => {
                             </div>
                         </div>
 
-                        <!-- Referer -->
+                        <!-- Referrer -->
                         <div class="flex flex-col justify-center items-start gap-1 w-full">
                             <div class="text-surface-500 text-xs w-full truncate">
-                                Referer
+                                Referrer
                             </div>
                             <div class="flex items-center gap-2 w-full">
                                 <div class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">

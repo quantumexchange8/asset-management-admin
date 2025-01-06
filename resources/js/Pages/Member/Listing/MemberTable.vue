@@ -9,11 +9,12 @@ import Tag from 'primevue/tag';
 import Select from 'primevue/select';
 import { IconSearch } from '@tabler/icons-vue';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import dayjs from 'dayjs';
 import MemberTableAction from './MemberTableAction.vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import Empty from "@/Components/Empty.vue";
+import { usePage } from '@inertiajs/vue3';
 
 const isLoading = ref(false);
 
@@ -34,11 +35,6 @@ const fetchUsers = async () => {
 onMounted(() => {
     fetchUsers();
 });
-
-//catch the emitted new event(refreshTable) from membertableaction.vue
-const handleRefreshTable = () => {
-    fetchUsers();  // Refresh the data when the event is caught
-};
 
 //filteration
 const filters = ref();
@@ -78,6 +74,12 @@ const getSeverity = (status) => {
 };
 
 const statuses = ref(['unverified', 'verified', 'pending']);
+
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        fetchUsers();
+    }
+});
 </script>
 
 <template>
@@ -91,7 +93,7 @@ const statuses = ref(['unverified', 'verified', 'pending']);
             paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             :rowsPerPageOptions="[10, 20, 50, 100]"
-            :globalFilterFields="['name', 'email', 'username']"
+            :globalFilterFields="['name', 'email', 'username', 'created_at']"
             tableStyle="md:min-width: 50rem"
             v-model:filters="filters"
             removableSort
@@ -175,7 +177,7 @@ const statuses = ref(['unverified', 'verified', 'pending']);
 
                 <Column
                     field="upline.name"
-                    header="referer"
+                    header="referrer"
                     style="min-width: 12rem"
                     sortable
                 >
@@ -266,7 +268,7 @@ const statuses = ref(['unverified', 'verified', 'pending']);
                     class="hidden md:table-cell"
                 >
                     <template #body="{data}">
-                    <MemberTableAction :member="data" @refreshTable="handleRefreshTable"/>
+                    <MemberTableAction :member="data"/>
                     </template>
                 </Column>
             </template>

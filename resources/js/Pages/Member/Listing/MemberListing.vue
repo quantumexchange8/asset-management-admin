@@ -2,7 +2,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AddMember from './AddMember.vue';
 import MemberTable from './MemberTable.vue';
+import MemberOverview from './MemberOverview.vue';
 
+const props = defineProps({
+    memberCounts: Number
+})
 </script>
 
 <template>
@@ -12,6 +16,8 @@ import MemberTable from './MemberTable.vue';
             <div class="flex justify-end w-full">
                 <AddMember />
             </div>
+
+            <MemberOverview :memberCounts="memberCounts"/>
 
             <!-- User Table -->
             <MemberTable />

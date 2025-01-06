@@ -9,9 +9,9 @@ const props = defineProps({
 
 <template>
     <div class="flex flex-col justify-center items-center py-5 px-6 gap-5 self-stretch">
-        <slot name="image">
+        <!-- <slot name="image">
             <img src="/storage/pictures/mountain.jpg" alt="no_data" class="w-60 h-[180px]">
-        </slot>
+        </slot> -->
 
         <div class="flex flex-col items-center gap-2 self-stretch">
             <slot name="title">

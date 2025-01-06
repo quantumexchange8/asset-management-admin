@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 :root {
-    --p-primary-50: #ecfdf5;
-    --p-primary-100: #d1fae5;
-    --p-primary-200: #a7f3d0;
-    --p-primary-300: #6ee7b7;
-    --p-primary-400: #34d399;
-    --p-primary-500: #10b981;
-    --p-primary-600: #059669;
-    --p-primary-700: #047857;
-    --p-primary-800: #065f46;
-    --p-primary-900: #064e3b;
-    --p-primary-950: #022c22;
+   --p-primary-50: #fdf8f0;
+    --p-primary-100: #faecd4;
+    --p-primary-200: #f5dcb0;
+    --p-primary-300: #ecc482;
+    --p-primary-400: #e2ae65;
+    --p-primary-500: #cca05a; /* Main primary color */
+    --p-primary-600: #b08750;
+    --p-primary-700: #926f43;
+    --p-primary-800: #735737;
+    --p-primary-900: #594529;
+    --p-primary-950: #362717;
     --p-surface-0: #ffffff;
     --p-surface-50: #fafafa;
     --p-surface-100: #f4f4f5;

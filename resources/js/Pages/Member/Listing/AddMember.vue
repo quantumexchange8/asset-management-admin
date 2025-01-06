@@ -9,6 +9,7 @@ import Select from 'primevue/select';
 import { onMounted, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from "primevue/usetoast";
+import { IconUserPlus } from '@tabler/icons-vue';
 
 const visible = ref(false);
 const selectedUpline = ref();
@@ -99,7 +100,8 @@ const submitForm = () => {
 
 <template>
     <Button class="w-full md:w-auto" @click="visible = true">
-        <span class="pr-1">Add Member</span>
+        <IconUserPlus size="16" />
+        <span class="pl-2">Add Member</span>
     </Button>
 
     <!-- Modal -->

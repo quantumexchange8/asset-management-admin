@@ -52,7 +52,6 @@ const submitForm = () => {
     form.put(route('member.upgradeRank'), {
         onSuccess:() => {
             emit('update:visible', false);
-            emit('rankUpgraded');
             toast.add({
                 severity: 'success',
                 summary: 'Success',
