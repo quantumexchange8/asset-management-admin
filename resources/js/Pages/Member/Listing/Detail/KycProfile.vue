@@ -19,7 +19,7 @@ const props = defineProps({
                     </div>
                     <div class="w-[350px] h-[195px] rounded-lg overflow-hidden">
                         <Image 
-                            :src="currentImage || '/storage/pictures/mountain.jpg'" 
+                            :src="currentImage || '/storage/mountain.jpg'" 
                             alt="IC/Passport Front" 
                             class="w-full h-full object-cover" 
                             preview 
@@ -34,7 +34,7 @@ const props = defineProps({
                     </div>
                     <div class="w-[350px] h-[195px] rounded-lg overflow-hidden">
                         <Image 
-                            :src="currentImage || '/storage/pictures/mountain.jpg'" 
+                            :src="currentImage || '/storage/mountain.jpg'" 
                             alt="IC/Passport Back" 
                             class="w-full h-full object-cover" 
                             preview 
