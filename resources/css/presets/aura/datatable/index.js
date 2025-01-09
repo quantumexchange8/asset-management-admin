@@ -45,11 +45,10 @@ export default {
         class: [
             'font-bold',
 
-            // Shape
-            props.showGridlines ? 'border-x border-t border-b-0' : 'border-y border-x-0',
+           
 
             // Spacing
-            'p-4',
+            'pb-4',
 
             // Color
             'bg-surface-0 dark:bg-surface-900',

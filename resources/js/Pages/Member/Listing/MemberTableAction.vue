@@ -49,10 +49,6 @@ const items = ref([
                     dialogType.value = 'Upgrade Rank';
                 }
             },
-            {
-                label: 'Role',
-                icon: h(IconUserDollar),
-            }
         ]
     },
     {

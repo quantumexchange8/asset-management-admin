@@ -293,7 +293,6 @@ const submitReject = async (userId) => {
                                 </div>
                             </template>
                         </Column>
-
                     </template>
                 </DataTable>
             </div>

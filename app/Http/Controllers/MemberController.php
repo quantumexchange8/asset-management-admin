@@ -12,6 +12,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Services\RunningNumberService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -25,33 +26,70 @@ class MemberController extends Controller
         ]);
     }
 
-    public function getMemberData()
+    public function getMemberData(Request $request)
     {
-        $user = User::select([
-            'id',
-            'name',
-            'email',
-            'username',
-            'upline_id',
-            'country_id',
-            'setting_rank_id',
-            'role',
-            'id_number',
-            'kyc_status',
-            'created_at'
-        ])
-            ->with([
-                'country:id,name,emoji',
-                'rank:id,rank_name',
-                'upline:id,name,email,upline_id',
-            ])
-            ->orderBy('id', 'DESC')
-            ->latest()
-            ->get();
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
-        return response()->json([
-            'user' => $user,
-        ]);
+            //user query
+            $query = User::query()
+                ->with([
+                    'country:id,name,emoji',
+                    'rank:id,rank_name',
+                    'upline:id,name,email,upline_id',
+                ]);
+
+
+            //global filter
+            if ($data['filters']['global']['value']) {
+                $query->where(function ($q) use ($data) { //function() allow to add more condition' use ($data) means $data is passed into the clause to be use
+                    $keyword = $data['filters']['global']['value'];
+
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('email', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            //date filter
+            if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay(); //add day to ensure capture entire day
+                $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_date, $end_date]);
+            }
+
+            //country filter
+            if ($data['filters']['country']['value']) {
+                $query->where('country_id', $data['filters']['country']['value']);
+            }
+
+            //rank filter
+            if ($data['filters']['rank']['value']) {
+                $query->where('setting_rank_id', $data['filters']['rank']['value']);
+            }
+
+            //kyc status filter
+            if ($data['filters']['status']['value']) {
+                $query->where('kyc_status', $data['filters']['status']['value']);
+            }
+
+            //sort field/order
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->latest();
+            }
+
+            $users = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+            ]);
+        }
+
+        return response()->json(['success' => false, 'data' => []]);
     }
 
     public function getPendingKyc()
@@ -152,7 +190,7 @@ class MemberController extends Controller
         $wallet->currency_symbol = '¥';
         $wallet->save();
 
-        return back()->with('toast');
+        return redirect()->back()->with('toast');
     }
 
     public function memberDetail($id_number)

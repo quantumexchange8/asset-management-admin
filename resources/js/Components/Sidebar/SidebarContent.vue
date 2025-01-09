@@ -51,9 +51,9 @@ import { IconUsersGroup } from '@tabler/icons-vue';
         </SidebarCollapsible>
         
 
-        <!-- Group -->
+        <!-- Broker -->
         <SidebarLink 
-            :title="'Group'" 
+            :title="'Broker'" 
             href="#"
         >
             <template #icon>
