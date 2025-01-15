@@ -4,6 +4,7 @@ import Card from 'primevue/card';
 import Divider from 'primevue/divider';
 import Tag from 'primevue/tag';
 import EditContactInfo from './EditContactInfo.vue';
+import Image from 'primevue/image';
 
 const props = defineProps({
     user: Object,
@@ -44,7 +45,9 @@ const getSeverity = (status) => {
                             <div v-if="props.user">
                                 <div
                                     class="w-full h-full p-2 flex justify-center items-center bg-primary-200 dark:bg-surface-800">
-                                    <DefaultProfilePhoto />
+                                    <Image
+                                        :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                        alt="userPic" />
                                 </div>
                             </div>
                         </div>
@@ -120,7 +123,9 @@ const getSeverity = (status) => {
                                         <img :src="props.user.upline_profile_photo" alt="Profile Photo" />
                                     </div>
                                     <div v-else class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">
-                                        <DefaultProfilePhoto />
+                                        <Image
+                                            :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
+                                            alt="userPic" />
                                     </div>
                                 </div>
                                 <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">

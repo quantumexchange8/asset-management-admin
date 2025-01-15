@@ -46,7 +46,7 @@ const submit = () => {
                     type="email"
                     class="mt-1 block w-full"
                     v-model="form.email"
-                    :invalid="form.errors.email"
+                    :invalid="!!form.errors.email"
                     autofocus
                     autocomplete="username"
                 />
@@ -62,7 +62,7 @@ const submit = () => {
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
-                    :invalid="form.errors.password"
+                    :invalid="!!form.errors.password"
                     autocomplete="current-password"
                 />
 

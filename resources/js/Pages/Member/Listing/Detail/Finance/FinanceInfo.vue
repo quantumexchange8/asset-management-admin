@@ -38,7 +38,7 @@ watchEffect(() => {
 </script>
 
 <template>
-       <div class="flex flex-col xl:flex-row items-start gap-5 self-stretch">
+    <div class="flex flex-col xl:flex-row items-start gap-5 self-stretch">
         <div class="flex flex-col gap-5 w-full xl:max-w-[640px]">
             <div
                 v-if="isLoading"
@@ -69,6 +69,7 @@ watchEffect(() => {
                     v-for="wallet in wallets"
                 >
                     <template #content>
+                        
                         <div class="flex flex-col gap-3 items-start self-stretch">
                             <div class="flex justify-between items-center self-stretch">
                                 <span class="text-xs md:text-sm dark:text-surface-400"> {{ wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}</span>
@@ -90,7 +91,5 @@ watchEffect(() => {
                 </Card>
             </div>
         </div>
-
-      
     </div>
 </template>

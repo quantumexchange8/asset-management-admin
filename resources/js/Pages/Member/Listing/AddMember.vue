@@ -120,7 +120,7 @@ const submitForm = () => {
                             class="block w-full"
                             v-model="form.name"
                             placeholder="Name as per NRIC or passport"
-                            :invalid="form.errors.name"
+                            :invalid="!!form.errors.name"
                             autofocus
                       />
 
@@ -135,7 +135,7 @@ const submitForm = () => {
                                 class="block w-full"
                                 v-model="form.email"
                                 placeholder="example@example.com"
-                                :invalid="form.errors.email"
+                                :invalid="!!form.errors.email"
                         />
 
                       <InputError :message="form.errors.email"/>
@@ -149,7 +149,7 @@ const submitForm = () => {
                                 class="block w-full"
                                 v-model="form.username"
                                 placeholder="Enter Username"
-                                :invalid="form.errors.username"
+                                :invalid="!!form.errors.username"
                         />
 
                         <InputError :message="form.errors.username"/>
@@ -164,7 +164,7 @@ const submitForm = () => {
                             optionLabel="name"
                             placeholder="Select Upline"
                             class="w-full"
-                            :invalid="form.errors.upline"
+                            :invalid="!!form.errors.upline"
                             filter
                         >
                             <template #option="slotProps">
@@ -186,7 +186,7 @@ const submitForm = () => {
                             optionLabel="name"
                             placeholder="Select Country"
                             class="w-full"
-                            :invalid="form.errors.country"
+                            :invalid="!!form.errors.country"
                             filter
                         >
                             <template #value="slotProps">
@@ -215,7 +215,7 @@ const submitForm = () => {
                             optionLabel="name"
                             placeholder="Phone Code"
                             class="w-[100px]"
-                            :invalid="form.errors.dial_code"
+                            :invalid="!!form.errors.dial_code"
                             filter
                             :filterFields="['name', 'iso2', 'phone_code']"
                           >
@@ -242,7 +242,7 @@ const submitForm = () => {
                                 class="block w-full"
                                 v-model="form.phone"
                                 placeholder="Phone Number"
-                                :invalid="form.errors.phone"
+                                :invalid="!!form.errors.phone"
                           />
                         </div>
                       <InputError :message="form.errors.phone" />
@@ -260,7 +260,7 @@ const submitForm = () => {
                       <Password 
                         v-model="form.password"
                         toggleMask
-                        :invalid="form.errors.password"
+                        :invalid="!!form.errors.password"
                         class="w-full"
                       />
                       <InputError :message="form.errors.password" />
@@ -272,7 +272,7 @@ const submitForm = () => {
                         <Password 
                             v-model="form.password_confirmation"
                             toggleMask
-                            :invalid="form.errors.password"
+                            :invalid="!!form.errors.password"
                             class="w-full"
                         />
                     </div>

@@ -19,7 +19,7 @@ export default {
             { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
             // Invalid State
-               { 'border-red-500 dark:border-[#dc2626]': props.invalid },
+               { 'border-red-500 dark:border-[#DC2626]': props.invalid },
             //{ 'border-red-500 dark:border-red-700': props.invalid },
 
             // Transitions

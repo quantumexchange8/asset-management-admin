@@ -15,7 +15,7 @@ import KycProfile from './KycProfile.vue';
 const props = defineProps({
     user: Object,
     refereeCount: Number,
-    currentImage: String,
+    kycImages: Array,
 });
 
 const home = ref({
@@ -72,7 +72,7 @@ const tabs = ref([
 
                 <KycProfile
                     :user="user" 
-                    :currentImage="currentImage"
+                    :kycImages="kycImages"
                 />
                
             </div>

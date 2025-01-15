@@ -36,7 +36,7 @@ const submit = () => {
                     v-model="form.name"
                     autofocus
                     autocomplete="name"
-                    :invalid="form.errors.name"
+                    :invalid="!!form.errors.name"
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
@@ -51,7 +51,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     v-model="form.email"
                     autocomplete="username"
-                    :invalid="form.errors.email"
+                    :invalid="!!form.errors.email"
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
@@ -65,7 +65,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     v-model="form.password"
                     autocomplete="new-password"
-                    :invalid="form.errors.password"
+                    :invalid="!!form.errors.password"
                 />
 
                 <InputError class="mt-2" :message="form.errors.password" />
@@ -82,7 +82,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     v-model="form.password_confirmation"
                     autocomplete="new-password"
-                    :invalid="form.errors.password_confirmation"
+                    :invalid="!!form.errors.password_confirmation"
                 />
 
                 <InputError

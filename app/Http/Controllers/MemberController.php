@@ -205,14 +205,14 @@ class MemberController extends Controller
             ->withCount('wallets')
             ->first();
 
-        $currentImage = $user->getFirstMediaUrl('kyc_image') ?? null;
+        $kycImages = $user->getMedia('kyc_verification')->map(fn($image) => $image->getUrl());
 
         $refereeCount = User::where('upline_id', $user->id)->count();
 
         return Inertia::render('Member/Listing/Detail/MemberDetail', [
             'user' => $user,
             'refereeCount' => $refereeCount,
-            'currentImage' => $currentImage,
+            'kycImages' => $kycImages,
         ]);
     }
 

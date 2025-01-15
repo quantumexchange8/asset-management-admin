@@ -248,17 +248,17 @@ export default {
             'mx-2',
 
             // Positioning
-            'top-1/2 mt-[-0.5rem] left-0',
+            'top-1/2 mt-[-2rem] left-0',
             {
                 '!absolute': !parent.state.containerVisible && parent.props.showItemNavigators,
                 '!fixed': parent.state.containerVisible
             },
 
             // Hover Effect
-            'hover:bg-surface-0/10 hover:text-white',
+            'hover:bg-surface-0/10 hover:text-white hover:rounded-full',
 
             // Focus Effects
-            'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400'
+            'focus:outline-none focus:outline-offset-0 focus:ring-0 focus:ring-primary-500 dark:focus:ring-primary-400'
         ]
     }),
     nextButton: ({ parent }) => ({
@@ -276,17 +276,17 @@ export default {
             'mx-2',
 
             // Positioning
-            'top-1/2 mt-[-0.5rem] right-0',
+            'top-1/2 mt-[-2rem] right-0',
             {
                 '!absolute': !parent.state.containerVisible && parent.props.showItemNavigators,
                 '!fixed': parent.state.containerVisible
             },
 
             // Hover Effect
-            'hover:bg-surface-0/10 hover:text-white',
+            'hover:bg-surface-0/10 hover:text-white hover:rounded-full',
 
             // Focus Effects
-            'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400'
+            'focus:outline-none focus:outline-offset-0 focus:ring-0 focus:ring-primary-500 dark:focus:ring-primary-400'
         ]
     }),
     caption: {
