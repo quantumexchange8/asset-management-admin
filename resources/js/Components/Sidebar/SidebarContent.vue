@@ -5,9 +5,9 @@ import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.
 import {
     IconLayoutDashboard,
     IconUsers,
-    IconClockDollar,
-    IconBadges,
-    IconReportMoney
+    IconClockDollar, 
+    IconReportMoney,
+    IconUserDollar
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -44,7 +44,7 @@ import { IconUsersGroup } from '@tabler/icons-vue';
             />
 
             <SidebarCollapsibleItem 
-                :title="'Pending Kyc'" 
+                :title="'Pending KYC'" 
                 :href="route('member.getPendingKyc')"
                 :active="route().current('member.getPendingKyc')"
             />
@@ -95,15 +95,23 @@ import { IconUsersGroup } from '@tabler/icons-vue';
             />
         </SidebarCollapsible>
 
-        <SidebarCategoryLabel :title="'Settings'" />
-        <!-- Deposit Profile -->
-        <SidebarLink 
-            :title="'Deposit Profile'"
-            href="#"
+        <!-- Commissions -->
+        <SidebarCategoryLabel :title="'Reports'"/>
+
+        <SidebarCollapsible
+            :title="'Commissions'"
+            :active="route().current('report.*')"
         >
             <template #icon>
-                <IconReportMoney :size="20" stroke-width="1.5" />
+                <IconUserDollar :size="20" stroke-width="1.5" />
             </template>
-        </SidebarLink>
+
+            <SidebarCollapsibleItem 
+                :title="'Commission Listing'"
+                :href="route('report.getCommissionsList')"
+                :active="route().current('report.getCommissionsList')"
+            />
+
+        </SidebarCollapsible>
     </ScrollPanel>
 </template>

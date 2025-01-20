@@ -11,18 +11,18 @@ import DatePicker from 'primevue/datepicker';
 import ProgressSpinner from 'primevue/progressspinner';
 import Popover from 'primevue/popover';
 import Card from 'primevue/card';
-import { IconXboxX, IconX, IconSearch, IconAdjustments } from '@tabler/icons-vue';
+import { IconXboxX, IconX, IconSearch, IconAdjustments, IconDownload, IconTransferIn } from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
-import MemberTableAction from './MemberTableAction.vue';
 import { FilterMatchMode } from '@primevue/core/api';
+import Import from './Import.vue';
 import { usePage } from '@inertiajs/vue3';
 
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
-const users = ref([]);
+const commissions = ref([]);
 const totalRecords = ref(0);
 
 //filteration type and methods
@@ -30,43 +30,38 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    country: { value: null, matchMode: FilterMatchMode.EQUALS },
-    rank: { value: null, matchMode: FilterMatchMode.EQUALS },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-//get user data
-const lazyParams = ref({}); //track table parameters that need to be send to backend
+//get commission data
+const lazyParams = ref({});
 
-const loadLazyData = (event) => { // event will retrieve from the datatable attribute
+const loadLazyData = (event) => {
     isLoading.value = true;
 
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; //...lazyParams.value(retain existing properties after update);
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value};
 
     try {
         setTimeout(async () => {
 
-            //pagination, filter, sorting detail done by user through the event are pass into the params
-            const params = { //define query parameters for API
-                page: JSON.stringify(event?.page + 1), //retrieve page number from the event then send to BE
-                sortField: event?.sortField, 
+            const params = {
+                page: JSON.stringify(event?.page + 1),
+                sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
-                include: [], //an empty array for additional query parameters
-                lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
+                include: [],
+                lazyEvent: JSON.stringify(lazyParams.value),
             };
 
-            //send sorting/filter detail to BE
-            const url = route('member.getMemberData', params);
+            const url = route('report.getCommissionData', params);
             const response = await fetch(url);
 
-            //BE send back result back to FE
             const results = await response.json();
-            users.value = results?.data?.data;
+            commissions.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
             isLoading.value = false;
         }, 100);
-    } catch (e) {
-        users.value = [];
+    } catch(e) {
+        commissions.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
@@ -84,11 +79,11 @@ const onSort = (event) => {
 };
 
 const onFilter = (event) => {
-    lazyParams.value.fitlers = filters.value;
+    lazyParams.value.filters = filters.value;
     loadLazyData(event);
-};
+}
 
-//Date Filter
+//date filter
 const selectedDate = ref([]);
 
 const clearDate = () => {
@@ -109,47 +104,13 @@ watch(selectedDate, (newDateRange) => {
     }
 });
 
-//Country Filter
-const countries = ref();
-const loadingCountries = ref(false);
-
-const getCountries = async () => {
-    loadingCountries.value = true;
-    try {
-        const response = await axios.get('/get_countries');
-        countries.value = response.data.countries;
-    } catch (error) {
-        console.error('Error fetching countries:', error);
-    } finally {
-        loadingCountries.value = false;
-    }
-};
-
-//Rank Filter
-const ranks = ref();
-const loadingRanks = ref(false);
-
-const getRanks = async () => {
-    loadingRanks.value = true;
-    try{
-        const response = await axios.get('/get_ranks');
-        ranks.value = response.data.ranks;
-    } catch (error){
-        console.error('Error fetching ranks:', error);
-    } finally {
-        loadingRanks.value = false;
-    }
-};
-
-//KYC status filter
-const kycStatus = ref(['unverified', 'verified', 'pending']);
+//status filter
+const status = ref(['calculated', 'pending']);
 
 //filter toggle
 const op = ref();
 const toggle = (event) => {
     op.value.toggle(event);
-    getCountries();
-    getRanks();
 };
 
 //set a initial parameters when page first loaded then call loadLazyData to send initial parameters to BE
@@ -173,7 +134,7 @@ watch(
 )
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
-watch([filters.value['country'], filters.value['rank'], filters.value['status']], () => {
+watch([filters.value['status']], () => {
     loadLazyData()
 });
 
@@ -182,8 +143,6 @@ const clearAll = () => {
     filters.value['global'].value = null;
     filters.value['start_date'].value = null;
     filters.value['end_date'].value = null;
-    filters.value['country'].value = null;
-    filters.value['rank'].value = null;
     filters.value['status'].value = null;
     selectedDate.value = [];
 };
@@ -197,17 +156,42 @@ const clearFilterGlobal = () => {
 const getSeverity = (status) => {
     switch (status) {
         
-        case 'verified':
+        case 'calculated':
             return 'success';
 
-        case 'unverified':
-            return 'danger';
-
         case 'pending':
-            return 'info';
-
-        case 'rejected':
             return 'danger';
+    }
+};
+
+//export button
+const exportTable = ref('no');
+
+const exportStatus = ref(false);
+const exportCommission = () => {
+    exportStatus.value = true;
+    isLoading.value = true;
+
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+
+    const params = {
+        page: JSON.stringify(event?.page + 1),
+        sortField: event?.sortField,
+        sortOrder: event?.sortOrder,
+        include: [],
+        lazyEvent: JSON.stringify(lazyParams.value),
+        exportStatus: true,
+    };
+
+    const url = route('report.getCommissionData', params);
+
+    try {
+        window.location.href = url;
+    } catch (e) {
+        console.error('Error occured during export:', e);
+    } finally {
+        isLoading.value = false;
+        exportStatus.value = false;
     }
 };
 
@@ -223,7 +207,7 @@ watchEffect(() => {
         <template #content>
             <div class="w-full">
                 <DataTable
-                    :value="users" 
+                    :value="commissions" 
                     lazy
                     paginator 
                     removableSort
@@ -240,7 +224,7 @@ watchEffect(() => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['name', 'email', 'username']"
+                    :globalFilterFields="['email']"
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
@@ -277,12 +261,26 @@ watchEffect(() => {
                                     Filter
                                 </Button>
                             </div>
+
+                            <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
+                                <!-- Export button -->
+                                <Button 
+                                    class="w-full md:w-auto flex justify-center items-center" 
+                                    @click="exportCommission"
+                                    :disabled="exportTable==='yes'"
+                                >
+                                    <span class="pr-1">Export</span>
+                                    <IconDownload size="16" stroke-width="1.5"/>
+                                </Button>
+                            
+                               <Import />
+                            </div>
                         </div>
                     </template>
 
                     <template #empty>
                         <div class="flex flex-col">
-                            <span>No users</span>
+                            <span>No Commission</span>
                         </div>
                     </template>
 
@@ -291,43 +289,15 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
+                            <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">Loading commission data. Please wait. </span>
+                            <span v-else class="text-sm text-gray-700 dark:text-gray-300">Exporting Commission</span>
                         </div>
                     </template>
-                    
-                    <template v-if="users?.length > 0">
-                        <Column
-                            field="created_at"
-                            style="min-width: 9rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">joined</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                            </template>
-                        </Column>
-                        
-                        <Column
-                            field="name"
-                            style="min-width: 12rem"
-                            sortable
-                            frozen
-                        >
 
-                            <template #header>
-                                <span class="block">name</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.name }}
-                            </template>
-
-                        </Column>
-
+                    <template v-if="commissions?.length > 0">
                         <Column
                             field="email"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
@@ -339,93 +309,67 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="upline_id"
-                            style="min-width: 12rem"
+                            field="broker_id"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
-                                <span class="block">referrer</span>
-                            </template>
-
-                            <template #body="{data}">
-                                <div
-                                    v-if="data.upline"
-                                    class="flex flex-col items-start"
-                                >
-                                    <div class="font-medium max-w-[180px] truncate">
-                                        {{ data.upline.name }}
-                                    </div>
-                                    <div class="text-gray-500 text-xs max-w-[180px] truncate">
-                                        {{ data.upline.email }}
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    -
-                                </div>
-                            </template>                
-                        </Column>
-
-                        <Column
-                            field="setting_rank_id"
-                            style="min-width: 10rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">rank</span>
+                                <span class="block">broker</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.rank.rank_name }}
+                                {{ data.broker_id }}
                             </template>
                         </Column>
 
                         <Column
-                            field="role"
-                            style="min-width: 10rem"
+                            field="volume"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
-                                <span class="block">role</span>
+                                <span class="block">lot size</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.role }}
+                                {{ data.volume }}
                             </template>
                         </Column>
 
                         <Column
-                            field="country_id"
-                            style="min-width: 12rem"
+                            field="date"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
-                                <span class="block">country</span>
+                                <span class="block">date</span>
                             </template>
-                            <template #body="{data}">
-                                <span>{{ data.country.name }}</span>             
+                            <template #body="{ data }">
+                                {{ dayjs(data.date).format('YYYY-MM-DD') }}
                             </template>
                         </Column>
 
                         <Column
-                            field="kyc_status"
+                            field="status"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
                                 <span class="block">status</span>
                             </template>
                             <template #body="{ data }">
-                                <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
+                                <Tag :value="data.status" :severity="getSeverity(data.status)" />
                             </template>
                         </Column>
 
                         <Column
                             field="action"
-                            frozen
-                            alignFrozen="right"
-                            header=""
-                            style="width: 5%"
-                            class="hidden md:table-cell"
+                            style="min-width: 7rem"
+                            sortable
                         >
-                            <template #body="{data}">
-                                <MemberTableAction :member="data"/>
+                            <template #header>
+                                <span class="block">action</span>
+                            </template>
+                            <template #body="{ data }">
+                           
                             </template>
                         </Column>
                     </template>
@@ -459,72 +403,16 @@ watchEffect(() => {
                 </div>
             </div>
 
-            <!-- Filter Country -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Country
-                </div>
-                <Select
-                    v-model="filters['country'].value"
-                    :options="countries"
-                    optionLabel="name"
-                    placeholder="Select Country"
-                    filter
-                    :filter-fields="['name']"
-                    :loading="loadingCountries"
-                    class="w-full"
-                    showClear
-                >
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value" class="flex items-center">
-                            {{ slotProps.value.name }}
-                        </div>
-                        <span v-else>{{ slotProps.placeholder }}</span>
-                    </template>
-                    <template #option="slotProps">
-                        <div>{{ slotProps.option.name }}</div>
-                    </template>
-                </Select>
-            </div>
-
-            <!-- Filter Rank -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Rank
-                </div>
-                <Select
-                    v-model="filters['rank'].value"
-                    :options="ranks"
-                    optionLabel="rank_name"
-                    placeholder="Select Rank"
-                    filter
-                    :filter-fields="['rank_name']"
-                    :loading="loadingRanks"
-                    class="w-full"
-                    showClear
-                >
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value" class="flex items-center">
-                            {{ slotProps.value.rank_name }}
-                        </div>
-                        <span v-else>{{ slotProps.placeholder }}</span>
-                    </template>
-                    <template #option="slotProps">
-                        <div>{{ slotProps.option.rank_name }}</div>
-                    </template>
-                </Select>
-            </div>
-
-            <!-- Filter kyc Status -->
+            <!-- Filter Status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
                     Filter By Status
                 </div>
                 <Select
                     v-model="filters['status'].value"
-                    :options="kycStatus"
+                    :options="status"
                     placeholder="Select Status"
-                    :loading="loadingRanks"
+                   
                     class="w-full"
                     showClear
                 >

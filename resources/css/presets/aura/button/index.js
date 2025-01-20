@@ -48,7 +48,7 @@ export default {
 
             // Primary Button
             {
-                'text-primary-contrast': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                'text-surface-ground dark:text-white': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
                 'bg-primary': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
                 'border border-primary': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
             },
@@ -135,7 +135,7 @@ export default {
             { 'text-surface-900 dark:text-surface-0 border border-surface-900 dark:border-surface-0': props.outlined && props.severity === 'contrast' && !props.plain },
 
             // --- Severity Button States ---
-            'focus:outline-none focus:outline-offset-0 focus:ring-1',
+            'focus:outline-none focus:outline-offset-0 focus:ring-0',
 
             // Link
             { 'focus:ring-primary': props.link },
