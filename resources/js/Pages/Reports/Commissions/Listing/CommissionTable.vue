@@ -11,7 +11,7 @@ import DatePicker from 'primevue/datepicker';
 import ProgressSpinner from 'primevue/progressspinner';
 import Popover from 'primevue/popover';
 import Card from 'primevue/card';
-import { IconXboxX, IconX, IconSearch, IconAdjustments, IconDownload, IconTransferIn } from '@tabler/icons-vue';
+import { IconXboxX, IconX, IconSearch, IconAdjustments, IconDownload } from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
@@ -135,7 +135,7 @@ watch(
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
 watch([filters.value['status']], () => {
-    loadLazyData()
+    loadLazyData();
 });
 
 //clear all selected filter
@@ -344,6 +344,9 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 {{ dayjs(data.date).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.date).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
                             </template>
                         </Column>
 

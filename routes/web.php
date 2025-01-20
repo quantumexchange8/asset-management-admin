@@ -59,9 +59,16 @@ Route::middleware('auth')->group(function () {
         //History
         Route::prefix('history')->group(function () {
             Route::get('/get_deposit_history', [TransactionController::class, 'getDepositHistory'])->name('transaction.history.getDepositHistory');
-            Route::get('/get_withdrawal_history', [TransactionController::class, 'getWithdrawalHistory'])->name('transaction.history.getWithdrawalHistory');
+            Route::get('/get_deposit_history_data', [TransactionController::class, 'getDepositHistoryData'])->name('transaction.history.getDepositHistoryData');
             Route::post('/import-deposit-history', [TransactionController::class, 'importDepositHistory'])->name('transaction.history.importDepositHistory');
-            Route::get('/export_deposit_history', [TransactionController::class, 'exportDepositHistory'])->name('transaction.history.exportDepositHistory');
+            Route::get('/download-template', function () {
+                $filePath = public_path('/VoltAsia_Deposit_History_Import_Template.xlsx');
+                return response()->download($filePath);
+            });
+
+            Route::get('/get_withdrawal_history', [TransactionController::class, 'getWithdrawalHistory'])->name('transaction.history.getWithdrawalHistory');
+            Route::get('/get_withdrawal_history_data', [TransactionController::class, 'getWithdrawalHistoryData'])->name('transaction.history.getWithdrawalHistoryData');
+          
         });
     });
 

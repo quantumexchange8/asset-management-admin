@@ -174,7 +174,7 @@ watch(
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
 watch([filters.value['country'], filters.value['rank'], filters.value['status']], () => {
-    loadLazyData()
+    loadLazyData();
 });
 
 //clear all selected filter
@@ -524,7 +524,6 @@ watchEffect(() => {
                     v-model="filters['status'].value"
                     :options="kycStatus"
                     placeholder="Select Status"
-                    :loading="loadingRanks"
                     class="w-full"
                     showClear
                 >

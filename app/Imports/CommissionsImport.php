@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\TradeBrokerHistory;
-use App\Models\User;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
