@@ -1,6 +1,14 @@
 export default {
     root: ({ props }) => ({
-        class: ['relative [&>input]:w-full', { '[&>input]:pr-10': props.toggleMask }, { 'flex [&>input]:w-full': props.fluid, 'inline-flex': !props.fluid }]
+        class: [
+            'relative [&>input]:w-full', 
+            { '[&>input]:pr-10': props.toggleMask }, 
+            { 'flex [&>input]:w-full': props.fluid, 
+                'inline-flex': !props.fluid 
+            },
+            { '[&>input]:pr-10': props.toggleMask }, // Adds right padding if toggle mask is enabled.
+            { '[&>input]:pl-10': true }, // Adds left padding for the icon to prevent overlap with the text input area.
+        ]
     }),
     overlay: {
         class: [
@@ -52,10 +60,10 @@ export default {
         ]
     }),
     maskIcon: {
-        class: ['absolute top-1/2 right-3 -mt-2 z-10', 'text-surface-600 dark:text-white/70']
+        class: [ 'absolute top-1/2 right-3 -translate-y-1/2 z-10', 'text-surface-600 dark:text-white/70']
     },
     unmaskIcon: {
-        class: ['absolute top-1/2 right-3 -mt-2 z-10', 'text-surface-600 dark:text-white/70']
+        class: [ 'absolute top-1/2 right-3 -translate-y-1/2 z-10', 'text-surface-600 dark:text-white/70']
     },
     transition: {
         enterFromClass: 'opacity-0 scale-y-[0.8]',

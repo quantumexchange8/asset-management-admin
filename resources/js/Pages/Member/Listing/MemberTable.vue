@@ -400,7 +400,7 @@ watchEffect(() => {
                                 <span class="block">country</span>
                             </template>
                             <template #body="{data}">
-                                <span>{{ data.country.name }}</span>             
+                                <span>{{ data.country?.name || '-' }}</span>        
                             </template>
                         </Column>
 

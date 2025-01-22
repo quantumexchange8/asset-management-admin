@@ -40,8 +40,7 @@ Route::middleware('auth')->group(function () {
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');
         Route::get('/get_pending_kyc_data', [MemberController::class, 'getPendingKycData'])->name('member.getPendingKycData');
-        Route::put('/{id_number}/kycApprove', [MemberController::class, 'kycApprove'])->name('member.kycApprove');
-        Route::put('/{id_number}/kycReject', [MemberController::class, 'kycReject'])->name('member.kycReject');
+        Route::put('/kycPendingApproval', [MemberController::class, 'kycPendingApproval'])->name('member.kycPendingApproval');
 
         Route::prefix('detail')->group(function () {
             Route::get('/{id_number}', [MemberController::class, 'memberDetail'])->name('member.detail.memberDetail');

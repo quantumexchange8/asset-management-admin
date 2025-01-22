@@ -95,7 +95,7 @@ const getSeverity = (status) => {
                                 Phone
                             </div>
                             <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                {{ props.user.dial_code }} {{ props.user.phone }}
+                                {{ props.user.dial_code }} {{ props.user.phone || '-' }}
                             </div>
                         </div>
                     </div>
@@ -107,8 +107,8 @@ const getSeverity = (status) => {
                                 Country
                             </div>
                             <div class="flex gap-1 items-center">
-                                <span class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">{{
-                                    props.user.country.name }}</span>
+                                <span class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
+                                    {{props.user.country?.name || '-' }}</span>
                             </div>
                         </div>
 
