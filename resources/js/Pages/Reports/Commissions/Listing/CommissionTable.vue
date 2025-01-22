@@ -317,7 +317,7 @@ watchEffect(() => {
                                 <span class="block">broker</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.broker_id }}
+                                {{ data.broker?.name || '-' }}
                             </template>
                         </Column>
 

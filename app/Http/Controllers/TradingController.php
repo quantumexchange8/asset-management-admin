@@ -24,7 +24,10 @@ class TradingController extends Controller
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
             //commission query
-            $query = TradeBrokerHistory::query();
+            $query = TradeBrokerHistory::query()
+                ->with([
+                    'broker:id,name',
+                ]);
 
             //global filter
             if ($data['filters']['global']['value']) {
@@ -74,14 +77,17 @@ class TradingController extends Controller
     {
 
         $request->validate([
-            // 'broker' => ['required'],
+            'broker' => ['required'],
             'commission_file' => ['required', 'mimes:xlsx,xls,csv', 'max:25000'],
         ]);
 
         $file = $request->file('commission_file');
 
-        Excel::import(new CommissionsImport, $file);
+        $broker_id = $request->broker['id'];
+
+        Excel::import(new CommissionsImport($broker_id), $file);
 
         return Redirect::route('report.getCommissionsList');
     }
+    
 }

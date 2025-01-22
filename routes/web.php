@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrokerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SelectOptionController;
@@ -24,12 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/get_users', [SelectOptionController::class, 'getUsers'])->name('getUsers');
     Route::get('/get_countries', [SelectOptionController::class, 'getCountries'])->name('getCountries');
     Route::get('/get_ranks', [SelectOptionController::class, 'getRanks'])->name('getRanks');
+    Route::get('/get_brokers', [SelectOptionController::class, 'getBrokers'])->name('getBrokers');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    //Customer
+    //member
     Route::prefix('member')->group(function () {
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
         Route::get('/get_member_overview', [MemberController::class, 'getMemberOverview'])->name('member.getMemberOverview');
@@ -71,7 +73,10 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    //report
     Route::prefix('report')->group(function () {
+
+        //commission
         Route::get('/get_commissions_list', [TradingController::class, 'getCommissionsList'])->name('report.getCommissionsList');
         Route::post('/import-commissions', [TradingController::class, 'importCommissions'])->name('report.importCommissions');
         Route::get('/get_commission_data', [TradingController::class, 'getCommissionData'])->name('report.getCommissionData');
@@ -80,6 +85,13 @@ Route::middleware('auth')->group(function () {
             $filePath = public_path('/VoltAsia_Commission_Import_Template.xlsx');
             return response()->download($filePath);
         });
+    });
+
+    //broker
+    Route::prefix('broker')->group(function () {
+        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList'); 
+        Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
+        Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
     });
 });
 

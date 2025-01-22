@@ -5,12 +5,33 @@ import FileUpload from 'primevue/fileupload';
 import Select from 'primevue/select';
 import InputError from '@/Components/InputError.vue';
 import { IconTransferIn, IconUsers, IconX, IconUpload, IconPhotoPlus, IconFileCheck } from '@tabler/icons-vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
 
 const visible = ref(false);
+
+//get brokers
+const selectedBrokers = ref();
+const brokers = ref([]);
+const loadingBrokers = ref(false);
+const getBrokers = async () => {
+    loadingBrokers.value = true;
+
+    try {
+        const response = await axios.get('/get_brokers');
+        brokers.value = response.data.brokers;
+    } catch (error) {
+        console.error('Error fetching selectedBrokers:', error);
+    } finally {
+        loadingBrokers.value = false;
+    }
+}
+
+onMounted(() => {
+    getBrokers();
+});
 
 //file
 const onSelectedFiles = (event) => {
@@ -27,6 +48,7 @@ const form = useForm({
 const toast = useToast();
 
 const submit = () => {
+    form.broker = selectedBrokers.value;
     form.post(route('report.importCommissions'), {
         onSuccess: () => {
             visible.value = false;
@@ -41,7 +63,10 @@ const submit = () => {
         onError: (errors) => {
             console.error(errors);
 
-            const errorMessages = Object.values(errors);
+             // Filter out the 'broker' field from the errors
+            const errorMessages = Object.entries(errors)
+                .filter(([key]) => key !== 'broker')  // Exclude 'broker' field
+                .map(([, value]) => value); // Extract only the error messages
           
             let str = '';
 
@@ -100,12 +125,22 @@ const downloadTemplate = () => {
                             <IconUsers :size="20" stroke-width="1.5"/>
                         </template>
                         <Select
+                            v-model="selectedBrokers"
+                            :options="brokers"
+                            :loading="loadingBrokers"
+                            optionLabel="name"
                             placeholder="Select Broker"
                             class="pl-7 block w-full"
                             :invalid="!!form.errors.broker"
                             filter
+                            showClear
                         >
-
+                            <template #value="slotProps">
+                                <div v-if="slotProps.value" class="flex items-center">
+                                    <div>{{ slotProps.value.name }}</div>
+                                </div>
+                                <span v-else>{{ slotProps.placeholder }}</span>
+                            </template>
                         </Select>
                     </InputIconWrapper>
                     <InputError :message="form.errors.broker"/>

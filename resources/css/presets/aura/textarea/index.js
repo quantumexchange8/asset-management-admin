@@ -3,7 +3,8 @@ export default {
         class: [
             // Font
             'leading-none',
-
+            'text-sm',
+            
             // Spacing
             'm-0',
             'py-2 px-3',

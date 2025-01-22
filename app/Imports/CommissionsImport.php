@@ -10,11 +10,13 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 
 class CommissionsImport implements ToModel, WithHeadingRow, WithValidation
 {
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
+    protected $broker_id;
+
+    public function __construct($broker_id)
+    {
+        $this->broker_id = $broker_id;
+    }
+
     public function model(array $row)
     {
         // Convert Excel serial date to Y-m-d H:i:s format
@@ -25,7 +27,7 @@ class CommissionsImport implements ToModel, WithHeadingRow, WithValidation
             //  'mt_login' => $row['mt_login'],
             'volume' => $row['lot_size'],
             'date' => $transactionDate,
-
+            'broker_id' => $this->broker_id,
         ]);
     }
 
@@ -38,17 +40,17 @@ class CommissionsImport implements ToModel, WithHeadingRow, WithValidation
         ];
     }
 
-    public function customValidationMessages(){
+    public function customValidationMessages()
+    {
         return [
             'email.required' => 'Email field is required',
             'email.email' => 'Wrong email format',
             'email.exists' => 'Email does not exist',
-            
+
             'lot_size.required' => 'Lot size is required',
             'lot_size.regex' => 'Lot size must be a number with up to two decimal places',
-    
+
             'transaction_date.required' => 'Transaction date is required',
         ];
     }
-    
 }

@@ -54,7 +54,8 @@ import { IconUsersGroup } from '@tabler/icons-vue';
         <!-- Broker -->
         <SidebarLink 
             :title="'Broker'" 
-            href="#"
+            :href="route('broker.getBrokerList')"
+            :active="route().current('broker.getBrokerList')"
         >
             <template #icon>
                 <IconUsersGroup :size="20" stroke-width="1.5" />

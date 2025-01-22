@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TradeBrokerHistory extends Model
@@ -24,4 +25,9 @@ class TradeBrokerHistory extends Model
         'status',
         'date',
     ];
+
+    public function broker(): BelongsTo
+    {
+        return $this->belongsTo(Broker::class, 'broker_id', 'id');
+    }
 }
