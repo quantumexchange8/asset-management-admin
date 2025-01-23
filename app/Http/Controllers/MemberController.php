@@ -92,6 +92,27 @@ class MemberController extends Controller
         return response()->json(['success' => false, 'data' => []]);
     }
 
+    public function getMemberOverview()
+    {
+        $userQuery = User::query();
+
+        $memberCounts = User::count();
+
+        $verified_user = (clone $userQuery)
+            ->where('kyc_status', 'verified')
+            ->count();
+
+        $unverified_user = (clone $userQuery)
+            ->whereIn('kyc_status', ['unverified', 'pending'])
+            ->count();
+
+        return response()->json([
+            'memberCounts' => $memberCounts,
+            'verifiedUser' => $verified_user,
+            'unverifiedUser' => $unverified_user,
+        ]);
+    }
+
     public function getPendingKyc()
     {
         return Inertia::render('Member/Listing/KycPending');
@@ -164,6 +185,24 @@ class MemberController extends Controller
         }
 
         return response()->json(['success' => false, 'data' => []]);
+    }
+
+    public function kycPendingApproval(Request $request)
+    {
+        $validatedData = $request->validate([
+            'remarks' => ['required_if:action,reject'],
+        ]);
+
+        $user = User::find($request->user_id);
+
+        if ($request->action == 'approve') {
+            $user->kyc_status = 'verified';
+            $user->update();
+        } else {
+            $user->kyc_status = 'rejected';
+            $user->remarks = $validatedData['remarks'];
+            $user->update();
+        }
     }
 
     public function addNewMember(Request $request)
@@ -255,16 +294,6 @@ class MemberController extends Controller
         ]);
     }
 
-    public function getWalletData($id_number)
-    {
-        $user = User::where('id_number', $id_number)
-            ->with('wallets')
-            ->first();
-
-        $wallets = $user->wallets; //wallets from User.php relationship
-        return response()->json($wallets);
-    }
-
     public function updateMemberProfile(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -289,6 +318,16 @@ class MemberController extends Controller
         $user->nationality = $country->nationality;
 
         $user->update();
+    }
+
+    public function getWalletData($id_number)
+    {
+        $user = User::where('id_number', $id_number)
+            ->with('wallets')
+            ->first();
+
+        $wallets = $user->wallets; //wallets from User.php relationship
+        return response()->json($wallets);
     }
 
     public function walletAdjustment(Request $request)
@@ -369,42 +408,8 @@ class MemberController extends Controller
         return back()->with('toast');
     }
 
-    public function kycPendingApproval(Request $request)
-    {
-        $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject'],
-        ]);
-
-        $user = User::find($request->user_id);
-
-        if ($request->action == 'approve') {
-            $user->kyc_status = 'verified';
-            $user->update();
-        } else {
-            $user->kyc_status = 'rejected';
-            $user->remarks = $validatedData['remarks'];
-            $user->update();
-        }
+    public function changeUpline(Request $request, $id){
+        
     }
-
-    public function getMemberOverview()
-    {
-        $userQuery = User::query();
-
-        $memberCounts = User::count();
-
-        $verified_user = (clone $userQuery)
-            ->where('kyc_status', 'verified')
-            ->count();
-
-        $unverified_user = (clone $userQuery)
-            ->whereIn('kyc_status', ['unverified', 'pending'])
-            ->count();
-
-        return response()->json([
-            'memberCounts' => $memberCounts,
-            'verifiedUser' => $verified_user,
-            'unverifiedUser' => $unverified_user,
-        ]);
-    }
+  
 }

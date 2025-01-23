@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
+        Route::put('/{id_number}/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
 
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');
@@ -92,6 +93,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList'); 
         Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
         Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
+
+        Route::prefix('detail')->group(function () {
+            Route::get('/{id_number}', [BrokerController::class, 'brokerDetail'])->name('broker.detail.brokerDetail');
+            Route::put('/{id_number}/updateBrokerInfo', [BrokerController::class, 'updateBrokerInfo'])->name('broker.detail.updateBrokerInfo');
+        });
     });
 });
 

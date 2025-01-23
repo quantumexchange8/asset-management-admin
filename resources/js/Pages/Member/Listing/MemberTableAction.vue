@@ -11,7 +11,7 @@ import {
     IconDeviceLaptop,
     IconChevronRight,
     IconUserCog,
-    IconUserDollar,
+    IconUserEdit
 } from "@tabler/icons-vue";
 import UpgradeRank from "./Partial/UpgradeRank.vue";
 
@@ -38,6 +38,14 @@ const items = ref([
         icon: h(IconDeviceLaptop),
     },
     {
+        label: 'Change Upline',
+        icon: h(IconUserEdit),
+        command: () => {
+            visible.value = true;
+            dialogType.value = 'change_upline'
+        },
+    },
+    {
         label: 'Upgrade',
         icon: h(IconUserUp),
         items: [
@@ -46,7 +54,7 @@ const items = ref([
                 icon: h(IconUserCog),
                 command: () => {
                     visible.value = true;
-                    dialogType.value = 'Upgrade Rank';
+                    dialogType.value = 'upgrade_rank';
                 }
             },
         ]
@@ -98,10 +106,17 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-        :header="dialogType"
         :style="{ width: '20rem' }"
     >
-        <template v-if="dialogType === 'Upgrade Rank'">
+        <template #header>
+            <div class="flex items-center gap-4">
+                <div class="text-xl font-bold">
+                    {{dialogType.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase())}}
+                </div>
+            </div>
+        </template>
+
+        <template v-if="dialogType === 'upgrade_rank'">
             <UpgradeRank
                 :member="member"
                 @update:visible="visible = false"

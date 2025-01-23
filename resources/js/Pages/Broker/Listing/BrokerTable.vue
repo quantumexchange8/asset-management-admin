@@ -11,7 +11,7 @@ import AddBroker from './AddBroker.vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import debounce from "lodash/debounce.js";
-import { usePage } from '@inertiajs/vue3';
+import { usePage, Link } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 
 const props = defineProps({
@@ -58,7 +58,6 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
 
             //BE send back result back to FE
             const results = await response.json();
-            console.log(results);
             brokers.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
             isLoading.value = false;
@@ -133,7 +132,10 @@ watchEffect(() => {
     </div>
 
     <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 w-full gap-4 md:gap-5">
-        <Card style=" overflow: hidden">
+        <Card 
+            style="overflow: hidden"
+            v-for="index in props.brokerCounts"
+        >
             <template #title>
                 <Skeleton class="w-full h-6 mt-2" />
             </template>
@@ -159,7 +161,7 @@ watchEffect(() => {
             style=" overflow: hidden"
             v-for="broker in brokers"
             :key="broker.id"
-            lazy
+
         >
             <template #header>
                 <img alt="user header" :src="broker.broker_image" class="w-full h-16 sm:h-24 md:h-16 lg:h-16 2xl:h-24 object-contain mt-4" />
@@ -175,9 +177,14 @@ watchEffect(() => {
 
             <template #footer>
                 <div class="flex gap-4 mt-1">
-                    <Button severity="secondary" class="w-full">
-                        Edit
-                    </Button>
+                    <Link
+                        :href="route('broker.detail.brokerDetail', broker.id)"
+                        class="w-full"
+                    >
+                        <Button severity="secondary" class="w-full">
+                            View
+                        </Button>
+                    </Link>
                     <Button severity="danger" class="w-full">
                         Remove
                     </Button>

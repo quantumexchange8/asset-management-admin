@@ -1,16 +1,23 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
-import { IconLinkPlus, IconUserDollar, IconUsersPlus } from '@tabler/icons-vue';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import FileUpload from 'primevue/fileupload';
+import Image from 'primevue/image';
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+import { IconEdit, IconLinkPlus, IconUserDollar } from '@tabler/icons-vue';
+import { router, useForm } from '@inertiajs/vue3';
+
+const props = defineProps({
+    broker: Object,
+    broker_image: Array,
+    broker_qr_image: Array,
+});
 
 const visible = ref(false);
 
@@ -24,46 +31,70 @@ const onSelectedQrImage = (event) => {
 }
 
 const form = useForm({
-    name: '',
-    description: '',
-    note: '',
-    url: '',
+    id: props.broker.id,
+    name: props.broker.name || '',
+    description: props.broker.description || '',
+    note: props.broker.note || '',
+    url: props.broker.url || '',
     broker_image: null,
     broker_qr_image: null,
-});
+}); 
 
 const toast = useToast();
 
 const submitForm = () => {
-    form.post(route('broker.addNewBroker'), {
-        onSuccess: () => {
+    form.processing = true;
+    const formData = new FormData();
+    formData.append('_method', 'put');
+    formData.append('name', form.name);
+    formData.append('description', form.description);
+    formData.append('note', form.note);
+    formData.append('url', form.url);
+    if(form.broker_image){
+        formData.append('broker_image', form.broker_image);
+    }
+
+    if(form.broker_qr_image){
+        formData.append('broker_qr_image', form.broker_qr_image);
+    }
+
+    router.post(`/broker/detail/${form.id}/updateBrokerInfo`, formData, {
+        onSuccess:() => {
             visible.value = false;
-            form.reset();
+            form.processing = false;
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'Broker added successfully!',
+                detail: 'Broker updated successfully!',
                 life: 3000,
             });
         },
         onError: (errors) => {
             console.error(errors);
+            form.errors = errors;
         }
     });
-};
+}
 </script>
 
 <template>
-    <Button class="w-full md:w-auto" @click="visible = true">
-        <IconUsersPlus size="16" />
-        <span class="pl-2">Add Broker</span>
+    <Button 
+        @click="visible = true"
+        type="button"
+    >
+        <IconEdit size="20" stroke-width="1.5"/>
     </Button>
 
-    <Dialog v-model:visible="visible" modal class="dialog-xs md:dialog-md" style="width: 90%; max-width: 45rem;">
+    <Dialog
+        v-model:visible="visible"
+        modal
+        class="dialog-xs md:dialog-md"
+        style="width: 90%; max-width: 45rem;"
+    >
         <template #header>
             <div class="flex items-center gap-4">
                 <div class="text-xl font-bold">
-                    Add Broker
+                    Broker Information
                 </div>
             </div>
         </template>
@@ -170,9 +201,10 @@ const submitForm = () => {
                     </div>
                 </div>
             </div>
+            
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
                 <Button type="button" severity="secondary" @click="visible = false">Cancel</Button>
-                <Button type="submit" :disabled="form.processing">Submit</Button>
+                <Button type="submit" :disabled="form.processing">Update</Button>
             </div>
         </form>
     </Dialog>
