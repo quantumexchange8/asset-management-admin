@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
-        Route::put('/{id_number}/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
+        Route::put('/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
 
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');

@@ -14,6 +14,7 @@ import {
     IconUserEdit
 } from "@tabler/icons-vue";
 import UpgradeRank from "./Partial/UpgradeRank.vue";
+import ChangeUpline from "./Partial/ChangeUpline.vue";
 
 const props = defineProps({
     member: Object,
@@ -118,6 +119,13 @@ const toggle = (event) => {
 
         <template v-if="dialogType === 'upgrade_rank'">
             <UpgradeRank
+                :member="member"
+                @update:visible="visible = false"
+            />
+        </template>
+
+        <template v-if="dialogType === 'change_upline'">
+            <ChangeUpline 
                 :member="member"
                 @update:visible="visible = false"
             />

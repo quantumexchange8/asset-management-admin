@@ -408,8 +408,44 @@ class MemberController extends Controller
         return back()->with('toast');
     }
 
-    public function changeUpline(Request $request, $id){
-        
+    public function changeUpline(Request $request)
+    {
+        $user = User::find($request->user_id);
+    
+        if ($request->upline) {
+            $upline_id = $request->upline['id'];
+            $upline = User::find($upline_id);
+    
+            // Build the new hierarchy list for the user based on the new upline
+            $newHierarchyList = empty($upline->hierarchyList) ? "-$upline_id-" : $upline->hierarchyList . "$upline_id-";
+    
+            // Update the user's upline and hierarchy list
+            $user->upline_id = $upline_id;
+            $user->hierarchyList = $newHierarchyList;
+            $user->save();
+    
+            // Update all descendants' hierarchy lists recursively
+            $this->updateDescendantHierarchy($user->id, $newHierarchyList);
+        }
+    
+        return back()->with('toast', 'Hierarchy updated successfully!');
     }
-  
+    
+    private function updateDescendantHierarchy($userId, $parentHierarchy)
+    {
+        // Get all direct descendants of the user
+        $descendants = User::where('upline_id', $userId)->get();
+    
+        foreach ($descendants as $descendant) {
+            // Build the new hierarchy list for the descendant
+            $newHierarchyList = $parentHierarchy . "$descendant->upline_id-";
+            $descendant->hierarchyList = $newHierarchyList;
+            $descendant->save();
+    
+            // Recursively update the descendants of the current descendant
+            $this->updateDescendantHierarchy($descendant->id, $newHierarchyList);
+        }
+    }
+    
+    
 }

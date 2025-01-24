@@ -422,7 +422,6 @@ watchEffect(() => {
                             alignFrozen="right"
                             header=""
                             style="width: 5%"
-                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 <MemberTableAction :member="data"/>

@@ -7,7 +7,8 @@ import Button from 'primevue/button';
 import { onMounted, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
-
+import InputIconWrapper from '@/Components/InputIconWrapper.vue';
+import { IconUserUp } from '@tabler/icons-vue';
 
 const props = defineProps({
     member: {
@@ -21,7 +22,7 @@ const selectedRank = ref(props.member.rank);
 const loadingRanks = ref(false);
 
 //close dialog after save and refresh rank after save
-const emit = defineEmits(['update:visible', 'rankUpgraded']);
+const emit = defineEmits(['update:visible']);
 
 const getRanks = async () => {
     loadingRanks.value = true;
@@ -84,44 +85,49 @@ const submitForm = () => {
             </div>
 
             <div class="flex flex-col gap-3 self-stretch">
-
                 <span class="font-semibold text-sm">Select New Rank</span>
-                <div class="flex flex-col gap-1 items-start self-stretch">
+                <div class="space-y-2">
                     <InputLabel
                         for="rank"
                         value="Rank"
                     />
-                    <Select
-                        v-model="selectedRank"
-                        :options="ranks"
-                        :loading="loadingRanks"
-                        optionLabel="name"
-                        placeholder="Select Rank"
-                        class="w-full"
-                        :invalid="form.errors.rank"
-                        filter
-                    >
-                        <template #value="slotProps">
-                            <div v-if="slotProps.value" class="flex items-center">
-                                <div>{{ slotProps.value.rank_name }}</div>
-                            </div>
-                            <span v-else>
-                                    {{ slotProps.placeholder }}
-                                </span> 
+                    <InputIconWrapper>
+                        <template #icon>
+                            <IconUserUp :size="20" stroke-width="1.5"/>
                         </template>
-                        <template #option="slotProps">
-                            <div class="flex items-center gap-1 max-w-[220px] truncate">
-                                <span>{{ slotProps.option.rank_name }}</span>
-                            </div>
-                        </template>
-                    </Select>
+
+                        <Select
+                            v-model="selectedRank"
+                            :options="ranks"
+                            :loading="loadingRanks"
+                            optionLabel="name"
+                            placeholder="Select Rank"
+                            class="pl-7 block w-full"
+                            :invalid="form.errors.rank"
+                            filter
+                        >
+                            <template #value="slotProps">
+                                <div v-if="slotProps.value" class="flex items-center">
+                                    <div>{{ slotProps.value.rank_name }}</div>
+                                </div>
+                                <span v-else>
+                                        {{ slotProps.placeholder }}
+                                    </span> 
+                            </template>
+                            <template #option="slotProps">
+                                <div class="flex items-center gap-1 max-w-[220px] truncate">
+                                    <span>{{ slotProps.option.rank_name }}</span>
+                                </div>
+                            </template>
+                        </Select>
+                    </InputIconWrapper>
                     <InputError :message="form.errors.rank"/>
                 </div>
             </div>
         </div>
         <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                <Button type="submit" label="Save" :disabled="form.processing"></Button>
+            <Button type="button" label="Cancel" severity="secondary" @click="$emit('update:visible', false)"></Button>
+            <Button type="submit" label="Save" :disabled="form.processing"></Button>
         </div>
     </form>
 </template>
