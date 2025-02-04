@@ -45,8 +45,6 @@ export default {
         class: [
             'font-bold',
 
-           
-
             // Spacing
             'pb-4',
 

@@ -4,7 +4,10 @@ export default {
             'relative',
             {
                 'flex flex-col h-full': props.scrollHeight === 'flex'
-            }
+            },
+            
+            // Size
+            { 'h-full': props.scrollable && props.scrollHeight === 'flex' }
         ]
     }),
     mask: {
@@ -12,17 +15,17 @@ export default {
             // Position
             'absolute',
             'top-0 left-0',
-            'z-20',
-
+            'z-50', // Ensure the mask is above all other elements
+    
             // Flex & Alignment
             'flex items-center justify-center',
-
+    
             // Size
             'w-full h-full',
-
+    
             // Color
             'bg-surface-100/40 dark:bg-surface-800/40',
-
+    
             // Transition
             'transition duration-200'
         ]
@@ -41,13 +44,12 @@ export default {
     }),
     header: ({ props }) => ({
         class: [
-            'font-semibold',
-
-            // Shape
-            props.showGridlines ? 'border-x border-t border-b-0' : 'border-y border-x-0',
+            'font-bold',
 
             // Spacing
-            'p-4',
+            'pb-4',
+
+            'pl-0',
 
             // Color
             'bg-surface-0 dark:bg-surface-900',
@@ -81,7 +83,7 @@ export default {
         class: [
             // Position & Z-index
             {
-                'top-0 z-40 sticky': props.scrollable
+                'top-0 z-20 sticky': props.scrollable
             }
         ]
     }),
@@ -123,10 +125,11 @@ export default {
             {
                 'hover:bg-surface-100 dark:bg-surface-800/50': context.selectable && !context.selected
             },
-            'focus:outline-none focus:outline-offset-0 focus:ring-1 focus:ring-primary-500 ring-inset dark:focus:ring-primary-400',
 
             // Transition
             { 'transition duration-200': (props.selectionMode && !context.selected) || props.rowHover }
+
+
         ]
     }),
     headerCell: ({ context, props }) => ({
@@ -173,6 +176,8 @@ export default {
             class: [
                 'font-semibold',
                 'leading-[normal]',
+                'uppercase',
+                'text-sm',
 
                 // Position
                 { 'sticky z-40': context.scrollable && context.scrollDirection === 'both' && context.frozen },
@@ -192,8 +197,8 @@ export default {
                 context?.size === 'small' ? 'py-[0.375rem] px-2' : context?.size === 'large' ? 'py-[0.9375rem] px-5' : 'py-3 px-4',
 
                 // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-highlight' : 'bg-surface-0 text-surface-700 dark:text-white/80 dark:bg-surface-900',
-                'border-surface-200 dark:border-surface-700',
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-100 text-surface-900 dark:bg-highlight' : 'bg-surface-50 text-surface-700 dark:text-white/80 dark:bg-surface-800',
+                'border-surface-200 dark:border-surface-700 ',
 
                 // States
                 { 'hover:bg-surface-100 dark:hover:bg-surface-80/50': (props.sortable === '' || props.sortable) && !context?.sorted },
@@ -208,6 +213,9 @@ export default {
                 }
             ]
         }),
+        columnHeaderContent: {
+            class: 'flex items-center gap-2'
+        },
         bodyCell: ({ context }) => ({
             class: [
                 // Font

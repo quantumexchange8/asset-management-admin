@@ -3,6 +3,7 @@
 use App\Http\Controllers\BrokerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\SelectOptionController;
 use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
@@ -52,6 +53,16 @@ Route::middleware('auth')->group(function () {
             //Finance
             Route::get('/{id_number}/getWalletData', [MemberController::class, 'getWalletData'])->name('member.detail.getWalletData');
             Route::post('walletAdjustment', [MemberController::class, 'walletAdjustment'])->name('member.detail.walletAdjustment');
+        });
+    });
+
+    //referrals
+    Route::prefix('referral')->group(function () {
+        Route::get('/get_referral_list', [ReferralController::class, 'getReferralList'])->name('referral.getReferralList');
+        Route::get('/get_referral_data', [ReferralController::class, 'getReferralData'])->name('referral.getReferralData');
+
+        Route::prefix('detail')->group(function () {
+            Route::get('/{id_number}', [ReferralController::class, 'referralDetail'])->name('referral.detail.referralDetail');
         });
     });
 

@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
 
         $user->setReferralId();
 
-        $id_no = 'LID' . Str::padLeft($user->id - 1, 6, "0");
+        $id_no = 'VTA' . Str::padLeft($user->id - 1, 6, "0");
         $user->id_number = $id_no;
 
         $user->save();

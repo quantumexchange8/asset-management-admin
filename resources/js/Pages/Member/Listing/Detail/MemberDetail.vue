@@ -23,6 +23,7 @@ const home = ref({
     route: route('member.getMemberList')
 
 });
+
 const items = ref([
     { label: props.user.name },
 ]);
@@ -62,7 +63,7 @@ const tabs = ref([
                 </template>
             </Breadcrumb>
 
-            <!-- Customer Info -->
+            <!-- Member Info -->
 
             <div class="flex flex-col lg:flex-row items-center w-full gap-5 self-stretch">
                 <MemberInfo 

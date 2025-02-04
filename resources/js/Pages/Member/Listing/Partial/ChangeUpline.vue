@@ -38,28 +38,28 @@ onMounted(() => {
     getUsers();
 });
 
-// Function to get all descendants of a given user
-const getDescendants = (userId) => {
-    let descendants = [];
+// Function to get all downlines of a given user
+const getDownlines = (userId) => {
+    let downlines = [];
     
-    const findDescendants = (currentUserId) => {
+    const findDownlines = (currentUserId) => {
         users.value.forEach(user => {
             if (user.upline_id === currentUserId) {
-                descendants.push(user.id);
-                findDescendants(user.id); // Recursively find descendants
+                downlines.push(user.id);
+                findDownlines(user.id); // Recursively find downlines
             }
         });
     }
 
-    findDescendants(userId); //check each user in the users.value array to see if they have the current user as their upline
-    return descendants;
+    findDownlines(userId); //check each user in the users.value array to see if they have the current user as their upline
+    return downlines;
 };
 
 const filteredUsers = computed(() => {
-    const descendants = getDescendants(props.member.id);
+    const downlines = getDownlines(props.member.id);
 
     const validUsers = users.value.filter(user => {
-        return user.id !== props.member.id && !descendants.includes(user.id);
+        return user.id !== props.member.id && !downlines.includes(user.id);
     });
 
     // Create a deep copy of validUsers to avoid Vue proxying issues

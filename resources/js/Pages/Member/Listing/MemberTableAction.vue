@@ -11,7 +11,9 @@ import {
     IconDeviceLaptop,
     IconChevronRight,
     IconUserCog,
-    IconUserEdit
+    IconUserEdit,
+    IconHierarchy,
+    IconSitemap
 } from "@tabler/icons-vue";
 import UpgradeRank from "./Partial/UpgradeRank.vue";
 import ChangeUpline from "./Partial/ChangeUpline.vue";
@@ -39,6 +41,8 @@ const items = ref([
         icon: h(IconDeviceLaptop),
     },
     {
+        label: 'Downline Tree',
+        icon: h(IconSitemap),
         label: 'Change Upline',
         icon: h(IconUserEdit),
         command: () => {

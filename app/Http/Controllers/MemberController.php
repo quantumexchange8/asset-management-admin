@@ -248,7 +248,7 @@ class MemberController extends Controller
 
         $user->setReferralId();
 
-        $id_no = 'LID' . Str::padLeft($user->id - 1, 6, "0");
+        $id_no = 'VTA' . Str::padLeft($user->id - 1, 6, "0");
         $user->id_number = $id_no;
         $user->save();
 
@@ -424,26 +424,26 @@ class MemberController extends Controller
             $user->hierarchyList = $newHierarchyList;
             $user->save();
     
-            // Update all descendants' hierarchy lists recursively
-            $this->updateDescendantHierarchy($user->id, $newHierarchyList);
+            // Update all downLines' hierarchy lists recursively
+            $this->updateDownLineHierarchy($user->id, $newHierarchyList);
         }
     
-        return back()->with('toast', 'Hierarchy updated successfully!');
+        return back()->with('toast');
     }
     
-    private function updateDescendantHierarchy($userId, $parentHierarchy)
+    private function updateDownLineHierarchy($userId, $parentHierarchy)
     {
-        // Get all direct descendants of the user
-        $descendants = User::where('upline_id', $userId)->get();
+        // Get all direct downLines of the user
+        $downLines = User::where('upline_id', $userId)->get();
     
-        foreach ($descendants as $descendant) {
-            // Build the new hierarchy list for the descendant
-            $newHierarchyList = $parentHierarchy . "$descendant->upline_id-";
-            $descendant->hierarchyList = $newHierarchyList;
-            $descendant->save();
+        foreach ($downLines as $downLine) {
+            // Build the new hierarchy list for the downLine
+            $newHierarchyList = $parentHierarchy . "$downLine->upline_id-";
+            $downLine->hierarchyList = $newHierarchyList;
+            $downLine->save();
     
-            // Recursively update the descendants of the current descendant
-            $this->updateDescendantHierarchy($descendant->id, $newHierarchyList);
+            // Recursively update the downLines of the current downLine
+            $this->updateDownLineHierarchy($downLine->id, $newHierarchyList);
         }
     }
     

@@ -11,21 +11,21 @@ class RunningNumberSeeder extends Seeder
     {
         RunningNumber::create([
             'type' => 'transaction',
-            'prefix' => 'VA-TXN',
+            'prefix' => 'VTA-TXN',
             'digits' => 7,
             'last_number' => 0,
         ]);
 
         RunningNumber::create([
             'type' => 'bonus_wallet',
-            'prefix' => 'VA-BW',
+            'prefix' => 'VTA-BW',
             'digits' => 7,
             'last_number' => 0,
         ]);
 
         RunningNumber::create([
             'type' => 'cash_wallet',
-            'prefix' => 'VA-CW',
+            'prefix' => 'VTA-CW',
             'digits' => 7,
             'last_number' => 0,
         ]);

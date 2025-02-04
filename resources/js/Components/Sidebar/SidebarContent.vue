@@ -7,7 +7,8 @@ import {
     IconUsers,
     IconClockDollar, 
     IconReportMoney,
-    IconUserDollar
+    IconUserDollar,
+    IconSitemap
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -28,7 +29,7 @@ import { IconUsersGroup } from '@tabler/icons-vue';
             </template>
         </SidebarLink>
 
-        <!-- Customer -->
+        <!-- member -->
         <SidebarCategoryLabel :title="'Member'" />
         <SidebarCollapsible 
             :title="'Member'"
@@ -61,6 +62,22 @@ import { IconUsersGroup } from '@tabler/icons-vue';
                 <IconUsersGroup :size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
+
+        <!-- referrals -->
+        <SidebarCategoryLabel :title="'Referrals'" />
+        <SidebarCollapsible 
+            :title="'Referrals'"
+            :active="route().current('referral.*')"
+        >
+            <template #icon>
+                <IconSitemap :size="20" stroke-width="1.5" />
+            </template>
+            <SidebarCollapsibleItem 
+                :title="'Referrals Tree'" 
+                :href="route('referral.getReferralList')"
+                :active="route().current('referral.getReferralList')"
+            />
+        </SidebarCollapsible>
 
         <!-- Transaction -->
         <SidebarCategoryLabel :title="'Transaction'" />
