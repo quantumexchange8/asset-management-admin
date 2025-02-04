@@ -83,6 +83,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/get_withdrawal_history_data', [TransactionController::class, 'getWithdrawalHistoryData'])->name('transaction.history.getWithdrawalHistoryData');
           
         });
+
+        Route::prefix('pending')->group(function () {
+            Route::get('/get_pending_deposit', [TransactionController::class, 'getPendingDeposit'])->name('transaction.pending.getPendingDeposit');
+            Route::get('/get_pending_deposit_data', [TransactionController::class, 'getPendingDepositData'])->name('transaction.pending.getPendingDepositData');
+            Route::put('/pendingDepositApproval', [TransactionController::class, 'pendingDepositApproval'])->name('transaction.pending.pendingDepositApproval');
+        });
     });
 
     //report

@@ -358,6 +358,19 @@ watchEffect(() => {
                             </Column>
 
                             <Column 
+                                field="from_wallet_id"
+                                style="min-width: 12rem"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">From</span>
+                                </template>
+                                <template #body="{ data }">
+                                    {{ data.from_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
+                                </template>
+                            </Column>
+
+                            <Column 
                                 field="status"
                                 style="min-width: 12rem"
                                 sortable

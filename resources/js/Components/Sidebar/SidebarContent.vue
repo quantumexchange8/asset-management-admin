@@ -83,12 +83,17 @@ import { IconUsersGroup } from '@tabler/icons-vue';
         <SidebarCategoryLabel :title="'Transaction'" />
 
         <!-- Pending -->
-        <SidebarCollapsible :title="'Pending'">
+        <SidebarCollapsible 
+            :title="'Pending'"
+            :active="route().current('transaction.pending.*')"
+        >
             <template #icon>
                 <IconClockDollar :size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem :title="'Deposit'"  href="#"/>
-            <SidebarCollapsibleItem :title="'Withdrawal'"  href="#"/>
+            <SidebarCollapsibleItem 
+                :title="'Deposit'"  
+                :href="route('transaction.pending.getPendingDeposit')"
+            />
         </SidebarCollapsible>
 
         <!-- History -->

@@ -18,7 +18,7 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';    
-import Import from './Import.vue';
+import PendingAction from './PendingAction.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -56,7 +56,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             };
 
             //send sorting/filter detail to BE
-            const url = route('transaction.history.getDepositHistoryData', params);
+            const url = route('transaction.pending.getPendingDepositData', params);
             const response = await fetch(url);
 
             //BE send back result back to FE
@@ -165,11 +165,8 @@ const clearFilterGlobal = () => {
 const getSeverity = (status) => {
     switch (status) {
         
-        case 'success':
-            return 'success';
-        
-        case 'rejected':
-            return 'danger';
+        case 'pending':
+            return 'info';
     }
 };
 
@@ -192,7 +189,7 @@ const exportDeposit = () => {
         exportStatus: true,
     };
 
-    const url = route('transaction.history.getDepositHistoryData', params);
+    const url = route('transaction.pending.getPendingDepositData', params);
 
     try {
         window.location.href = url;
@@ -212,7 +209,7 @@ watchEffect(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Deposit History'">
+    <AuthenticatedLayout :title="'Pending Deposit'">
         <Card>
             <template #content>
                 <div class="w-full">
@@ -282,8 +279,6 @@ watchEffect(() => {
                                         <span class="pr-1">Export</span>
                                         <IconDownload size="16" stroke-width="1.5"/>
                                     </Button>
-                                
-                                    <Import />
                                 </div>
                             </div>
                         </template>
@@ -328,6 +323,9 @@ watchEffect(() => {
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.user.name }}
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ data.user.email }}
+                                    </div>
                                 </template>
                             </Column>
 
@@ -400,6 +398,18 @@ watchEffect(() => {
                                     </div>
                                 </template> 
                             </Column>
+
+                            <Column
+                                    field="action"
+                                    header="action"
+                                >
+                                    <template #body="{data}">
+                                        <PendingAction 
+                                            :pending="data"
+                                           
+                                        />
+                                    </template>
+                                </Column>
                         </template>
                     </DataTable>
                 </div>

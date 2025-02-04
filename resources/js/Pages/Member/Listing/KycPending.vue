@@ -17,7 +17,6 @@ import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
-import { usePage } from '@inertiajs/vue3';
 import KycAction from './Partial/KycAction.vue';
 
 const isLoading = ref(false);
@@ -199,15 +198,9 @@ const getSeverity = (status) => {
 
 // Define a method to refresh the table
 const refreshTable = () => {
-    console.log('Refreshing the table...');
     loadLazyData();
 };
 
-// watchEffect(() => {
-//     if (usePage().props.toast !== null) {
-//         loadLazyData();
-//     }
-// });
 </script>
 
 <template>

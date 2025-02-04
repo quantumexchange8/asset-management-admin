@@ -343,9 +343,9 @@ watchEffect(() => {
                                 <span class="block">date</span>
                             </template>
                             <template #body="{ data }">
-                                {{ dayjs(data.date).format('YYYY-MM-DD') }}
+                                {{ data.date ? dayjs(data.date).format('YYYY-MM-DD') : 'N/A' }}
                                 <div class="text-xs text-gray-500 mt-1">
-                                    {{ dayjs(data.date).add(8, 'hour').format('hh:mm:ss A') }}
+                                    {{ data.date ? dayjs(data.date).add(8, 'hour').format('hh:mm:ss A') : 'N/A' }}
                                 </div>
                             </template>
                         </Column>
