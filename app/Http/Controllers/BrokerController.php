@@ -42,6 +42,29 @@ class BrokerController extends Controller
                 $query->where('status', $data['filters']['status']['value']);
             }
 
+            //sort order
+            if ($data['sortOrder']) {
+                $sortType = $data['sortOrder'];
+                switch ($sortType) {
+                    case 'latest':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+
+                    case 'largest_fund':
+                        $query->orderBy('created_at', 'asc');
+                        break;
+
+                    case 'most_investors':
+                        $query->orderBy('created_at', 'desc');
+                        break;
+                        
+                    default:
+                        return response()->json(['error' => 'Invalid filter'], 400);
+                }
+            } else {
+                $query->latest();
+            }
+
             $brokers = $query->paginate($data['rows']);
 
             foreach ($brokers as $broker) {
@@ -157,7 +180,8 @@ class BrokerController extends Controller
         // return redirect()->back()->with('toast');
     }
 
-    public function updateBrokerStatus(Request $request) {
+    public function updateBrokerStatus(Request $request)
+    {
         $broker = Broker::find($request->id);
 
         $broker->status = $broker->status == 'active' ? 'inactive' : 'active';

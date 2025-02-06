@@ -35,6 +35,7 @@ const totalRecords = ref(0);
 const selectedSort = ref('latest');
 
 const sortOptions = ref([
+    'latest',
     'largest_fund',
     'most_investors',
 ]);
@@ -58,6 +59,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //pagination, filter, sorting detail done by user through the event are pass into the params
             const params = { //define query parameters for API
                 page: JSON.stringify(event?.page + 1),
+                sortOrder: event?.sortOrder,
                 include: [], //an empty array for additional query parameters
                 lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
             };
@@ -86,6 +88,11 @@ const onPage = (event) => {
     loadLazyData(event);
 };
 
+const onSort = (event) => {
+    lazyParams.value = event;
+    loadLazyData(event);
+};
+
 const onFilter = (event) => {
     lazyParams.value.fitlers = filters.value;
     loadLazyData(event);
@@ -103,9 +110,15 @@ onMounted(() => {
     lazyParams.value = {
         first: first.value, // Start from the first record
         rows: rows.value, // Rows per page
+        sortOrder: selectedSort.value,
         filters: filters.value,
     };
     loadLazyData({ first: first.value, rows: rows.value });
+});
+
+watch(selectedSort, (newSort) => {
+    lazyParams.value.sortOrder = newSort; 
+    loadLazyData({ first: first.value, rows: rows.value, sortOrder: newSort });
 });
 
 watch(
@@ -246,6 +259,7 @@ watchEffect(() => {
     <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-5 self-stretch mx-auto max-w-[1920px]">
         <Card 
             @filter="onFilter($event)"
+            @sort="onSort($event)"
             class="w-full relative"
             style="overflow: hidden; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
             v-for="broker in brokers"
