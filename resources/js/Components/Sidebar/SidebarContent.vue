@@ -5,136 +5,132 @@ import SidebarCollapsibleItem from '@/Components/Sidebar/SidebarCollapsibleItem.
 import {
     IconLayoutDashboard,
     IconUsers,
-    IconClockDollar, 
+    IconClockDollar,
     IconReportMoney,
     IconUserDollar,
     IconSitemap
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
-import { IconUsersGroup } from '@tabler/icons-vue';
-
 </script>
 
 <template>
     <ScrollPanel style="flex: 1; width: 100%;" class="h-full">
         <!-- Dashboard -->
-        <SidebarLink 
-            :title="'Dashboard'" 
+        <SidebarLink
+            title="dashboard"
             :href="route('dashboard')"
             :active="route().current('dashboard')"
         >
             <template #icon>
-                <IconLayoutDashboard :size="20" stroke-width="1.5" />
+                <IconLayoutDashboard size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 
-        <!-- member -->
-        <SidebarCategoryLabel :title="'Member'" />
-        <SidebarCollapsible 
-            :title="'Member'"
+        <!-- Member -->
+        <SidebarCategoryLabel title="member" />
+        <SidebarCollapsible
+            title="member"
             :active="route().current('member.*')"
         >
             <template #icon>
-                <IconUsers :size="20" stroke-width="1.5" />
+                <IconUsers size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem 
-                :title="'Member Listing'" 
+            <SidebarCollapsibleItem
+                title="member_listing"
                 :href="route('member.getMemberList')"
                 :active="route().current('member.getMemberList')"
             />
-
-            <SidebarCollapsibleItem 
-                :title="'Pending KYC'" 
+            <SidebarCollapsibleItem
+                title="pending_kyc"
                 :href="route('member.getPendingKyc')"
                 :active="route().current('member.getPendingKyc')"
             />
-        </SidebarCollapsible>
-        
-
-        <!-- Broker -->
-        <SidebarLink 
-            :title="'Broker'" 
-            :href="route('broker.getBrokerList')"
-            :active="route().current('broker.getBrokerList')"
-        >
-            <template #icon>
-                <IconUsersGroup :size="20" stroke-width="1.5" />
-            </template>
-        </SidebarLink>
-
-        <!-- referrals -->
-        <SidebarCategoryLabel :title="'Referrals'" />
-        <SidebarCollapsible 
-            :title="'Referrals'"
-            :active="route().current('referral.*')"
-        >
-            <template #icon>
-                <IconSitemap :size="20" stroke-width="1.5" />
-            </template>
-            <SidebarCollapsibleItem 
-                :title="'Referrals Tree'" 
+            <SidebarCollapsibleItem
+                title="member_referrals"
                 :href="route('referral.getReferralList')"
                 :active="route().current('referral.getReferralList')"
             />
         </SidebarCollapsible>
 
+        <!-- Marketplace -->
+        <SidebarCategoryLabel title="marketplace" />
+        <!-- Broker -->
+        <SidebarLink
+            title="broker"
+            :href="route('broker.getBrokerList')"
+            :active="route().current('broker.getBrokerList')"
+        >
+            <template #icon>
+                <IconHomeDollar size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
+        <!-- Connections -->
+        <SidebarCollapsible
+            title="connections"
+            :active="route().current('connection.*')"
+        >
+            <template #icon>
+                <IconHomeShare size="20" stroke-width="1.5" />
+            </template>
+            <SidebarCollapsibleItem
+                title="broker_connection"
+                :href="route('connection.broker_connection')"
+                :active="route().current('connection.broker_connection')"
+            />
+        </SidebarCollapsible>
+
         <!-- Transaction -->
-        <SidebarCategoryLabel :title="'Transaction'" />
+        <SidebarCategoryLabel title="transaction" />
 
         <!-- Pending -->
-        <SidebarCollapsible 
-            :title="'Pending'"
+        <SidebarCollapsible
+            title="pending"
             :active="route().current('transaction.pending.*')"
         >
             <template #icon>
-                <IconClockDollar :size="20" stroke-width="1.5" />
+                <IconClockDollar size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem 
-                :title="'Deposit'"  
+            <SidebarCollapsibleItem
+                title="deposit"
                 :href="route('transaction.pending.getPendingDeposit')"
             />
         </SidebarCollapsible>
 
         <!-- History -->
-        <SidebarCollapsible 
-            :title="'History'"
+        <SidebarCollapsible
+            title="history"
             :active="route().current('transaction.history.*')"
         >
             <template #icon>
-                <IconClockDollar :size="20" stroke-width="1.5" />
+                <IconReportMoney size="20" stroke-width="1.5" />
             </template>
 
-            <SidebarCollapsibleItem 
-                :title="'Deposit'"  
+            <SidebarCollapsibleItem
+                title="deposit"
                 :href="route('transaction.history.getDepositHistory')"
                 :active="route().current('transaction.history.getDepositHistory')"
             />
-            
-            <SidebarCollapsibleItem 
-                :title="'Withdrawal'"  
+
+            <SidebarCollapsibleItem
+                title="withdrawal"
                 :href="route('transaction.history.getWithdrawalHistory')"
                 :active="route().current('transaction.history.getWithdrawalHistory')"
             />
         </SidebarCollapsible>
 
         <!-- Commissions -->
-        <SidebarCategoryLabel :title="'Reports'"/>
+        <SidebarCategoryLabel title="reports" />
 
-        <SidebarCollapsible
-            :title="'Commissions'"
-            :active="route().current('report.*')"
+        <SidebarLink
+            title="rebate_bonus"
+            :href="route('report.getCommissionsList')"
+            :active="route().current('report.getCommissionsList')"
         >
             <template #icon>
-                <IconUserDollar :size="20" stroke-width="1.5" />
+                <IconUserDollar size="20" stroke-width="1.5" />
             </template>
-
-            <SidebarCollapsibleItem 
-                :title="'Commission Listing'"
-                :href="route('report.getCommissionsList')"
-                :active="route().current('report.getCommissionsList')"
-            />
-
-        </SidebarCollapsible>
+        </SidebarLink>
     </ScrollPanel>
 </template>

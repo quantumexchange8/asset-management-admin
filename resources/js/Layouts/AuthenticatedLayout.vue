@@ -10,8 +10,7 @@ defineProps({
 </script>
 
 <template>
-
-    <Head :title="title"></Head>
+    <Head :title="$t(`public.${title}`)"></Head>
 
     <div class="min-h-screen bg-surface-50 dark:bg-surface-ground">
         <!-- Sidebar -->
@@ -24,13 +23,13 @@ defineProps({
             },
         ]">
             <!-- Navbar -->
-            <Navbar :title="title" />
+            <Navbar :title="$t(`public.${title}`)" />
 
             <!-- Page Content -->
             <main class="flex flex-1 justify-center items-start px-3 pt-3 pb-12 md:px-5 md:pt-5">
                 <div class="w-full">
                       <!-- Toast -->
-                    <Toast/>
+                    <Toast />
                     <slot />
                 </div>
             </main>

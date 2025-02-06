@@ -16,6 +16,6 @@ defineProps({
                 !sidebarState.isOpen,
         }"
     >
-        {{ title }}
+        {{ $t(`public.${title}`) }}
     </div>
 </template>

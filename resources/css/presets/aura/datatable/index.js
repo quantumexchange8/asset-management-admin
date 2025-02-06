@@ -145,7 +145,7 @@ export default {
         bodyCell: ({ props, context, state, parent }) => ({
             class: [
                 // Font
-                'leading-[normal]',
+                'text-sm leading-[normal]',
 
                 //Position
                 { 'sticky box-border border-b': parent.instance.frozenRow },

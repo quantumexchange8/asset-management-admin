@@ -43,7 +43,15 @@ const Tag = !props.external ? Link : 'a'
             },
         ]"
     >
-        <div class="max-w-5 text-primary">
+        <div
+            :class="[
+                'max-w-5',
+                {
+                    'text-primary-500 dark:text-primary-300': active,
+                    'text-surface-700 dark:text-surface-500': !active,
+                },
+            ]"
+        >
             <slot name="icon">
                 <IconCircle
                     size="20"
@@ -56,7 +64,7 @@ const Tag = !props.external ? Link : 'a'
                 class="text-sm font-medium w-full"
                 v-show="sidebarState.isOpen || sidebarState.isHovered"
             >
-                {{ title }}
+                {{ $t(`public.${title}`) }}
             </span>
             <Badge
                 v-if="pendingCounts > 0 && (sidebarState.isOpen || sidebarState.isHovered)"
@@ -80,7 +88,15 @@ const Tag = !props.external ? Link : 'a'
             },
         ]"
     >
-        <div class="max-w-5 text-primary">
+        <div
+            :class="[
+                'max-w-5',
+                {
+                    'text-primary-500 dark:text-primary-300': active,
+                    'text-surface-700 dark:text-surface-500': !active,
+                },
+            ]"
+        >
             <slot name="icon">
                 <IconCircle
                     size="20"
@@ -92,7 +108,7 @@ const Tag = !props.external ? Link : 'a'
             class="text-sm font-medium dark:text-white"
             v-show="sidebarState.isOpen || sidebarState.isHovered"
         >
-            {{ title }}
+            {{ $t(`public.${title}`) }}
         </span>
         <slot name="arrow" />
     </button>

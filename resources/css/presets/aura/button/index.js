@@ -81,7 +81,7 @@ export default {
 
             // Info Button
             {
-                'text-white dark:text-surface-900': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
+                'text-white': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
                 'bg-blue-500 dark:bg-blue-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain,
                 'border border-blue-500 dark:border-blue-400': props.severity === 'info' && !props.text && !props.outlined && !props.plain
             },

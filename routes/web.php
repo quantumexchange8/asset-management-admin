@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrokerController;
+use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
@@ -66,6 +67,27 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    /**
+     * ==============================
+     *          Marketplace
+     * ==============================
+     */
+    Route::prefix('marketplace')->group(function () {
+        /**
+         * ==============================
+         *          Connections
+         * ==============================
+         */
+        Route::prefix('connections')->group(function () {
+            Route::get('pending_connection');
+            Route::get('broker_connection', [ConnectionController::class, 'broker_connection'])->name('connection.broker_connection');
+            Route::get('getConnections', [ConnectionController::class, 'getConnections'])->name('connection.getConnections');
+            Route::get('/download_import_example', [ConnectionController::class, 'download_import_example'])->name('connection.download_import_example');
+
+            Route::post('/importBrokerConnection', [ConnectionController::class, 'importBrokerConnection'])->name('connection.importBrokerConnection');
+        });
+    });
+
     //Transaction
     Route::prefix('transaction')->group(function () {
 
@@ -74,14 +96,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/get_deposit_history', [TransactionController::class, 'getDepositHistory'])->name('transaction.history.getDepositHistory');
             Route::get('/get_deposit_history_data', [TransactionController::class, 'getDepositHistoryData'])->name('transaction.history.getDepositHistoryData');
             Route::post('/import-deposit-history', [TransactionController::class, 'importDepositHistory'])->name('transaction.history.importDepositHistory');
-            Route::get('/download-template', function () {
-                $filePath = public_path('/VoltAsia_Deposit_History_Import_Template.xlsx');
-                return response()->download($filePath);
-            });
 
             Route::get('/get_withdrawal_history', [TransactionController::class, 'getWithdrawalHistory'])->name('transaction.history.getWithdrawalHistory');
             Route::get('/get_withdrawal_history_data', [TransactionController::class, 'getWithdrawalHistoryData'])->name('transaction.history.getWithdrawalHistoryData');
-          
+
         });
 
         Route::prefix('pending')->group(function () {
@@ -107,7 +125,7 @@ Route::middleware('auth')->group(function () {
 
     //broker
     Route::prefix('broker')->group(function () {
-        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList'); 
+        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
         Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
         Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
 

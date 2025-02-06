@@ -77,9 +77,7 @@ const leave = (el) => {
         >
             <div
                 class="overflow-hidden transition-all duration-200 max-h-0"
-                v-show="
-                    isOpen
-                "
+                v-show="isOpen"
             >
                 <ul
                     class="relative w-full"

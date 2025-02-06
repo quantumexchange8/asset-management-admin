@@ -35,17 +35,26 @@ const Tag = external ? 'a' : Link
                 'p-2.5 flex gap-3 items-center hover:text-primary-500 dark:hover:text-primary-300 w-full',
                 {
                     'text-primary-500 dark:text-primary-300': active,
-                    'text-surface-700': !active,
+                    'text-surface-700 dark:text-surface-500': !active,
                 },
             ]"
         >
-            <div class="pl-8 flex items-center justify-center">
+            <div class="pl-6 flex items-center justify-center">
                 <IconCircle
                     size="10"
                 />
             </div>
-            <div v-show="sidebarState.isOpen" class="font-medium dark:text-white">
-                {{ title }}
+            <div
+                v-show="sidebarState.isOpen"
+                :class="[
+                    'font-medium',
+                    {
+                        'text-primary-500 dark:text-primary-300': active,
+                        'text-surface-700 dark:text-surface-300': !active,
+                    },
+                ]"
+            >
+                {{ $t(`public.${title}`) }}
             </div>
         </component>
     </li>

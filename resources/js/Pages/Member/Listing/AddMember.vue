@@ -47,10 +47,11 @@ const getCountries = async () => {
     }
 }
 
-onMounted(() => {
+const openDialog = () => {
+    visible.value = true;
     getUsers();
     getCountries();
-});
+}
 
 const form = useForm({
     name: '',
@@ -82,8 +83,9 @@ const submitForm = () => {
 
     form.post(route('member.addNewMember'), {
         onSuccess: () => {
-            visible.value = false;
+            closeDialog();
             form.reset();
+
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -97,10 +99,19 @@ const submitForm = () => {
     })
 }
 
+const closeDialog = () => {
+    visible.value = false;
+    selectedUpline.value = null;
+    selectedCountry.value = null;
+    selectedPhoneCode.value = null;
+}
 </script>
 
 <template>
-    <Button class="w-full md:w-auto" @click="visible = true">
+    <Button
+        class="w-full md:w-auto"
+        @click="openDialog"
+    >
         <IconUserPlus size="16" />
         <span class="pl-2">Add Member</span>
     </Button>
@@ -116,7 +127,7 @@ const submitForm = () => {
                       <InputLabel for="name" value="Name"/>
                       <InputIconWrapper>
                             <template #icon>
-                                <IconUser :size="20" stroke-width="1.5"/> 
+                                <IconUser :size="20" stroke-width="1.5"/>
                             </template>
 
                             <InputText
@@ -166,7 +177,7 @@ const submitForm = () => {
                                 :invalid="!!form.errors.username"
                         />
                         </InputIconWrapper>
-                        
+
                         <InputError :message="form.errors.username"/>
                     </div>
 
@@ -195,7 +206,7 @@ const submitForm = () => {
                             </template>
                         </Select>
                         </InputIconWrapper>
-                        <InputError :message="form.errors.upline" />    
+                        <InputError :message="form.errors.upline" />
                     </div>
 
                     <div class="space-y-2">
@@ -231,7 +242,7 @@ const submitForm = () => {
                         </InputIconWrapper>
                         <InputError :message="form.errors.country" />
                     </div>
-                    
+
                     <div class="space-y-2">
                         <InputLabel value="Phone Number" for="phone"/>
                         <div class="flex gap-2 items-center self-stretch relative">
@@ -268,8 +279,8 @@ const submitForm = () => {
                                     </template>
                                 </Select>
                             </InputIconWrapper>
-                            
-                            <InputText 
+
+                            <InputText
                                 id="phone"
                                 type="text"
                                 class="block w-full"
@@ -295,7 +306,7 @@ const submitForm = () => {
                                 <IconLock :size="20" stroke-width="1.5" />
                             </template>
 
-                            <Password 
+                            <Password
                                 v-model="form.password"
                                 :invalid="!!form.errors.password"
                                 class="block w-full"
@@ -315,7 +326,7 @@ const submitForm = () => {
                                 <IconLock :size="20" stroke-width="1.5"/>
                             </template>
 
-                            <Password 
+                            <Password
                                 v-model="form.password_confirmation"
                                 :invalid="!!form.errors.password"
                                 class="block w-full"
@@ -328,8 +339,17 @@ const submitForm = () => {
             </div>
 
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                <Button type="submit" label="Save" :disabled="form.processing"></Button>
+                <Button
+                    type="button"
+                    :label="$t('public.cancel')"
+                    severity="secondary"
+                    @click="closeDialog"
+                />
+                <Button
+                    type="submit"
+                    :label="$t('public.save')"
+                    :disabled="form.processing"
+                />
             </div>
         </form>
     </Dialog>
