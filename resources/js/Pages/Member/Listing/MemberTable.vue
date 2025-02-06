@@ -28,6 +28,7 @@ const totalRecords = ref(0);
 //filteration type and methods
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    referrer: { value: null, matchMode: FilterMatchMode.EQUALS },
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     country: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -109,6 +110,23 @@ watch(selectedDate, (newDateRange) => {
     }
 });
 
+//referrer filter
+const upline = ref();
+const loadingUpline = ref(false);
+
+const getUpline = async () => {
+    loadingUpline.value = true;
+    try {
+        const response = await axios.get('/get_uplines');
+        upline.value = response.data.uplines;
+        console.log(response.data.uplines);
+    } catch (error) {
+        console.error('Error fetching countries:', error);
+    } finally {
+        loadingUpline.value = false;
+    }
+}
+
 //Country Filter
 const countries = ref();
 const loadingCountries = ref(false);
@@ -150,6 +168,7 @@ const toggle = (event) => {
     op.value.toggle(event);
     getCountries();
     getRanks();
+    getUpline();
 };
 
 //set a initial parameters when page first loaded then call loadLazyData to send initial parameters to BE
@@ -173,7 +192,7 @@ watch(
 )
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
-watch([filters.value['country'], filters.value['rank'], filters.value['status']], () => {
+watch([filters.value['country'], filters.value['rank'], filters.value['status'], filters.value['referrer']], () => {
     loadLazyData();
 });
 
@@ -185,6 +204,7 @@ const clearAll = () => {
     filters.value['country'].value = null;
     filters.value['rank'].value = null;
     filters.value['status'].value = null;
+    filters.value['referrer'].value = null;
     selectedDate.value = [];
 };
 
@@ -435,6 +455,34 @@ watchEffect(() => {
 
     <Popover ref="op">
         <div class="flex flex-col gap-6 w-60">
+            <!-- Filter Referrer -->
+            <div class="flex flex-col gap-2 items-center self-stretch">
+                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                    Filter By Referrer
+                </div>
+                <Select
+                    v-model="filters['referrer'].value"
+                    :options="upline"
+                    optionLabel="name"
+                    placeholder="Select Referrer"
+                    filter
+                    :filter-fields="['name']"
+                    :loading="loadingUpline"
+                    class="w-full"
+                    showClear
+                >
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value" class="flex items-center">
+                            {{ slotProps.value.name }}
+                        </div>
+                        <span v-else>{{ slotProps.placeholder }}</span>
+                    </template>
+                    <template #option="slotProps">          
+                        <div>{{ slotProps.option.name }}</div>
+                    </template>
+                </Select>
+            </div>
+
             <!-- Filter Date -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">

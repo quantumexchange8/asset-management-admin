@@ -1,16 +1,25 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
-import { IconLinkPlus, IconUserDollar, IconUsersPlus } from '@tabler/icons-vue';
+import { IconExclamationCircle, IconLinkPlus, IconUserDollar, IconUsersPlus } from '@tabler/icons-vue';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import FileUpload from 'primevue/fileupload';
 import { useToast } from 'primevue/usetoast';
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
 import { ref } from 'vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+
+const props = defineProps({
+    locales: Array,
+})
 
 const visible = ref(false);
 
@@ -19,17 +28,15 @@ const onSelectedBrokerImage = (event) => {
     form.broker_image = event.target.files[0];
 };
 
-const onSelectedQrImage = (event) => {
-    form.broker_qr_image = event.target.files[0];
-}
-
 const form = useForm({
+    locales: props.locales,
     name: '',
-    description: '',
+    description_translation: {
+        en: '',
+    },
     note: '',
     url: '',
     broker_image: null,
-    broker_qr_image: null,
 });
 
 const toast = useToast();
@@ -110,33 +117,53 @@ const submitForm = () => {
                     </div>
 
                     <div class="space-y-2">
-                        <InputLabel for="description" value="Description"/>
-                        <Textarea
-                            id="description"
-                            type="text"
-                            class="block w-full"
-                            v-model="form.description"
-                            placeholder="Description"
-                            :invalid="!!form.errors.description"
-                            rows="7"
-                            cols="30"
-                        />
-                        <InputError :message="form.errors.description"/>
-                    </div>
-
-                    <div class="space-y-2">
-                        <InputLabel for="note" value="Note"/>
-                        <Textarea
-                            id="note"
-                            type="text"
-                            class="block w-full"
-                            v-model="form.note"
-                            placeholder="Note"
-                            :invalid="!!form.errors.note"
-                            rows="7"
-                            cols="30"
-                        />
-                        <InputError :message="form.errors.note"/>
+                        <div class="card">
+                            <Tabs :value="locales[0]">
+                                <TabList>
+                                    <Tab 
+                                        v-for="locale in locales"
+                                        :key="locale"
+                                        :value="locale"
+                                    >
+                                    <div class="flex items-center gap-2">
+                                        {{ $t(`public.${locale}`) }}
+                                        
+                                        <!-- Show error icon if there's a validation error -->
+                                        <IconExclamationCircle
+                                            v-if="form.errors[`description_translation.${locale}`]"
+                                            size="20"
+                                            stroke-width="1.5"
+                                            class="text-red-500"
+                                        />
+                                    </div>
+                                    </Tab>
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel
+                                        v-for="locale in form.locales"
+                                        :key="'input-' + locale"
+                                        :value="locale"
+                                    >
+                                        <InputLabel 
+                                            :for="'description' + locale"
+                                            :value="`Description (${$t(`public.${locale}`)})`"
+                                            class="mb-2"
+                                        />
+                                        <Textarea 
+                                           :id="'description_' + locale"
+                                            type="text"
+                                            class="block w-full"
+                                            v-model="form.description_translation[locale]"
+                                            :placeholder="`Description (${$t(`public.${locale}`)})`"
+                                            :invalid="!!form.errors[`description_translation.${locale}`]"
+                                            rows="7"
+                                            cols="30"
+                                        />
+                                        <InputError :message="form.errors[`description_translation.${locale}`]" />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
@@ -152,22 +179,7 @@ const submitForm = () => {
                             />
                         </div>
                         <InputError :message="form.errors.broker_image" />
-                    </div>
-
-                    <div class="space-y-2">
-                        <InputLabel for="broker_qr_image" value="QR Code"/>
-                        <div class="flex justify-start">
-                            <FileUpload
-                                name="broker_qr_image"
-                                :multiple="false"
-                                accept="image/*"
-                                @input="onSelectedQrImage"
-                                mode="basic"
-                                chooseLabel="Choose Image"
-                            />
-                        </div>
-                        <InputError :message="form.errors.broker_qr_image" />
-                    </div>
+                    </div> 
                 </div>
             </div>
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">

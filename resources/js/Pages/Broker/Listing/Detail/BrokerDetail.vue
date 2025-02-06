@@ -8,7 +8,6 @@ import BrokerInfo from './BrokerInfo.vue';
 const props = defineProps({
     broker: Object,
     broker_image: Array,
-    broker_qr_image: Array,
 });
 
 const home = ref({
@@ -38,7 +37,6 @@ const items = ref([
                 <BrokerInfo 
                     :broker="props.broker"
                     :broker_image="props.broker_image"
-                    :broker_qr_image="props.broker_qr_image"
                 />
             </div>
         </div>

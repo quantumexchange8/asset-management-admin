@@ -16,13 +16,14 @@ import { IconXboxX, IconX, IconSearch, IconAdjustments, IconDownload } from '@ta
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
-import { FilterMatchMode } from '@primevue/core/api';
-import PendingDepositAction from './PendingDepositAction.vue';
+import { FilterMatchMode } from '@primevue/core/api'; 
+import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
+
 
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
-const depositHistory = ref([]);
+const withdrawalHistory = ref([]);
 const totalRecords= ref(0);
 
 //filteration type and methods
@@ -55,23 +56,23 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             };
 
             //send sorting/filter detail to BE
-            const url = route('transaction.pending.getPendingDepositData', params);
+            const url = route('transaction.pending.getPendingWithdrawalData', params);
             const response = await fetch(url);
 
             //BE send back result back to FE
             const results = await response.json();
-            depositHistory.value = results?.data?.data;
+            withdrawalHistory.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
             isLoading.value = false;
         }, 100);
     } catch (e) {
-        depositHistory.value = [];
+        withdrawalHistory.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
 };
 
-// get deposit filter,paginate,sorting input and pass to the event of lazyParams into each const then to loadLazyData
+// get withdrawal filter,paginate,sorting input and pass to the event of lazyParams into each const then to loadLazyData
 const onPage = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
@@ -173,7 +174,7 @@ const getSeverity = (status) => {
 const exportTable = ref('no');
 
 const exportStatus = ref(false);
-const exportDeposit = () => {
+const exportWithdrawal = () => {
     exportStatus.value = true;
     isLoading.value = true;
 
@@ -188,7 +189,7 @@ const exportDeposit = () => {
         exportStatus: true,
     };
 
-    const url = route('transaction.pending.getPendingDepositData', params);
+    const url = route('transaction.pending.getPendingWithdrawalData', params);
 
     try {
         window.location.href = url;
@@ -207,12 +208,12 @@ const refreshTable = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Pending Deposit'">
+    <AuthenticatedLayout :title="'Pending Withdrawal'">
         <Card>
             <template #content>
                 <div class="w-full">
                     <DataTable 
-                        :value="depositHistory" 
+                        :value="withdrawalHistory" 
                         lazy
                         paginator 
                         removableSort
@@ -271,7 +272,7 @@ const refreshTable = () => {
                                     <!-- Export button -->
                                     <Button 
                                         class="w-full md:w-auto flex justify-center items-center" 
-                                        @click="exportDeposit"
+                                        @click="exportWithdrawal"
                                         :disabled="exportTable==='yes'"
                                     >
                                         <span class="pr-1">Export</span>
@@ -283,7 +284,7 @@ const refreshTable = () => {
 
                         <template #empty>
                             <div class="flex flex-col">
-                                <span>No deposit</span>
+                                <span>No withdrawal</span>
                             </div>
                         </template>
 
@@ -292,12 +293,12 @@ const refreshTable = () => {
                                 <ProgressSpinner
                                     strokeWidth="4"
                                 />
-                                <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">Loading deposit data. Please wait. </span>
-                                <span v-else class="text-sm text-gray-700 dark:text-gray-300">Exporting Deposit History</span>
+                                <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">Loading withdrawal data. Please wait. </span>
+                                <span v-else class="text-sm text-gray-700 dark:text-gray-300">Exporting Withdrawal History</span>
                             </div>
                         </template>
 
-                        <template v-if="depositHistory?.length > 0">
+                        <template v-if="withdrawalHistory?.length > 0">
                             <Column 
                                 field="transaction_number"
                                 style="min-width: 12rem"
@@ -355,15 +356,15 @@ const refreshTable = () => {
                             </Column>
 
                             <Column 
-                                field="to_wallet_id"
+                                field="from_wallet_id"
                                 style="min-width: 12rem"
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">to</span>
+                                    <span class="block">from</span>
                                 </template>
                                 <template #body="{ data }">
-                                    {{ data.to_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
+                                    {{ data.from_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
                                 </template>
                             </Column>
 
@@ -398,16 +399,16 @@ const refreshTable = () => {
                             </Column>
 
                             <Column
-                                field="action"
-                                header="action"
-                            >
-                                <template #body="{data}">
-                                    <PendingDepositAction 
-                                        :pending="data"
-                                        @pendingDepositActionCompleted="refreshTable"
-                                    />
-                                </template>
-                            </Column>
+                                    field="action"
+                                    header="action"
+                                >
+                                    <template #body="{data}">
+                                        <PendingWithdrawalAction 
+                                            :pending="data"
+                                            @pendingWithdrawalActionCompleted="refreshTable"
+                                        />
+                                    </template>
+                                </Column>
                         </template>
                     </DataTable>
                 </div>

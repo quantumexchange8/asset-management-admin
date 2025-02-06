@@ -94,6 +94,11 @@ import { IconUsersGroup } from '@tabler/icons-vue';
                 :title="'Deposit'"  
                 :href="route('transaction.pending.getPendingDeposit')"
             />
+
+            <SidebarCollapsibleItem 
+                :title="'Withdrawal'"  
+                :href="route('transaction.pending.getPendingWithdrawal')"
+            />
         </SidebarCollapsible>
 
         <!-- History -->
