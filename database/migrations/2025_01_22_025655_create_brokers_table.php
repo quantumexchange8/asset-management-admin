@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->longText('description')->nullable();
-            $table->longText('note')->nullable();
             $table->string('url');
+            $table->string('status')->default('active');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
             $table->softDeletes();

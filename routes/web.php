@@ -12,10 +12,19 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Redirect::route('login');
+});
+
+Route::get('locale/{locale}', function ($locale) {
+    App::setLocale($locale);
+    Session::put("locale", $locale);
+
+    return redirect()->back();
 });
 
 Route::get('/dashboard', function () {
@@ -25,6 +34,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     //select option
     Route::get('/get_users', [SelectOptionController::class, 'getUsers'])->name('getUsers');
+    Route::get('/get_uplines', [SelectOptionController::class, 'getUplines'])->name('getUplines');
     Route::get('/get_countries', [SelectOptionController::class, 'getCountries'])->name('getCountries');
     Route::get('/get_ranks', [SelectOptionController::class, 'getRanks'])->name('getRanks');
     Route::get('/get_brokers', [SelectOptionController::class, 'getBrokers'])->name('getBrokers');
@@ -106,6 +116,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/get_pending_deposit', [TransactionController::class, 'getPendingDeposit'])->name('transaction.pending.getPendingDeposit');
             Route::get('/get_pending_deposit_data', [TransactionController::class, 'getPendingDepositData'])->name('transaction.pending.getPendingDepositData');
             Route::put('/pendingDepositApproval', [TransactionController::class, 'pendingDepositApproval'])->name('transaction.pending.pendingDepositApproval');
+            Route::get('/get_pending_withdrawal', [TransactionController::class, 'getPendingWithdrawal'])->name('transaction.pending.getPendingWithdrawal');
+            Route::get('/get_pending_withdrawal_data', [TransactionController::class, 'getPendingWithdrawalData'])->name('transaction.pending.getPendingWithdrawalData');
+            Route::put('/pendingWithdrawalApproval', [TransactionController::class, 'pendingWithdrawalApproval'])->name('transaction.pending.pendingWithdrawalApproval');
         });
     });
 
@@ -125,6 +138,10 @@ Route::middleware('auth')->group(function () {
 
     //broker
     Route::prefix('broker')->group(function () {
+        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
+
+        Route::put('/updateBrokerStatus', [BrokerController::class, 'updateBrokerStatus'])->name('broker.updateBrokerStatus');
+
         Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
         Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
         Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');

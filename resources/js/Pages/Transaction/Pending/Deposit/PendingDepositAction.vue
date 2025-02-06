@@ -31,6 +31,8 @@ const form = useForm({
     remarks: '',
 });
 
+const emit = defineEmits(['pendingDepositActionCompleted']);
+
 const submitForm = () => {
     form.action = dialogType.value;
     form.put(route('transaction.pending.pendingDepositApproval'), {
@@ -52,8 +54,8 @@ const submitForm = () => {
                     life: 3000,
                 });
             }
-            // // Emit the custom event to parent
-            // emit('kycActionCompleted');
+            // Emit the custom event to parent
+            emit('pendingDepositActionCompleted');
         },
         onError: (errors) => {
             console.error(errors);
@@ -190,6 +192,7 @@ const imagesToDisplay = computed(() => {
         </div>
 
         <div v-if="dialogType === 'reject'" class="space-y-2">
+            <Divider />
             <InputLabel for="remarks" value="Remarks" />
             <Textarea 
                 id="remarks"

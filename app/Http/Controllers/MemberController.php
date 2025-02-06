@@ -58,6 +58,11 @@ class MemberController extends Controller
                 $query->whereBetween('created_at', [$start_date, $end_date]);
             }
 
+            //referrer filter
+            if ($data['filters']['referrer']['value']) {
+                $query->where('upline_id', $data['filters']['referrer']['value']);
+            }
+
             //country filter
             if ($data['filters']['country']['value']) {
                 $query->where('country_id', $data['filters']['country']['value']);
@@ -256,16 +261,16 @@ class MemberController extends Controller
         $wallet->user_id = $user->id;
         $wallet->type = 'cash_wallet';
         $wallet->address = RunningNumberService::getID('cash_wallet');
-        $wallet->currency = 'CNY';
-        $wallet->currency_symbol = '¥';
+        $wallet->currency = 'USD';
+        $wallet->currency_symbol = '$';
         $wallet->save();
 
         $wallet = new Wallet();
         $wallet->user_id = $user->id;
         $wallet->type = 'bonus_wallet';
         $wallet->address = RunningNumberService::getID('bonus_wallet');
-        $wallet->currency = 'CNY';
-        $wallet->currency_symbol = '¥';
+        $wallet->currency = 'USD';
+        $wallet->currency_symbol = '$';
         $wallet->save();
 
         return redirect()->back()->with('toast');

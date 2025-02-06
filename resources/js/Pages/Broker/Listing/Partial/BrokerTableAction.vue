@@ -6,68 +6,37 @@ import Dialog from "primevue/dialog";
 import {
     IconDotsVertical,
     IconId,
-    IconUserUp,
-    IconTrash,
-    IconDeviceLaptop,
     IconChevronRight,
-    IconUserCog,
-    IconSitemap
+    IconEdit
 } from "@tabler/icons-vue";
-import UpgradeRank from "./Partial/UpgradeRank.vue";
-import ChangeUpline from "./Partial/ChangeUpline.vue";
+import EditBrokerInfo from "../Detail/EditBrokerInfo.vue";
 
 const props = defineProps({
-    member: Object,
-})
+    broker: Object,
+    locales: Array,
+});
 
 const menu = ref();
 const visible = ref(false);
 
-// type of dialog spawn (rank or role)
 const dialogType = ref();
 
 const items = ref([
     {
-        label: 'Member Detail',
+        label: 'Broker Detail',
         icon: h(IconId), 
         command: () => {
-            window.location.href = `/member/detail/${props.member.id_number}`;
+            window.location.href = `/broker/detail/${props.broker.id}`;
         },
     },
     {
-        label: 'Access Portal',
-        icon: h(IconDeviceLaptop),
-    },
-    {
-        label: 'Change Upline',
-        icon: h(IconSitemap),
+        label: 'Edit',
+        icon: h(IconEdit),
         command: () => {
             visible.value = true;
-            dialogType.value = 'change_upline'
+            dialogType.value = 'edit'
         },
     },
-    {
-        label: 'Upgrade',
-        icon: h(IconUserUp),
-        items: [
-            {
-                label: 'Rank',
-                icon: h(IconUserCog),
-                command: () => {
-                    visible.value = true;
-                    dialogType.value = 'upgrade_rank';
-                }
-            },
-        ]
-    },
-    {
-        separator: true
-    },
-    {
-        label: 'Delete',
-        icon: h(IconTrash),
-    },
-   
 ]);
 
 const toggle = (event) => {
@@ -76,7 +45,7 @@ const toggle = (event) => {
 </script>
 
 <template>
-    <Button
+  <Button
         variant="gray-text"
         size="sm"
         type="button"
@@ -86,9 +55,9 @@ const toggle = (event) => {
         aria-haspopup="true"
         aria-controls="overlay_tmenu"
     >
-        <IconDotsVertical size="16" stroke-width="1.25" color="#667085" />
+        <IconDotsVertical size="16" stroke-width="1.5" color="#667085" />
     </Button>
-    
+
     <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup>
         <template #item="{ item, props, hasSubmenu }">
             <div
@@ -107,7 +76,9 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-        :style="{ width: '20rem' }"
+         class="dialog-xs md:dialog-md"
+        style="width: 90%; max-width: 45rem;"
+    
     >
         <template #header>
             <div class="flex items-center gap-4">
@@ -117,22 +88,12 @@ const toggle = (event) => {
             </div>
         </template>
 
-        <template v-if="dialogType === 'upgrade_rank'">
-            <UpgradeRank
-                :member="member"
-                @update:visible="visible = false"
-            />
-        </template>
-
-        <template v-if="dialogType === 'change_upline'">
-            <ChangeUpline 
-                :member="member"
+        <template v-if="dialogType === 'edit'">
+            <EditBrokerInfo
+                :broker="props.broker"
+                :locales="props.locales"
                 @update:visible="visible = false"
             />
         </template>
     </Dialog>
-        
 </template>
-
-
-

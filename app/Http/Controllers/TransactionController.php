@@ -256,7 +256,99 @@ class TransactionController extends Controller
         return response()->json(['success' => false, 'data' => []]);
     }
 
+    public function getPendingWithdrawal()
+    {
+        return Inertia::render('Transaction/Pending/Withdrawal/PendingWithdrawal');
+    }
+
+    public function getPendingWithdrawalData(Request $request)
+    {
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
+
+            //user query
+            $query = Transaction::query()
+                ->with([
+                    'user:id,name,email,upline_id',
+                    'from_wallet:id,type,address,currency_symbol',
+                    'to_wallet:id,type,address,currency_symbol',
+                ])
+                ->where('transaction_type', 'withdrawal')
+                ->where('status', 'pending');;
+
+
+            //global filter
+            if (!empty($data['filters']['global']['value'])) {
+                $query->whereHas('user', function ($q) use ($data) {
+                    $keyword = $data['filters']['global']['value'];
+
+                    // Filter on the 'name' column in the related 'user' table
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('transaction_number', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            //date filter
+            if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay(); //add day to ensure capture entire day
+                $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('approval_at', [$start_date, $end_date]);
+            }
+
+            //fund_type filter
+            if ($data['filters']['fund_type']['value']) {
+                $query->where('fund_type', $data['filters']['fund_type']['value']);
+            }
+
+            //status filter
+            if ($data['filters']['status']['value']) {
+                $query->where('status', $data['filters']['status']['value']);
+            }
+
+            //sort field/order
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->latest();
+            }
+
+            //export logic
+            if ($request->has('exportStatus') && $request->exportStatus) {
+                return Excel::download(new WithdrawalExport($query), now() . '-withdrawal-history-list.xlsx');
+            }
+
+            $users = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $users,
+            ]);
+        }
+
+        return response()->json(['success' => false, 'data' => []]);
+    }
+
     public function pendingDepositApproval(Request $request)
+    {
+        $validatedData = $request->validate([
+            'remarks' => ['required_if:action,reject'],
+        ]);
+
+        $transaction = Transaction::find($request->transaction_id);
+
+        if ($request->action == 'approve') {
+            $transaction->status = 'success';
+            $transaction->update();
+        } else {
+            $transaction->status = 'rejected';
+            $transaction->remarks = $validatedData['remarks'];
+            $transaction->update();
+        }
+    }
+
+    public function pendingWithdrawalApproval(Request $request)
     {
         $validatedData = $request->validate([
             'remarks' => ['required_if:action,reject'],

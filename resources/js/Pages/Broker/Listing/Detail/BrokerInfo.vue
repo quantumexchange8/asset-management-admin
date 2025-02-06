@@ -5,14 +5,15 @@ import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Image from 'primevue/image';
 import dayjs from 'dayjs';
+import { useLangObserver } from '@/Composables/localeObserver';
 import EditBrokerInfo from './EditBrokerInfo.vue';
 
 const toast = useToast();
+const { locale } = useLangObserver();
 
 const props = defineProps({
     broker: Object,
     broker_image: Array,
-    broker_qr_image: Array,
 });
 
 const copyToClipboard = (text) => {
@@ -35,13 +36,6 @@ const copyToClipboard = (text) => {
         <div class="flex-[1.5] lg:w-3/5">
             <Card class="w-full relative">
                 <template #content>
-                    <div class="absolute top-3 right-3">
-                        <EditBrokerInfo 
-                            :broker="props.broker"
-                            :broker_image="props.broker_image"
-                            :broker_qr_image="props.broker_qr_image"
-                        />
-                    </div>
                     <div class="text-lg font-semibold mb-1">{{ broker.name }}</div>
                     <div class="text-sm text-gray-500 mb-4">
                         Last Updated: {{ dayjs(broker.updated_at).format('YYYY-MM-DD') }} {{ dayjs(broker.updated_at).add(8, 'hour').format('hh:mm:ss A') }}
@@ -68,14 +62,7 @@ const copyToClipboard = (text) => {
                         <div>
                             <div class="font-semibold">Description</div>
                             <div class="text-sm text-gray-600 dark:text-surface-400 text-justify">
-                                {{ broker.description }}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="font-semibold">Note</div>
-                            <div class="text-sm text-gray-600 dark:text-surface-400 text-justify">
-                                {{ broker.note }}
+                                {{ broker.description[locale] }}
                             </div>
                         </div>
                     </div>
@@ -93,19 +80,6 @@ const copyToClipboard = (text) => {
                             :src="props.broker_image" 
                             alt="Broker Image"
                             width="320"
-                        />
-                    </div>
-                </template>
-            </Card>
-
-            <Card class="w-full">
-                <template #content>
-                    <div class="text-lg font-semibold mb-2">Broker QR Code</div>
-                    <div class="flex justify-center">
-                        <Image 
-                            :src="props.broker_qr_image" 
-                            alt="Broker QR Code"
-                            class="max-w-full h-auto rounded"
                         />
                     </div>
                 </template>
