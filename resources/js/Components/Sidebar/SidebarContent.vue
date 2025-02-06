@@ -8,7 +8,8 @@ import {
     IconClockDollar,
     IconReportMoney,
     IconUserDollar,
-    IconSitemap
+    IconHomeShare,
+    IconHomeDollar
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -97,8 +98,8 @@ import ScrollPanel from 'primevue/scrollpanel';
                 :href="route('transaction.pending.getPendingDeposit')"
             />
 
-            <SidebarCollapsibleItem 
-                :title="'Withdrawal'"  
+            <SidebarCollapsibleItem
+                :title="'Withdrawal'"
                 :href="route('transaction.pending.getPendingWithdrawal')"
             />
         </SidebarCollapsible>
