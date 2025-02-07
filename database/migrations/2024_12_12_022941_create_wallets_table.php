@@ -22,7 +22,7 @@ return new class extends Migration
             $table->tinyInteger('balance_visibility')->default(1);
             $table->decimal('demo_fund', 13)->default(0);
             $table->decimal('real_fund', 13)->default(0);
-            $table->string('status', 100)->nullable()->default('nullable');
+            $table->string('status', 100)->nullable()->default('active');
             $table->timestamps();
             $table->softDeletes();
 

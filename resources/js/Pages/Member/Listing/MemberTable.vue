@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import MemberTableAction from './MemberTableAction.vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
+import EmptyData from "@/Components/EmptyData.vue";
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -50,7 +51,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //pagination, filter, sorting detail done by user through the event are pass into the params
             const params = { //define query parameters for API
                 page: JSON.stringify(event?.page + 1), //retrieve page number from the event then send to BE
-                sortField: event?.sortField, 
+                sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
                 include: [], //an empty array for additional query parameters
                 lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
@@ -216,7 +217,7 @@ const clearFilterGlobal = () => {
 //status severity
 const getSeverity = (status) => {
     switch (status) {
-        
+
         case 'verified':
             return 'success';
 
@@ -243,11 +244,11 @@ watchEffect(() => {
         <template #content>
             <div class="w-full">
                 <DataTable
-                    :value="users" 
+                    :value="users"
                     lazy
-                    paginator 
+                    paginator
                     removableSort
-                    :rows="10" 
+                    :rows="10"
                     :rowsPerPageOptions="[10, 20, 50, 100]"
                     :first="first"
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
@@ -265,15 +266,15 @@ watchEffect(() => {
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
                             <div class="flex items-center space-x-4 w-full md:w-auto">
-                                
+
                                 <!-- Search bar -->
                                 <IconField>
                                     <InputIcon>
                                         <IconSearch :size="16" stroke-width="1.5" />
                                     </InputIcon>
-                                    <InputText 
-                                        v-model="filters['global'].value" 
-                                        placeholder="Keyword Search" 
+                                    <InputText
+                                        v-model="filters['global'].value"
+                                        placeholder="Keyword Search"
                                         type="text"
                                         class="block w-full pl-10 pr-10"
                                     />
@@ -286,7 +287,7 @@ watchEffect(() => {
                                         <IconXboxX aria-hidden="true" :size="15" />
                                     </div>
                                 </IconField>
-                                
+
                                 <!-- filter button -->
                                 <Button
                                     class="w-full md:w-28 flex gap-2"
@@ -301,9 +302,10 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div class="flex flex-col">
-                            <span>No users</span>
-                        </div>
+                        <EmptyData
+                            :title="$t('public.no_members_founded')"
+                            :message="$t('public.add_members_to_proceed')"
+                        />
                     </template>
 
                     <template #loading>
@@ -314,7 +316,7 @@ watchEffect(() => {
                             <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
                         </div>
                     </template>
-                    
+
                     <template v-if="users?.length > 0">
                         <Column
                             field="created_at"
@@ -328,7 +330,7 @@ watchEffect(() => {
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
                             </template>
                         </Column>
-                        
+
                         <Column
                             field="name"
                             style="min-width: 12rem"
@@ -382,7 +384,7 @@ watchEffect(() => {
                                 <div v-else>
                                     -
                                 </div>
-                            </template>                
+                            </template>
                         </Column>
 
                         <Column
@@ -420,7 +422,7 @@ watchEffect(() => {
                                 <span class="block">country</span>
                             </template>
                             <template #body="{data}">
-                                <span>{{ data.country?.name || '-' }}</span>        
+                                <span>{{ data.country?.name || '-' }}</span>
                             </template>
                         </Column>
 
@@ -477,7 +479,7 @@ watchEffect(() => {
                         </div>
                         <span v-else>{{ slotProps.placeholder }}</span>
                     </template>
-                    <template #option="slotProps">          
+                    <template #option="slotProps">
                         <div>{{ slotProps.option.name }}</div>
                     </template>
                 </Select>

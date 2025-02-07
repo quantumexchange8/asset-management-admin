@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import {
     IconTableImport,
+    IconFileCheck
 } from '@tabler/icons-vue';
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
@@ -69,8 +70,8 @@ const validateFile = (fileInput) => {
     } else {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Invalid file type. Please upload an xlsx, xls, or csv file.',
+            summary: trans('public.error'),
+            detail: trans('public.toast_import_error'),
             life: 5000,
         });
     }
@@ -92,8 +93,8 @@ const submit = () => {
             form.reset();
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Import Successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_import_success'),
                 life: 3000,
             });
         },
@@ -144,7 +145,7 @@ const downloadTemplate = async () => {
         toast.add({
             severity: 'success',
             summary: trans('public.success'),
-            detail: trans('public.success_downloaded_file'),
+            detail: trans('public.toast_download_example_success'),
             life: 3000,
         });
     } catch (error) {
@@ -207,6 +208,13 @@ const downloadTemplate = async () => {
                         @drop.prevent="handleDrop"
                     >
                         <div
+                            v-if="file"
+                            class="rounded-full w-14 h-14 shrink-0 grow-0 border border-green-300 dark:border-green-600 flex items-center justify-center text-green-500 dark:text-green-400"
+                        >
+                            <IconFileCheck size="28" stroke-width="1.5" />
+                        </div>
+                        <div
+                            v-else
                             :class="[
                                 'rounded-full w-14 h-14 shrink-0 grow-0 border border-surface-300 dark:border-surface-600 flex items-center justify-center',
                                 {
@@ -215,7 +223,7 @@ const downloadTemplate = async () => {
                                 }
                             ]"
                         >
-                            <IconTableImport size="28" />
+                            <IconTableImport size="28" stroke-width="1.5" />
                         </div>
                         <div
                             v-if="file"

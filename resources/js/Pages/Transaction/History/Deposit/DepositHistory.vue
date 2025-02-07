@@ -282,8 +282,6 @@ watchEffect(() => {
                                         <span class="pr-1">Export</span>
                                         <IconDownload size="16" stroke-width="1.5"/>
                                     </Button>
-
-                                    <Import />
                                 </div>
                             </div>
                         </template>

@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\MediaLibrary\HasMedia;
@@ -13,8 +14,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class User extends Authenticatable implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, InteractsWithMedia;
+    use HasFactory, SoftDeletes, Notifiable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -53,7 +53,7 @@ class User extends Authenticatable implements HasMedia
     public function setReferralId(): void
     {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $randomString = 'LKMx';
+        $randomString = 'VTAx';
 
         $length = 10 - strlen($randomString);
 
@@ -91,6 +91,4 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Wallet::class, 'user_id', 'id');
     }
-
-   
 }
