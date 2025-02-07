@@ -6,7 +6,7 @@ import ReferralTree from './ReferralTree.vue';
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Referral Tree'">
+    <AuthenticatedLayout title="referral_tree">
         <div class="space-y-4">
             <ReferralTree />
         </div>

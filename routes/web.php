@@ -71,10 +71,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('referral')->group(function () {
         Route::get('/get_referral_list', [ReferralController::class, 'getReferralList'])->name('referral.getReferralList');
         Route::get('/get_referral_data', [ReferralController::class, 'getReferralData'])->name('referral.getReferralData');
-
-        Route::prefix('detail')->group(function () {
-            Route::get('/{id_number}', [ReferralController::class, 'referralDetail'])->name('referral.detail.referralDetail');
-        });
     });
 
     /**

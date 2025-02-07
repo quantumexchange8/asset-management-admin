@@ -14,6 +14,7 @@ import { onMounted, ref, watch, watchEffect } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash/debounce.js";
+import ReferralInfo from './Detail/ReferralInfo.vue';
 
 const isLoading = ref(false);
 const referrals = ref([]);
@@ -195,15 +196,11 @@ watchEffect(() => {
                                 <span class="block">Action</span>
                             </template>
                             <template #body="{ node }">
-                                <Link
-                                    :href="route('referral.detail.referralDetail', node.id_number)"
-                                >
-                                    <Button
-                                        class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
-                                    >
-                                        <IconFileDescription :size="20" stroke-width="1.5" :style="{ stroke: '#cca05a' }" />
-                                    </Button>
-                                </Link>
+                                <ReferralInfo 
+                                    :referral="node"
+                                    :refereeCount="node.downlines_count"
+                                    :totalDownline="node.total_downlines_count"
+                                />
                             </template>
                         </Column>
                     </template>

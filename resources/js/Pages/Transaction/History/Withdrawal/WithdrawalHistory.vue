@@ -212,7 +212,7 @@ watchEffect(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Withdrawal History'">
+    <AuthenticatedLayout title="withdrawal_history">
         <Card>
             <template #content>
                 <div class="w-full">

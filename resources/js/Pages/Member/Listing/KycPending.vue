@@ -204,7 +204,7 @@ const refreshTable = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Pending KYC'">
+    <AuthenticatedLayout title="pending_kyc">
         <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
            <Card>
                 <template #content>

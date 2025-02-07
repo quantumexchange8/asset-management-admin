@@ -207,7 +207,7 @@ const refreshTable = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Pending Deposit'">
+    <AuthenticatedLayout title="pending_deposit">
         <Card>
             <template #content>
                 <div class="w-full">

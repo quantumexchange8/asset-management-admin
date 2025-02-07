@@ -212,7 +212,7 @@ watchEffect(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Deposit History'">
+    <AuthenticatedLayout title="deposit_history">
         <Card>
             <template #content>
                 <div class="w-full">

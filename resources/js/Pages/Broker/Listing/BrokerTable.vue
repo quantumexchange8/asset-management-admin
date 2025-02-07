@@ -163,8 +163,8 @@ watchEffect(() => {
 </script>
 
 <template>
-   <div class="flex justify-between items-center w-full">
-        <div class="flex items-center space-x-4 w-full md:w-auto">
+   <div class="flex flex-col md:flex-row gap-3 items-center self-stretch">
+        <div class="relative w-full md:w-60">
             <IconField>
                 <InputIcon>
                     <IconSearch :size="16" stroke-width="1.5" />
@@ -184,6 +184,9 @@ watchEffect(() => {
                     <IconXboxX aria-hidden="true" :size="15" />
                 </div>
             </IconField>
+        </div>
+        
+        <div class="w-full flex justify-between items-center self-stretch gap-3">
             <!-- filter button -->
             <Button
                 class="w-full md:w-28 flex gap-2"
@@ -193,25 +196,26 @@ watchEffect(() => {
                 <IconAdjustments :size="15"/>
                 Filter
             </Button>
-        </div>
-        <Select
-            class="w-full md:w-56"
-            v-model="selectedSort"
-            :options="sortOptions"
-            optionLabel="name"
-            :placeholder="'Sort'"
-        >
-            <template #value="slotProps">
-                <div v-if="slotProps.value" class="flex items-center gap-3">
-                    <div class="flex items-center gap-2">
-                        <div>{{ $t(`public.${slotProps.value}`) }}</div>
+
+            <Select
+                class="w-full md:w-56"
+                v-model="selectedSort"
+                :options="sortOptions"
+                optionLabel="name"
+                :placeholder="'Sort'"
+            >
+                <template #value="slotProps">
+                    <div v-if="slotProps.value" class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
+                            <div>{{ $t(`public.${slotProps.value}`) }}</div>
+                        </div>
                     </div>
-                </div>
-            </template>
-            <template #option="slotProps">
-                {{ $t(`public.${slotProps.option}`) }}
-            </template>
-        </Select>
+                </template>
+                <template #option="slotProps">
+                    {{ $t(`public.${slotProps.option}`) }}
+                </template>
+            </Select>
+        </div>
     </div>
 
     <div v-if="isLoading" class="grid grid-cols-1 xl:grid-cols-2 gap-5 self-stretch mx-auto max-w-[1920px]">
