@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Broker;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +27,11 @@ class BrokerController extends Controller
             $query = Broker::query()
                 ->with([
                     'user:id,name',
-                ]);
+                ])
+                ->withCount(['connections as connections_count' => function($query) {
+                    $query->select(DB::raw('count(distinct(user_id))'));
+                }])
+                ->withSum('connections', 'capital_fund');
 
             //global filter
             if ($data['filters']['global']['value']) {
@@ -57,7 +62,7 @@ class BrokerController extends Controller
                     case 'most_investors':
                         $query->orderBy('created_at', 'desc');
                         break;
-                        
+
                     default:
                         return response()->json(['error' => 'Invalid filter'], 400);
                 }
@@ -91,7 +96,7 @@ class BrokerController extends Controller
             'name' => ['required', 'max:255'],
             'url' => ['required'],
             'description_translation' => ['required', 'array', 'max:500'],
-            'broker_image' => ['required', 'mimes:jpg,jpeg,png', 'max:2084'],
+            'broker_image' => ['required', 'max:2084'],
         ];
 
         foreach ($locales as $locale) {
@@ -99,6 +104,8 @@ class BrokerController extends Controller
         }
 
         $attributeNames = [
+            'name' => trans('public.name'),
+            'url' => trans('public.url'),
             'locales' => trans('public.languages'),
             'description_translation.*' => trans('public.description'),
         ];
@@ -119,7 +126,7 @@ class BrokerController extends Controller
             $broker->addMediaFromRequest('broker_image')->toMediaCollection('broker_image');
         }
 
-        return redirect()->back()->with('toast');
+        return back()->with('toast');
     }
 
     public function brokerDetail($id)
@@ -138,7 +145,7 @@ class BrokerController extends Controller
         ]);
     }
 
-    public function updateBrokerInfo(Request $request, $id)
+    public function updateBrokerInfo(Request $request)
     {
         $locales = $request->input('locales', []);
 
@@ -148,7 +155,7 @@ class BrokerController extends Controller
             'name' => ['required', 'max:255'],
             'url' => ['required'],
             'description_translation' => ['required', 'array', 'max:500'],
-            'broker_image' => ['nullable', 'mimes:jpg,jpeg,png', 'max:2084'],
+            'broker_image' => ['nullable', 'max:2084'],
         ];
 
         foreach ($locales as $locale) {
@@ -156,6 +163,8 @@ class BrokerController extends Controller
         }
 
         $attributeNames = [
+            'name' => trans('public.name'),
+            'url' => trans('public.url'),
             'locales' => trans('public.languages'),
             'description_translation.*' => trans('public.description'),
         ];
@@ -165,7 +174,7 @@ class BrokerController extends Controller
 
         $validator->validate();
 
-        $broker = Broker::find($id);
+        $broker = Broker::find($request->id);
         $broker->name = $request->name;
         $broker->url = $request->url;
         $broker->description = $request->description_translation;
@@ -177,7 +186,7 @@ class BrokerController extends Controller
             $broker->addMediaFromRequest('broker_image')->toMediaCollection('broker_image');
         }
 
-        // return redirect()->back()->with('toast');
+         return back()->with('toast');
     }
 
     public function updateBrokerStatus(Request $request)

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('brokers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->longText('description')->nullable();
+            $table->json('description')->nullable();
             $table->string('url');
             $table->string('status')->default('active');
             $table->unsignedBigInteger('user_id')->nullable();

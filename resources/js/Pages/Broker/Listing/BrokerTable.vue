@@ -10,8 +10,14 @@ import Divider from 'primevue/divider';
 import Skeleton from 'primevue/skeleton';
 import Tag from 'primevue/tag';
 import Popover from 'primevue/popover';
-import { IconPremiumRights, IconProgressCheck, IconSearch, IconUserDollar, IconXboxX, IconAdjustments } from '@tabler/icons-vue';
-import AddBroker from './AddBroker.vue';
+import {
+    IconPremiumRights,
+    IconSearch,
+    IconUserDollar,
+    IconXboxX,
+    IconAdjustments,
+    IconCircleLetterB
+} from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import debounce from "lodash/debounce.js";
@@ -19,6 +25,8 @@ import { usePage } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import BrokerTableAction from './Partial/BrokerTableAction.vue';
 import ToggleBrokerStatus from './Partial/ToggleBrokerStatus.vue';
+import EmptyData from "@/Components/EmptyData.vue";
+import {generalFormat} from "@/Composables/format.js";
 
 const props = defineProps({
     brokerCounts: Number,
@@ -31,6 +39,7 @@ const first = ref(0);
 const rows = ref(5);
 const brokers = ref([]);
 const totalRecords = ref(0);
+const {formatAmount} = generalFormat();
 
 const selectedSort = ref('latest');
 
@@ -117,7 +126,7 @@ onMounted(() => {
 });
 
 watch(selectedSort, (newSort) => {
-    lazyParams.value.sortOrder = newSort; 
+    lazyParams.value.sortOrder = newSort;
     loadLazyData({ first: first.value, rows: rows.value, sortOrder: newSort });
 });
 
@@ -146,7 +155,7 @@ const clearFilterGlobal = () => {
 //status severity
 const getSeverity = (status) => {
     switch (status) {
-        
+
         case 'active':
             return 'success';
 
@@ -163,15 +172,15 @@ watchEffect(() => {
 </script>
 
 <template>
-   <div class="flex justify-between items-center w-full">
+    <div class="flex justify-between items-center w-full">
         <div class="flex items-center space-x-4 w-full md:w-auto">
             <IconField>
                 <InputIcon>
                     <IconSearch :size="16" stroke-width="1.5" />
                 </InputIcon>
-                <InputText 
-                    v-model="filters['global'].value" 
-                    placeholder="Keyword Search" 
+                <InputText
+                    v-model="filters['global'].value"
+                    placeholder="Keyword Search"
                     type="text"
                     class="block w-full pl-10 pr-10"
                 />
@@ -214,163 +223,178 @@ watchEffect(() => {
         </Select>
     </div>
 
-    <div v-if="isLoading" class="grid grid-cols-1 xl:grid-cols-2 gap-5 self-stretch mx-auto max-w-[1920px]">
-        <Card 
-            style="overflow: hidden"
-            v-for="index in props.brokerCounts"
-        >
-            <template #content>
-                <div class="flex flex-col gap-4 items-center self-stretch">
-                    <!-- Image moves on top on smaller screens -->
-                    <div class="w-full flex flex-col sm:flex-row items-center gap-4 self-stretch">
-                        <Skeleton width="30rem" height="4rem"/>
-
-                        <div class="flex flex-col items-center sm:items-start w-full text-center sm:text-left">
-                            <div class="self-stretch truncate text-gray-950 dark:text-white font-bold text-xl">
-                                <Skeleton class="mt-2" width="6rem"/>
-                            </div>
-                            <div class="self-stretch truncate text-gray-500 text-sm">
-                                <Skeleton class="mt-2" width="15rem"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Divider />
-
-                    <!-- Bottom Section -->
-                    <div class="flex items-end justify-between self-stretch">
-                        <div class="flex flex-col items-center gap-1 self-stretch w-full">
-                            <div class="py-1 flex items-center gap-3 self-stretch">
-                                <IconUserDollar size="20" stroke-width="1.25" />
-                                <Skeleton width="5rem" />
-                            </div>
-                            <div class="py-1 flex items-center gap-3 self-stretch">
-                                <IconPremiumRights size="20" stroke-width="1.25" />
-                                <Skeleton width="5rem" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </Card>
+    <div
+        v-if="brokerCounts === 0"
+        class="w-full"
+    >
+        <EmptyData
+            :title="$t('public.no_broker_found')"
+            :message="$t('public.no_broker_found_caption')"
+        />
     </div>
 
-   
-    <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-5 self-stretch mx-auto max-w-[1920px]">
-        <Card 
-            @filter="onFilter($event)"
-            @sort="onSort($event)"
-            class="w-full relative"
-            style="overflow: hidden; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
-            v-for="broker in brokers"
-            :key="broker.id"
-        >
-            <template #content>
-                <div class="flex flex-col gap-4 items-center self-stretch">
-
-                    <!-- Always in the top-right corner -->
-                    <div class="absolute top-5 right-4">
-                        <BrokerTableAction 
-                            :broker="broker"
-                            :locales="props.locales"
-                        />
-                    </div>
-
-                    <!-- Image moves on top on smaller screens -->
-                    <div class="w-full flex flex-col sm:flex-row items-center gap-4 self-stretch">
-                        <div class="relative w-[200px] h-[40px] sm:w-[300px] sm:h-[75px] md:w-[400px] md:h-[100px] lg:w-[450px] lg:h-[100px] xl:w-[300px] xl:h-[80px] overflow-hidden">
-                            <img 
-                                alt="broker image" 
-                                :src="broker.broker_image" 
-                                class="w-full h-full object-contain"
-                            />
-                        </div>
-                        
-                        <div class="flex flex-col items-center sm:items-start w-full text-center sm:text-left">
-                            <div class="self-stretch truncate text-gray-950 dark:text-white font-bold text-xl">
-                                {{ broker.name }}
-                            </div>
-                            <div class="self-stretch truncate text-gray-500 text-sm">
-                                Last Updated on: {{ dayjs(broker.updated_at).format('YYYY-MM-DD') }}  
-                                {{ dayjs(broker.updated_at).add(8, 'hour').format('hh:mm:ss A') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <Divider />
-
-                    <!-- Bottom Section -->
-                    <div class="flex items-end justify-between self-stretch">
-                        <div class="flex flex-col items-center gap-1 self-stretch w-full">
-                            <div class="py-1 flex items-center gap-3 self-stretch">
-                                <IconUserDollar size="20" stroke-width="1.25"/>
-                                <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                    0 Investor
+    <div
+        v-else
+        class="w-full"
+    >
+        <div v-if="isLoading">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch">
+                <Card
+                    v-for="(broker, index) in brokerCounts > 12 ? 12 : brokerCounts"
+                    :key="index"
+                >
+                    <template #content>
+                        <div class="flex flex-col items-center gap-4 self-stretch">
+                            <!-- Profile Section -->
+                            <div class="w-full flex items-center gap-4 self-stretch">
+                                <div class="w-10 h-10 rounded-full grow-0 shrink-0 flex items-center justify-center border border-surface-200 dark:border-surface-800 text-surface-300 dark:text-surface-600">
+                                    <IconCircleLetterB size="28" stroke-width="1.5" />
+                                </div>
+                                <div class="flex flex-col items-start">
+                                    <Skeleton width="10rem" class="my-1"></Skeleton>
+                                    <Skeleton width="5rem" class="mt-1"></Skeleton>
                                 </div>
                             </div>
-                            <div class="py-1 flex items-center gap-3 self-stretch">
-                                <IconPremiumRights size="20" stroke-width="1.25"/>
-                                <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                    0.00 Fund Capital
+
+                            <!-- StatusBadge Section -->
+                            <div class="flex items-center gap-2 self-stretch">
+                                <Skeleton width="5rem" height="1.5rem"></Skeleton>
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="flex items-end justify-between self-stretch">
+                                <div class="flex flex-col items-center gap-1 self-stretch w-full">
+                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
+                                        <IconUserDollar size="20" stroke-width="1.5" />
+                                        <Skeleton width="5rem"></Skeleton>
+                                    </div>
+                                    <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
+                                        <IconPremiumRights size="20" stroke-width="1.5" />
+                                        <Skeleton width="5rem"></Skeleton>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="py-1 flex items-center gap-3 self-stretch">
-                                <IconProgressCheck size="20" stroke-width="1.25"/>
-                                <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                    <ToggleBrokerStatus 
+                        </div>
+                    </template>
+                </Card>
+            </div>
+        </div>
+
+        <div v-else-if="!brokers.length">
+            <EmptyData
+                :title="$t('public.no_broker_found')"
+                :message="$t('public.no_broker_found_caption')"
+            />
+        </div>
+
+        <div v-else>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 self-stretch">
+                <Card
+                    v-for="(broker, index) in brokers"
+                    :key="index"
+                >
+                    <template #content>
+                        <div class="flex flex-col items-center gap-4 self-stretch">
+                            <!-- Profile Section -->
+                            <div class="w-full flex items-center gap-4 self-stretch">
+                                <img
+                                    v-if="broker.media"
+                                    class="object-cover w-10 h-10 rounded-full"
+                                    :src="broker.media[0].original_url"
+                                    alt="broker_image"
+                                />
+                                <div
+                                    v-else
+                                    class="w-10 h-10 rounded-full grow-0 shrink-0 flex items-center justify-center border border-surface-200 dark:border-surface-800 text-surface-300 dark:text-surface-600"
+                                >
+                                    <IconCircleLetterB size="28" stroke-width="1.5" />
+                                </div>
+                                <div class="flex flex-col items-start">
+                                    <div class="self-stretch truncate text-gray-950 dark:text-white font-bold">
+                                        {{ broker.name }}
+                                    </div>
+                                    <a
+                                        :href="broker.url"
+                                        target="_blank"
+                                        class="text-sm text-surface-500 hover:text-blue-500"
+                                    >
+                                        {{ broker.url }}
+                                    </a>
+                                </div>
+                                <div class="flex gap-3 items-center w-full justify-end">
+                                    <BrokerTableAction
                                         :broker="broker"
+                                        :locales="locales"
                                     />
                                 </div>
                             </div>
+
+                            <!-- StatusBadge Section -->
+                            <div class="flex items-center gap-2 self-stretch">
+                                <Tag
+                                    :severity="broker.status === 'active' ? 'success' : 'danger'"
+                                    :value="$t(`public.${broker.status}`)"
+                                />
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="flex items-end justify-between self-stretch">
+                                <div class="flex flex-col items-center gap-1 self-stretch w-full">
+                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
+                                        <IconUserDollar size="20" stroke-width="1.5" />
+                                        <div class="text-gray-950 dark:text-white text-sm font-medium">
+                                            {{ formatAmount(broker.connections_count, 0) }} {{ $t('public.connections') }}
+                                        </div>
+                                    </div>
+                                    <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
+                                        <IconPremiumRights size="20" stroke-width="1.5" />
+                                        <div class="text-gray-950 dark:text-white text-sm font-medium">
+                                            <span class="text-primary-500">$ {{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.fund_capital') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </template>
-        </Card>
-
-        <Popover ref="op">
-            <div class="flex flex-col gap-6 w-60">
-                <!-- Filter kyc Status -->
-                <div class="flex flex-col gap-2 items-center self-stretch">
-                    <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Status
-                    </div>
-                    <Select
-                        v-model="filters['status'].value"
-                        :options="brokerStatus"
-                        placeholder="Select Status"
-                        class="w-full"
-                        showClear
-                    >
-                        <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
-                        </template>
-                    </Select>
-                </div>
-
-                <Button
-                    type="button"
-                    outlined
-                    class="w-full"
-                    @click="clearAll"
-                >
-                Clear All
-                </Button>
+                    </template>
+                </Card>
             </div>
-        </Popover>
+            <Paginator
+                :first="first"
+                :rows="rows"
+                :totalRecords="totalRecords"
+                @page="onPage"
+            />
+        </div>
     </div>
 
-    <Paginator 
-        v-model:rows="rows"
-        v-model:first="first"
-        :totalRecords="totalRecords" 
-        :rowsPerPageOptions="[5, 10, 20, 30]"
-        @page="onPage"
-        template="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        lazy
-        ref="dt"
-    >
-    
-    </Paginator>
+    <Popover ref="op">
+        <div class="flex flex-col gap-6 w-60">
+            <!-- Filter kyc Status -->
+            <div class="flex flex-col gap-2 items-center self-stretch">
+                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                    Filter By Status
+                </div>
+                <Select
+                    v-model="filters['status'].value"
+                    :options="brokerStatus"
+                    placeholder="Select Status"
+                    class="w-full"
+                    showClear
+                >
+                    <template #option="slotProps">
+                        <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                    </template>
+                </Select>
+            </div>
+
+            <Button
+                type="button"
+                outlined
+                class="w-full"
+                @click="clearAll"
+            >
+                Clear All
+            </Button>
+        </div>
+    </Popover>
 </template>

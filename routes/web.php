@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BrokerController;
 use App\Http\Controllers\ConnectionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
@@ -27,10 +28,6 @@ Route::get('locale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     //select option
     Route::get('/get_users', [SelectOptionController::class, 'getUsers'])->name('getUsers');
@@ -38,6 +35,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/get_countries', [SelectOptionController::class, 'getCountries'])->name('getCountries');
     Route::get('/get_ranks', [SelectOptionController::class, 'getRanks'])->name('getRanks');
     Route::get('/get_brokers', [SelectOptionController::class, 'getBrokers'])->name('getBrokers');
+
+    /**
+     * ==============================
+     *          Dashboard
+     * ==============================
+     */
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -83,6 +89,26 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('marketplace')->group(function () {
+        /**
+         * ==============================
+         *            Broker
+         * ==============================
+         */
+        Route::prefix('broker')->group(function () {
+            Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
+
+            Route::put('/updateBrokerStatus', [BrokerController::class, 'updateBrokerStatus'])->name('broker.updateBrokerStatus');
+
+            Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
+            Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
+            Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
+
+            Route::prefix('detail')->group(function () {
+                Route::get('/{id_number}', [BrokerController::class, 'brokerDetail'])->name('broker.detail.brokerDetail');
+                Route::post('/updateBrokerInfo', [BrokerController::class, 'updateBrokerInfo'])->name('broker.detail.updateBrokerInfo');
+            });
+        });
+
         /**
          * ==============================
          *          Connections
@@ -133,22 +159,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/download-template', function () {
             $filePath = public_path('/VoltAsia_Commission_Import_Template.xlsx');
             return response()->download($filePath);
-        });
-    });
-
-    //broker
-    Route::prefix('broker')->group(function () {
-        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
-
-        Route::put('/updateBrokerStatus', [BrokerController::class, 'updateBrokerStatus'])->name('broker.updateBrokerStatus');
-
-        Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
-        Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
-        Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
-
-        Route::prefix('detail')->group(function () {
-            Route::get('/{id_number}', [BrokerController::class, 'brokerDetail'])->name('broker.detail.brokerDetail');
-            Route::put('/{id_number}/updateBrokerInfo', [BrokerController::class, 'updateBrokerInfo'])->name('broker.detail.updateBrokerInfo');
         });
     });
 });

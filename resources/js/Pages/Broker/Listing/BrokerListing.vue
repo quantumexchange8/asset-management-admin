@@ -10,17 +10,17 @@ const props = defineProps({
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Broker List'">
-        <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
+    <AuthenticatedLayout title="broker">
+        <div class="flex flex-col gap-5 items-center self-stretch w-full">
             <div class="flex justify-end w-full">
-                <AddBroker 
-                    :locales="props.locales"
+                <AddBroker
+                    :locales="locales"
                 />
             </div>
-          
-            <BrokerTable 
-                :brokerCounts="props.brokerCounts"
-                :locales="props.locales"
+
+            <BrokerTable
+                :brokerCounts="brokerCounts"
+                :locales="locales"
             />
         </div>
     </AuthenticatedLayout>

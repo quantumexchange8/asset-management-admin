@@ -1,21 +1,23 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
-import { IconExclamationCircle, IconLinkPlus, IconUserDollar, IconUsersPlus } from '@tabler/icons-vue';
+import {
+    IconLinkPlus,
+    IconHomeDollar,
+    IconCirclePlus,
+    IconCircleLetterB
+} from '@tabler/icons-vue';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
-import FileUpload from 'primevue/fileupload';
+import Image from 'primevue/image';
 import { useToast } from 'primevue/usetoast';
-import Tabs from 'primevue/tabs';
-import TabList from 'primevue/tablist';
-import Tab from 'primevue/tab';
-import TabPanels from 'primevue/tabpanels';
-import TabPanel from 'primevue/tabpanel';
+import Checkbox from "primevue/checkbox";
 import { ref } from 'vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     locales: Array,
@@ -23,18 +25,12 @@ const props = defineProps({
 
 const visible = ref(false);
 
-//file
-const onSelectedBrokerImage = (event) => {
-    form.broker_image = event.target.files[0];
-};
-
 const form = useForm({
     locales: props.locales,
     name: '',
     description_translation: {
         en: '',
     },
-    note: '',
     url: '',
     broker_image: null,
 });
@@ -48,8 +44,8 @@ const submitForm = () => {
             form.reset();
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Broker added successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_add_broker_success'),
                 life: 3000,
             });
         },
@@ -58,31 +54,84 @@ const submitForm = () => {
         }
     });
 };
+
+const selectedLogo = ref(null);
+
+const handleLogoUpload = (event) => {
+    const brokerLogoInput = event.target;
+    const file = brokerLogoInput.files[0];
+
+    if (file) {
+        // Display the selected image
+        const reader = new FileReader();
+        reader.onload = () => {
+            selectedLogo.value = reader.result;
+        };
+        reader.readAsDataURL(file);
+        form.broker_image = event.target.files[0];
+    } else {
+        selectedLogo.value = null;
+    }
+};
 </script>
 
 <template>
-    <Button class="w-full md:w-auto" @click="visible = true">
-        <IconUsersPlus size="16" />
-        <span class="pl-2">Add Broker</span>
+    <Button class="w-full md:w-auto flex gap-1" @click="visible = true">
+        <IconCirclePlus size="20" stroke-width="1.5" />
+        {{ $t('public.add_broker') }}
     </Button>
 
-    <Dialog v-model:visible="visible" modal class="dialog-xs md:dialog-md" style="width: 90%; max-width: 45rem;">
-        <template #header>
-            <div class="flex items-center gap-4">
-                <div class="text-xl font-bold">
-                    Add Broker
-                </div>
-            </div>
-        </template>
-
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t('public.add_broker')"
+        class="dialog-xs md:dialog-lg"
+    >
         <form @submit.prevent="submitForm" class="flex flex-col gap-6 items-center self-stretch">
             <div class="flex flex-col gap-3 items-center self-stretch">
+                <!-- Upload Image -->
+                <div class="flex flex-col gap-3 items-center self-stretch">
+                    <div class="w-20 h-20 grow-0 shrink-0 rounded-full border border-surface-200 dark:border-surface-800 flex items-center justify-center z-20">
+                        <Image
+                            v-if="selectedLogo"
+                            :src="selectedLogo"
+                            alt="Image"
+                            imageClass="w-16 h-16 object-cover rounded-full"
+                            class="rounded-full"
+                            preview
+                        />
+                        <div v-else class="text-surface-300 dark:text-surface-600">
+                            <IconCircleLetterB size="64" stroke-width="1.5" />
+                        </div>
+                    </div>
+                    <Button
+                        type="button"
+                        severity="info"
+                        size="small"
+                        class="w-full md:w-fit"
+                        :label="$t('public.browse')"
+                        @click="$refs.brokerLogoInput.click()"
+                    />
+                    <input
+                        ref="brokerLogoInput"
+                        id="broker_logo"
+                        type="file"
+                        class="hidden"
+                        accept="image/*"
+                        @change="handleLogoUpload"
+                    />
+                    <InputError :message="form.errors.broker_image"/>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
-                    <div class="space-y-2">
-                      <InputLabel for="name" value="Name"/>
-                      <InputIconWrapper>
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <InputLabel
+                            for="name"
+                            :value="$t('public.name')"
+                        />
+                        <InputIconWrapper class="w-full">
                             <template #icon>
-                                <IconUserDollar :size="20" stroke-width="1.5"/> 
+                                <IconHomeDollar :size="20" stroke-width="1.5"/>
                             </template>
 
                             <InputText
@@ -90,18 +139,22 @@ const submitForm = () => {
                                 type="text"
                                 class="pl-10 block w-full"
                                 v-model="form.name"
-                                placeholder="Name"
+                                :placeholder="$t('public.enter_name')"
+                                autofocus
                                 :invalid="!!form.errors.name"
                             />
                         </InputIconWrapper>
                         <InputError :message="form.errors.name"/>
                     </div>
 
-                    <div class="space-y-2">
-                      <InputLabel for="url" value="URL"/>
-                      <InputIconWrapper>
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <InputLabel
+                            for="url"
+                            :value="$t('public.url')"
+                        />
+                        <InputIconWrapper class="w-full">
                             <template #icon>
-                                <IconLinkPlus :size="20" stroke-width="1.5"/> 
+                                <IconLinkPlus :size="20" stroke-width="1.5"/>
                             </template>
 
                             <InputText
@@ -109,82 +162,80 @@ const submitForm = () => {
                                 type="text"
                                 class="pl-10 block w-full"
                                 v-model="form.url"
-                                placeholder="URL"
+                                :placeholder="$t('public.enter_url')"
                                 :invalid="!!form.errors.url"
                             />
                         </InputIconWrapper>
                         <InputError :message="form.errors.url"/>
                     </div>
 
-                    <div class="space-y-2">
-                        <div class="card">
-                            <Tabs :value="locales[0]">
-                                <TabList>
-                                    <Tab 
+                    <!-- Description -->
+                    <div class="flex flex-col gap-3 items-start self-stretch md:col-span-2 ">
+                        <span class="font-bold text-gray-950 dark:text-white w-full text-left">{{ $t('public.descriptions') }}</span>
+                        <div class="flex flex-col md:flex-row gap-5 self-stretch w-full">
+                            <!-- Checkbox for selecting locales -->
+                            <div class="flex flex-col gap-1 items-start self-stretch min-w-40">
+                                <InputLabel :value="$t('public.languages')" />
+                                <div class="flex flex-row md:flex-col gap-1">
+                                    <div
                                         v-for="locale in locales"
                                         :key="locale"
-                                        :value="locale"
+                                        class="flex items-center"
                                     >
-                                    <div class="flex items-center gap-2">
-                                        {{ $t(`public.${locale}`) }}
-                                        
-                                        <!-- Show error icon if there's a validation error -->
-                                        <IconExclamationCircle
-                                            v-if="form.errors[`description_translation.${locale}`]"
-                                            size="20"
-                                            stroke-width="1.5"
-                                            class="text-red-500"
+                                        <Checkbox
+                                            v-model="form.locales"
+                                            :inputId="locale"
+                                            :value="locale"
+                                            :disabled="locale === 'en'"
                                         />
+                                        <label :for="locale" class="ml-2 text-sm">{{ $t(`public.${locale}`) }}</label>
                                     </div>
-                                    </Tab>
-                                </TabList>
-                                <TabPanels>
-                                    <TabPanel
+                                </div>
+                            </div>
+
+                            <!-- Dynamically generated input fields for each selected locale -->
+                            <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                                <div class="grid md:grid-cols-2 gap-3 w-full">
+                                    <div
                                         v-for="locale in form.locales"
                                         :key="'input-' + locale"
-                                        :value="locale"
+                                        class="flex flex-col items-start gap-1 self-stretch"
                                     >
-                                        <InputLabel 
-                                            :for="'description' + locale"
-                                            :value="`Description (${$t(`public.${locale}`)})`"
-                                            class="mb-2"
+                                        <InputLabel
+                                            :for="'name_' + locale"
+                                            :value="`${$t('public.description')} (${$t(`public.${locale}`)})`"
+                                            :invalid="!!form.errors[`description_translation.${locale}`]"
                                         />
-                                        <Textarea 
-                                           :id="'description_' + locale"
+                                        <Textarea
+                                            :id="'description_' + locale"
                                             type="text"
                                             class="block w-full"
                                             v-model="form.description_translation[locale]"
-                                            :placeholder="`Description (${$t(`public.${locale}`)})`"
+                                            :placeholder="`${$t('public.description')} (${$t(`public.${locale}`)})`"
                                             :invalid="!!form.errors[`description_translation.${locale}`]"
                                             rows="7"
                                             cols="30"
                                         />
                                         <InputError :message="form.errors[`description_translation.${locale}`]" />
-                                    </TabPanel>
-                                </TabPanels>
-                            </Tabs>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="space-y-2">
-                        <InputLabel for="broker_image" value="Broker Image"/>
-                        <div class="flex justify-start">
-                            <FileUpload
-                                name="broker_image"
-                                :multiple="false"
-                                accept="image/*"
-                                @input="onSelectedBrokerImage"
-                                mode="basic"
-                                chooseLabel="Choose Image"
-                            />
-                        </div>
-                        <InputError :message="form.errors.broker_image" />
-                    </div> 
                 </div>
             </div>
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
-                <Button type="button" severity="secondary" @click="visible = false">Cancel</Button>
-                <Button type="submit" :disabled="form.processing">Submit</Button>
+                <Button
+                    type="button"
+                    severity="secondary"
+                    @click="visible = false"
+                    :label="$t('public.cancel')"
+                />
+                <Button
+                    type="submit"
+                    :disabled="form.processing"
+                    :label="$t('public.submit')"
+                />
             </div>
         </form>
     </Dialog>

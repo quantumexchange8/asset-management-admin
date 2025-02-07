@@ -6,7 +6,7 @@ export default {
 
             // Size
             'min-w-[12rem]',
-            'p-1',
+            'py-1',
 
             // Colors
             'bg-surface-0 dark:bg-surface-900',
@@ -27,14 +27,12 @@ export default {
     },
     itemContent: ({ context }) => ({
         class: [
-            //Shape
-            'rounded-[4px]',
-
             // Colors
+            'text-surface-700 dark:text-white/80',
             {
                 'text-surface-500 dark:text-white/70': !context.focused && !context.active,
-                'text-surface-500 dark:text-white/70 bg-surface-200 dark:bg-surface-600/90': context.focused && !context.active,
-                'bg-primary-100 text-surface-400 dark:bg-highlight dark:text-highlight-contrast': (context.focused && context.active) || context.active || (!context.focused && context.active)
+                'text-surface-500 dark:text-white/70 bg-surface-200': context.focused && !context.active,
+                'bg-highlight': (context.focused && context.active) || context.active || (!context.focused && context.active)
             },
 
             // Transitions
@@ -44,7 +42,7 @@ export default {
             // States
             {
                 'hover:bg-surface-100 dark:hover:bg-[rgba(255,255,255,0.03)]': !context.active,
-                'hover:bg-primary-100 hover:text-surface-400 dark:hover:bg-highlight': context.active
+                'hover:bg-highlight-emphasis': context.active
             },
 
             // Disabled
@@ -63,6 +61,12 @@ export default {
             'py-2',
             'px-3',
 
+            // Color
+            'text-surface-700 dark:text-white/80',
+
+            // Font
+            'text-sm',
+
             // Misc
             'no-underline',
             'overflow-hidden',
@@ -73,7 +77,10 @@ export default {
     itemIcon: {
         class: [
             // Spacing
-            'mr-2'
+            'mr-2',
+
+            // Color
+            'text-surface-600 dark:text-white/70'
         ]
     },
     itemLabel: {
@@ -90,12 +97,15 @@ export default {
             // Spacing
             'flex flex-col',
             'm-0',
-            'p-1',
-            'list-none',
-            'min-w-[12.5rem]',
+            'outline-none',
+            'rounded-md',
+
+            // Size
+            'w-full',
+            'py-1',
 
             // Shape
-            'shadow-none sm:shadow-md',
+            'shadow-dropdown',
             'border border-surface-200 dark:border-surface-700',
 
             // Position
@@ -107,7 +117,7 @@ export default {
         ]
     },
     separator: {
-        class: 'border-t border-surface-200 dark:border-surface-600'
+        class: 'border-t border-surface-200 dark:border-surface-600 my-[2px]'
     },
     transition: {
         enterFromClass: 'opacity-0',

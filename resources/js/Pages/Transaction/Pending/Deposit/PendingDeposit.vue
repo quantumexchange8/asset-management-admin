@@ -48,7 +48,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //pagination, filter, sorting detail done by user through the event are pass into the params
             const params = { //define query parameters for API
                 page: JSON.stringify(event?.page + 1), //retrieve page number from the event then send to BE
-                sortField: event?.sortField, 
+                sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
                 include: [], //an empty array for additional query parameters
                 lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
@@ -163,7 +163,7 @@ const clearFilterGlobal = () => {
 //status severity
 const getSeverity = (status) => {
     switch (status) {
-        
+
         case 'pending':
             return 'info';
     }
@@ -207,16 +207,16 @@ const refreshTable = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Pending Deposit'">
+    <AuthenticatedLayout title="pending_deposit">
         <Card>
             <template #content>
                 <div class="w-full">
-                    <DataTable 
-                        :value="depositHistory" 
+                    <DataTable
+                        :value="depositHistory"
                         lazy
-                        paginator 
+                        paginator
                         removableSort
-                        :rows="10" 
+                        :rows="10"
                         :rowsPerPageOptions="[10, 20, 50, 100]"
                         :first="first"
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
@@ -234,15 +234,15 @@ const refreshTable = () => {
                         <template #header>
                             <div class="flex flex-wrap justify-between items-center">
                                 <div class="flex items-center space-x-4 w-full md:w-auto">
-                                    
+
                                     <!-- Search bar -->
                                     <IconField>
                                         <InputIcon>
                                             <IconSearch :size="16" stroke-width="1.5" />
                                         </InputIcon>
-                                        <InputText 
-                                            v-model="filters['global'].value" 
-                                            placeholder="Keyword Search" 
+                                        <InputText
+                                            v-model="filters['global'].value"
+                                            placeholder="Keyword Search"
                                             type="text"
                                             class="block w-full pl-10 pr-10"
                                         />
@@ -255,7 +255,7 @@ const refreshTable = () => {
                                             <IconXboxX aria-hidden="true" :size="15" />
                                         </div>
                                     </IconField>
-                                    
+
                                     <!-- filter button -->
                                     <Button
                                         class="w-full md:w-28 flex gap-2"
@@ -269,8 +269,8 @@ const refreshTable = () => {
 
                                 <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                     <!-- Export button -->
-                                    <Button 
-                                        class="w-full md:w-auto flex justify-center items-center" 
+                                    <Button
+                                        class="w-full md:w-auto flex justify-center items-center"
                                         @click="exportDeposit"
                                         :disabled="exportTable==='yes'"
                                     >
@@ -298,7 +298,7 @@ const refreshTable = () => {
                         </template>
 
                         <template v-if="depositHistory?.length > 0">
-                            <Column 
+                            <Column
                                 field="transaction_number"
                                 style="min-width: 12rem"
                                 sortable
@@ -311,7 +311,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="name"
                                 style="min-width: 12rem"
                                 sortable
@@ -327,7 +327,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="amount"
                                 style="min-width: 12rem"
                                 dataType="numeric"
@@ -341,7 +341,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="fund_type"
                                 style="min-width: 12rem"
                                 sortable
@@ -354,7 +354,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="to_wallet_id"
                                 style="min-width: 12rem"
                                 sortable
@@ -367,7 +367,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="status"
                                 style="min-width: 12rem"
                                 sortable
@@ -380,7 +380,7 @@ const refreshTable = () => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="approval_at"
                                 style="min-width: 12rem"
                                 dataType="date"
@@ -394,7 +394,7 @@ const refreshTable = () => {
                                     <div class="text-xs text-gray-500 mt-1">
                                         {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
                                     </div>
-                                </template> 
+                                </template>
                             </Column>
 
                             <Column
@@ -402,7 +402,7 @@ const refreshTable = () => {
                                 header="action"
                             >
                                 <template #body="{data}">
-                                    <PendingDepositAction 
+                                    <PendingDepositAction
                                         :pending="data"
                                         @pendingDepositActionCompleted="refreshTable"
                                     />

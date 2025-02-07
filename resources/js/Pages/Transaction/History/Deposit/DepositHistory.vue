@@ -17,7 +17,7 @@ import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
-import { usePage } from '@inertiajs/vue3';    
+import { usePage } from '@inertiajs/vue3';
 import Import from './Import.vue';
 
 const isLoading = ref(false);
@@ -49,7 +49,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //pagination, filter, sorting detail done by user through the event are pass into the params
             const params = { //define query parameters for API
                 page: JSON.stringify(event?.page + 1), //retrieve page number from the event then send to BE
-                sortField: event?.sortField, 
+                sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
                 include: [], //an empty array for additional query parameters
                 lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
@@ -164,10 +164,10 @@ const clearFilterGlobal = () => {
 //status severity
 const getSeverity = (status) => {
     switch (status) {
-        
+
         case 'success':
             return 'success';
-        
+
         case 'rejected':
             return 'danger';
     }
@@ -212,16 +212,16 @@ watchEffect(() => {
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Deposit History'">
+    <AuthenticatedLayout title="deposit_history">
         <Card>
             <template #content>
                 <div class="w-full">
-                    <DataTable 
-                        :value="depositHistory" 
+                    <DataTable
+                        :value="depositHistory"
                         lazy
-                        paginator 
+                        paginator
                         removableSort
-                        :rows="10" 
+                        :rows="10"
                         :rowsPerPageOptions="[10, 20, 50, 100]"
                         :first="first"
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
@@ -239,15 +239,15 @@ watchEffect(() => {
                         <template #header>
                             <div class="flex flex-wrap justify-between items-center">
                                 <div class="flex items-center space-x-4 w-full md:w-auto">
-                                    
+
                                     <!-- Search bar -->
                                     <IconField>
                                         <InputIcon>
                                             <IconSearch :size="16" stroke-width="1.5" />
                                         </InputIcon>
-                                        <InputText 
-                                            v-model="filters['global'].value" 
-                                            placeholder="Keyword Search" 
+                                        <InputText
+                                            v-model="filters['global'].value"
+                                            placeholder="Keyword Search"
                                             type="text"
                                             class="block w-full pl-10 pr-10"
                                         />
@@ -260,7 +260,7 @@ watchEffect(() => {
                                             <IconXboxX aria-hidden="true" :size="15" />
                                         </div>
                                     </IconField>
-                                    
+
                                     <!-- filter button -->
                                     <Button
                                         class="w-full md:w-28 flex gap-2"
@@ -274,15 +274,15 @@ watchEffect(() => {
 
                                 <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                     <!-- Export button -->
-                                    <Button 
-                                        class="w-full md:w-auto flex justify-center items-center" 
+                                    <Button
+                                        class="w-full md:w-auto flex justify-center items-center"
                                         @click="exportDeposit"
                                         :disabled="exportTable==='yes'"
                                     >
                                         <span class="pr-1">Export</span>
                                         <IconDownload size="16" stroke-width="1.5"/>
                                     </Button>
-                                
+
                                     <Import />
                                 </div>
                             </div>
@@ -305,7 +305,7 @@ watchEffect(() => {
                         </template>
 
                         <template v-if="depositHistory?.length > 0">
-                            <Column 
+                            <Column
                                 field="transaction_number"
                                 style="min-width: 12rem"
                                 sortable
@@ -318,7 +318,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="name"
                                 style="min-width: 12rem"
                                 sortable
@@ -331,7 +331,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="amount"
                                 style="min-width: 12rem"
                                 dataType="numeric"
@@ -345,7 +345,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="fund_type"
                                 style="min-width: 12rem"
                                 sortable
@@ -358,7 +358,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="to_wallet_id"
                                 style="min-width: 12rem"
                                 sortable
@@ -371,7 +371,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="status"
                                 style="min-width: 12rem"
                                 sortable
@@ -384,7 +384,7 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
-                            <Column 
+                            <Column
                                 field="approval_at"
                                 style="min-width: 12rem"
                                 dataType="date"
@@ -398,7 +398,7 @@ watchEffect(() => {
                                     <div class="text-xs text-gray-500 mt-1">
                                         {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
                                     </div>
-                                </template> 
+                                </template>
                             </Column>
                         </template>
                     </DataTable>

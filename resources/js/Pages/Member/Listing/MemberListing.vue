@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Member List'">
+    <AuthenticatedLayout title="member_listing">
         <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
             <!-- Add User Button -->
             <div class="flex justify-end w-full">

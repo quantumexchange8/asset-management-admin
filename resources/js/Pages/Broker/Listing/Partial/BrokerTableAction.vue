@@ -23,14 +23,7 @@ const dialogType = ref();
 
 const items = ref([
     {
-        label: 'Broker Detail',
-        icon: h(IconId), 
-        command: () => {
-            window.location.href = `/broker/detail/${props.broker.id}`;
-        },
-    },
-    {
-        label: 'Edit',
+        label: 'edit',
         icon: h(IconEdit),
         command: () => {
             visible.value = true;
@@ -45,7 +38,7 @@ const toggle = (event) => {
 </script>
 
 <template>
-  <Button
+    <Button
         variant="gray-text"
         size="sm"
         type="button"
@@ -64,11 +57,8 @@ const toggle = (event) => {
                 class="flex items-center gap-3 self-stretch"
                 v-bind="props.action"
             >
-                <component :is="item.icon" size="20" stroke-width="1.25" :color="item.label === 'Delete' ? '#F04438' : '#667085'"  />
-                <span class="font-medium" :class="{'text-error-500': item.label === 'Delete'}">{{ item.label }}</span>
-                <span v-if="hasSubmenu" class="ml-auto">
-                    <IconChevronRight size="20" stroke-width="1.25" />
-                </span>
+                <component :is="item.icon" size="20" stroke-width="1.5" />
+                <span class="font-medium">{{ $t(`public.${item.label}`) }}</span>
             </div>
         </template>
     </TieredMenu>
@@ -76,18 +66,9 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-         class="dialog-xs md:dialog-md"
-        style="width: 90%; max-width: 45rem;"
-    
+        :header="$t(`public.${dialogType}`)"
+        class="dialog-xs md:dialog-lg"
     >
-        <template #header>
-            <div class="flex items-center gap-4">
-                <div class="text-xl font-bold">
-                    {{dialogType.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase())}}
-                </div>
-            </div>
-        </template>
-
         <template v-if="dialogType === 'edit'">
             <EditBrokerInfo
                 :broker="props.broker"
