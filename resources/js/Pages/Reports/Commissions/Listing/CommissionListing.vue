@@ -6,7 +6,7 @@ import CommissionTable from './CommissionTable.vue';
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Commission List'">
+    <AuthenticatedLayout title="commission_list">
         <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
 
             <CommissionTable />

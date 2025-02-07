@@ -101,24 +101,28 @@ class ReferralController extends Controller
         $tree = [];
 
         foreach ($users as $user) {
-            // Check if the current user belongs to the given parent (upline)
             if ($user['upline_id'] === $parentId) {
-                // Build tree recursively for the children of the current user
+                // Recursively build the tree for this user's children
                 $children = $this->buildTree($users, $user['id']);
 
-                // If the user has children, add them under 'children' and set downline count
-                if (!empty($children)) {
-                    $user['children'] = $children;
-                    $user['downlines_count'] = count($children);  // Direct downlines only
-                } else {
-                    // If no children, set downline count to 0
-                    $user['downlines_count'] = 0;
+                // Direct downline count (immediate children)
+                $directDownlineCount = count($children);
+
+                // Total downline count (direct + all descendants)
+                $totalDownlineCount = $directDownlineCount;
+                foreach ($children as $child) {
+                    $totalDownlineCount += $child['total_downlines_count'];
                 }
 
-                // Add this user to the tree
+                // Assign values
+                $user['children'] = $children;
+                $user['downlines_count'] = $directDownlineCount;
+                $user['total_downlines_count'] = $totalDownlineCount;
+
                 $tree[] = $user;
             }
         }
+
         return $tree;
     }
 
@@ -157,48 +161,5 @@ class ReferralController extends Controller
             }
         }
         return false;
-    }
-
-    public function referralDetail($id_number)
-    {
-        $referral = User::where('id_number', $id_number)
-            ->with([
-                'country:id,name,emoji',
-                'upline:id,name,email,upline_id',
-                'rank:id,rank_name',
-
-            ])->first();
-
-        $refereeCount = User::where('upline_id', $referral->id)->count();
-
-        // Count all descendants (recursively)
-        $totalDownline = $this->countDownline($referral->id);
-
-        return Inertia::render('Referrals/Listing/Detail/ReferralDetail', [
-            'referral' => $referral,
-            'refereeCount' => $refereeCount,
-            'totalDownline' => $totalDownline,
-        ]);
-    }
-
-    private function countDownline($uplineId)
-    {
-        // Retrieve all direct descendants
-        $directDownline = User::where('upline_id', $uplineId)->pluck('id');
-
-        // Base case: if no more descendants, return 0
-        if ($directDownline->isEmpty()) {
-            return 0;
-        }
-
-        // Count direct descendants
-        $count = $directDownline->count();
-
-        // Recursively count the descendants of each direct descendant
-        foreach ($directDownline as $downlineId) {
-            $count += $this->countDownline($downlineId);
-        }
-
-        return $count;
     }
 }
