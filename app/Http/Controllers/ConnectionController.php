@@ -60,7 +60,7 @@ class ConnectionController extends Controller
 
             // Export logic
             if ($request->exportStatus) {
-                return Excel::download(new BrokerConnectionExport($query->clone()), now() . '-rebate-report.xlsx');
+                return Excel::download(new BrokerConnectionExport($query->clone()), now() . '-broker-connection-report.xlsx');
             }
 
             $connections = $query->paginate($data['rows']);
