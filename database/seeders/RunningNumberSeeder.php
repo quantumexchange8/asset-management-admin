@@ -13,7 +13,7 @@ class RunningNumberSeeder extends Seeder
             'type' => 'transaction',
             'prefix' => 'VTA-TXN',
             'digits' => 7,
-            'last_number' => 1,
+            'last_number' => 0,
         ]);
 
         RunningNumber::create([
