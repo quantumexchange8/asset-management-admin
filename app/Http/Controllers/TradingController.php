@@ -73,9 +73,13 @@ class TradingController extends Controller
         }
     }
 
+    public function download_import_example()
+    {
+        return response()->download(public_path('import_template/VoltAsia_Commission_Import_Template.xlsx'));
+    }
+
     public function importCommissions(Request $request)
     {
-
         $request->validate([
             'broker' => ['required'],
             'commission_file' => ['required', 'mimes:xlsx,xls,csv', 'max:25000'],

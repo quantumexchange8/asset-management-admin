@@ -67,7 +67,7 @@ const submitForm = () => {
         <IconCreditCard size="20" stroke-width="1.5" />
     </Button>
 
-    <Dialog v-model:visible="visible" modal header="Wallet Adjustment" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="visible" modal header="Wallet Adjustment" class="dialog-xs md:dialog-md">
         <form @submit.prevent="submitForm">
             <div class="flex flex-col gap-5">
                 <div

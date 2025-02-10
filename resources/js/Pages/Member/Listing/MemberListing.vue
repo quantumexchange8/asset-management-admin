@@ -3,10 +3,17 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AddMember from './AddMember.vue';
 import MemberTable from './MemberTable.vue';
 import MemberOverview from './MemberOverview.vue';
+import { ref } from 'vue';
 
-const props = defineProps({
-    memberCounts: Number
-})
+const totalRecords = ref(null);
+const verifiedUser = ref(null);
+const unverifiedUser = ref(null);
+
+const handleOverview = (data) => {
+    totalRecords.value = data.totalRecords;
+    verifiedUser.value = data.verifiedUser;
+    unverifiedUser.value = data.unverifiedUser;
+}
 </script>
 
 <template>
@@ -17,10 +24,16 @@ const props = defineProps({
                 <AddMember />
             </div>
 
-            <MemberOverview :memberCounts="memberCounts"/>
+            <MemberOverview
+                :totalRecords="totalRecords"
+                :verifiedUser="verifiedUser"
+                :unverifiedUser="unverifiedUser"
+            />
 
             <!-- User Table -->
-            <MemberTable />
+            <MemberTable 
+                @updateTotalUser="handleOverview"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

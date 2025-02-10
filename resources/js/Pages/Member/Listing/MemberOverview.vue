@@ -6,33 +6,15 @@ import {
     IconUserCheck } from '@tabler/icons-vue';
 import { onMounted, ref } from 'vue';
 import Skeleton from 'primevue/skeleton';
+import {generalFormat} from "@/Composables/format.js";
 
 const props = defineProps({
-    memberCounts: Number
+    totalRecords: Number,
+    verifiedUser: Number,
+    unverifiedUser: Number,
 });
-
 const isLoading = ref(false);
-const memberCounts = ref(0);
-const verifiedUser = ref(0);
-const unverifiedUser = ref(0);
-
-const getMemberOverview = async () => {
-    isLoading.value = true;
-    try {
-        const response = await axios.get('/member/get_member_overview');
-        memberCounts.value = response.data.memberCounts;
-        verifiedUser.value = response.data.verifiedUser;
-        unverifiedUser.value = response.data.unverifiedUser;
-    } catch (error) {
-        console.error('Error fetching recent approvals:', error);
-    } finally {
-        isLoading.value = false;
-    }
-};
-
-onMounted(() => {
-    getMemberOverview();
-});
+const {formatAmount} = generalFormat();
 </script>
 
 <template>
@@ -52,7 +34,7 @@ onMounted(() => {
                                 </div>
 
                                 <div v-else>
-                                    {{ memberCounts }}
+                                    {{ totalRecords }}
                                 </div>
                             </div>
                         </div>

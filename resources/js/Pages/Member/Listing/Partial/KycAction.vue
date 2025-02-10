@@ -29,7 +29,7 @@ const form = useForm({
     remarks: '',
 });
 
-const emit = defineEmits();
+const emit = defineEmits(['kycActionCompleted']);
 
 const submitForm = () => {
     form.action = dialogType.value;
@@ -109,7 +109,7 @@ const imagesToDisplay = computed(() => {
     <Dialog
         v-model:visible="visible"
         modal
-       :style="{ width: '25rem' }"
+        class="dialog-xs md:dialog-md"
     >
         <template #header>
             <div class="flex items-center gap-4">
@@ -120,62 +120,60 @@ const imagesToDisplay = computed(() => {
         </template>
         
         <div class="grid gap-6 py-2">
-            <div class="space-y-2">
-                <div class="text-lg text-surface-950 dark:text-white mb-4">
-                        ID/Passport
-                    </div>
-                    <Galleria 
-                        :value="imagesToDisplay" 
-                        :responsiveOptions="responsiveOptions" 
-                        :numVisible="5" 
-                        :circular="true"
-                        containerStyle="max-width: 640px" 
-                        :showItemNavigators="true" 
-                        :showThumbnails="false"
-                        >
-                        <!-- Template for displaying individual images -->
-                        <template #item="slotProps">
-                            <img 
-                            :src="slotProps.item" 
-                            alt="Image Preview" 
-                            style="width: 100%; display: block;" 
-                            />
-                        </template>
-                    </Galleria>
-                </div>
-                
-                <div v-if="dialogType === 'reject'" class="space-y-2">
-                    <InputLabel for="remarks" value="Remarks" />
-                    <Textarea 
-                        id="remarks"
-                        type="text"
-                        v-model="form.remarks"
-                        :invalid="!!form.errors.remarks"
-                        placeholder="Reject Remarks"
-                        class="block w-full"
-                        autofocus
-                        rows="5"
-                        cols="30"
-                    />
-                    <InputError :message="form.errors.remarks" />
-                </div>
-    
-                <div class="flex justify-center mt-3">
-                    <Button
-                        severity="secondary"
-                        class="text-center mr-3"
-                        @click="visible = false"
+            <div class="flex flex-col gap-1 items-start self-stretch">
+                <InputLabel for="ID/Passport" value="ID/Passport" />
+                <Galleria 
+                    :value="imagesToDisplay" 
+                    :responsiveOptions="responsiveOptions" 
+                    :numVisible="5" 
+                    :circular="true"
+                    containerStyle="max-width: 640px" 
+                    :showItemNavigators="true" 
+                    :showThumbnails="false"
                     >
-                        Cancel
-                    </Button>
-                    <Button
-                        class="text-center"
-                        :disabled="form.processing"
-                        @click.prevent="submitForm"
-                    >
-                        Submit
-                    </Button>
-                </div>
+                    <!-- Template for displaying individual images -->
+                    <template #item="slotProps">
+                        <img 
+                        :src="slotProps.item" 
+                        alt="Image Preview" 
+                        style="width: 100%; display: block;" 
+                        />
+                    </template>
+                </Galleria>
             </div>
+                
+            <div v-if="dialogType === 'reject'" class="flex flex-col gap-1 items-start self-stretch">
+                <InputLabel for="remarks" value="Remarks" />
+                <Textarea 
+                    id="remarks"
+                    type="text"
+                    v-model="form.remarks"
+                    :invalid="!!form.errors.remarks"
+                    placeholder="Reject Remarks"
+                    class="block w-full"
+                    autofocus
+                    rows="5"
+                    cols="30"
+                />
+                <InputError :message="form.errors.remarks" />
+            </div>
+
+            <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
+                <Button
+                    severity="secondary"
+                    class="text-center mr-3"
+                    @click="visible = false"
+                >
+                    Cancel
+                </Button>
+                <Button
+                    class="text-center"
+                    :disabled="form.processing"
+                    @click.prevent="submitForm"
+                >
+                    Submit
+                </Button>
+            </div>
+        </div>
     </Dialog>
 </template>

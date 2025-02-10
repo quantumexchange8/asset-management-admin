@@ -18,6 +18,7 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import KycAction from './Partial/KycAction.vue';
+import EmptyData from '@/Components/EmptyData.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -268,9 +269,10 @@ const refreshTable = () => {
                             </template>
 
                             <template #empty>
-                                <div class="flex flex-col">
-                                    <span>No user</span>
-                                </div>
+                                <EmptyData
+                                    :title="$t('public.no_members_founded')"
+                                    :message="$t('public.add_members_to_proceed')"
+                                />
                             </template>
 
                             <template #loading>

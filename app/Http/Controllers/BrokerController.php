@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Broker;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -56,11 +56,11 @@ class BrokerController extends Controller
                         break;
 
                     case 'largest_fund':
-                        $query->orderBy('created_at', 'asc');
+                        $query->orderByDesc('connections_sum_capital_fund');
                         break;
 
                     case 'most_investors':
-                        $query->orderBy('created_at', 'desc');
+                        $query->orderByDesc('connections_count');
                         break;
 
                     default:
