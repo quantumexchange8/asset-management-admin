@@ -31,7 +31,7 @@ class RunningNumberSeeder extends Seeder
         ]);
 
         RunningNumber::create([
-            'type' => 'cash_wallet',
+            'type' => 'connection',
             'prefix' => 'VTA-CON',
             'digits' => 7,
             'last_number' => 0,
