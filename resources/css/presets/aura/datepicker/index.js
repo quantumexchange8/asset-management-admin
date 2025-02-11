@@ -306,7 +306,7 @@ export default {
             // Colors
             {
                 'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
-                'bg-highlight': context.selected && !context.disabled
+                'dark:bg-highlight bg-primary-100': context.selected && !context.disabled
             },
 
             // States
@@ -341,7 +341,7 @@ export default {
             // Colors
             {
                 'text-surface-600 dark:text-white/70 bg-transparent': !context.selected && !context.disabled,
-                'bg-highlight': context.selected && !context.disabled
+                'dark:bg-highlight bg-primary-100': context.selected && !context.disabled
             },
 
             // States

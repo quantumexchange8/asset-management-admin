@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -43,6 +44,7 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/get_total_deposit_by_days', [DashboardController::class, 'getTotalDepositByDays'])->name('dashboard.getTotalDepositByDays');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

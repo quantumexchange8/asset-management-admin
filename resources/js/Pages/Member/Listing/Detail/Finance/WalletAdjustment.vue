@@ -35,6 +35,8 @@ const form = useForm({
 
 const toast = useToast();
 
+const emit = defineEmits(['walletAdjusted']);
+
 const submitForm = () => {
     if(props.wallet){
         form.wallet_id = props.wallet.id;
@@ -54,6 +56,7 @@ const submitForm = () => {
                 detail: 'Wallet adjust successfully!',
                 life: 3000,
             });
+            emit('walletAdjusted');
         },
         onError: (errors) => {
             console.error(errors);
