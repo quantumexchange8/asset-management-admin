@@ -107,7 +107,7 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-        :style="{ width: '20rem' }"
+        class="dialog-xs md:dialog-sm"
     >
         <template #header>
             <div class="flex items-center gap-4">
