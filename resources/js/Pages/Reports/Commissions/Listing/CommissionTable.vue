@@ -335,7 +335,7 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="date"
+                            field="created_at"
                             style="min-width: 9rem"
                             sortable
                         >
@@ -343,9 +343,9 @@ watchEffect(() => {
                                 <span class="block">date</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.date ? dayjs(data.date).format('YYYY-MM-DD') : 'N/A' }}
+                                {{ data.created_at ? dayjs(data.created_at).format('YYYY-MM-DD') : 'N/A' }}
                                 <div class="text-xs text-gray-500 mt-1">
-                                    {{ data.date ? dayjs(data.date).add(8, 'hour').format('hh:mm:ss A') : 'N/A' }}
+                                    {{ data.created_at ? dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') : 'N/A' }}
                                 </div>
                             </template>
                         </Column>

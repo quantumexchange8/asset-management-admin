@@ -25,6 +25,8 @@ const dt = ref(null);
 const first = ref(0);
 const users = ref([]);
 const totalRecords = ref(0);
+const verifiedUser = ref();
+const unverifiedUser = ref();
 
 //filteration type and methods
 const filters = ref({
@@ -44,7 +46,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
     isLoading.value = true;
 
     lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; //...lazyParams.value(retain existing properties after update);
-
+    lazyParams.value.filters = filters.value;
     try {
         setTimeout(async () => {
 
@@ -65,6 +67,8 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             const results = await response.json();
             users.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
+            verifiedUser.value = results?.verifiedUser;
+            unverifiedUser.value = results?.unverifiedUser;
             isLoading.value = false;
         }, 100);
     } catch (e) {
@@ -89,6 +93,17 @@ const onFilter = (event) => {
     lazyParams.value.fitlers = filters.value;
     loadLazyData(event);
 };
+
+const emit = defineEmits(['updateTotalUser']);
+
+// Emit the totals whenever they change
+watch([totalRecords, verifiedUser, unverifiedUser], () => {
+    emit('updateTotalUser', {
+        totalRecords: totalRecords.value,
+        verifiedUser: verifiedUser.value,
+        unverifiedUser: unverifiedUser.value,
+    });
+});
 
 //Date Filter
 const selectedDate = ref([]);

@@ -52,7 +52,6 @@ Route::middleware('auth')->group(function () {
     //member
     Route::prefix('member')->group(function () {
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
-        Route::get('/get_member_overview', [MemberController::class, 'getMemberOverview'])->name('member.getMemberOverview');
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
@@ -100,7 +99,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
 
             Route::prefix('detail')->group(function () {
-                Route::get('/{id_number}', [BrokerController::class, 'brokerDetail'])->name('broker.detail.brokerDetail');
                 Route::post('/updateBrokerInfo', [BrokerController::class, 'updateBrokerInfo'])->name('broker.detail.updateBrokerInfo');
             });
         });
@@ -151,11 +149,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/get_commissions_list', [TradingController::class, 'getCommissionsList'])->name('report.getCommissionsList');
         Route::post('/import-commissions', [TradingController::class, 'importCommissions'])->name('report.importCommissions');
         Route::get('/get_commission_data', [TradingController::class, 'getCommissionData'])->name('report.getCommissionData');
-
-        Route::get('/download-template', function () {
-            $filePath = public_path('/VoltAsia_Commission_Import_Template.xlsx');
-            return response()->download($filePath);
-        });
+        Route::get('/download_import_example', [TradingController::class, 'download_import_example'])->name('report.download_import_example');
     });
 });
 

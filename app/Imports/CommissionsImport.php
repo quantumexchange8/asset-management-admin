@@ -26,7 +26,7 @@ class CommissionsImport implements ToModel, WithHeadingRow, WithValidation
             'email' => $row['email'],
             //  'mt_login' => $row['mt_login'],
             'volume' => $row['lot_size'],
-            'date' => $transactionDate,
+            'created_at' => $transactionDate,
             'broker_id' => $this->broker_id,
         ]);
     }

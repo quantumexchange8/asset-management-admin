@@ -87,34 +87,26 @@ class MemberController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $totalMember = $query->where('role', 'user')->count();
+
+            $verifiedUser = (clone $query)
+                ->where('kyc_status', 'verified')
+                ->count();
+    
+            $unverifiedUser = (clone $query)
+                ->whereIn('kyc_status', ['unverified', 'pending'])
+                ->count();
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'totalMember' => $totalMember,
+                'verifiedUser' => $verifiedUser,
+                'unverifiedUser' => $unverifiedUser,
             ]);
         }
 
         return response()->json(['success' => false, 'data' => []]);
-    }
-
-    public function getMemberOverview()
-    {
-        $userQuery = User::query();
-
-        $memberCounts = User::count();
-
-        $verified_user = (clone $userQuery)
-            ->where('kyc_status', 'verified')
-            ->count();
-
-        $unverified_user = (clone $userQuery)
-            ->whereIn('kyc_status', ['unverified', 'pending'])
-            ->count();
-
-        return response()->json([
-            'memberCounts' => $memberCounts,
-            'verifiedUser' => $verified_user,
-            'unverifiedUser' => $unverified_user,
-        ]);
     }
 
     public function getPendingKyc()
