@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class BrokerConnectionExport implements FromCollection, WithHeadings
+class RebateBonusExport implements FromCollection, WithHeadings
 {
     protected $query;
 
@@ -22,20 +22,22 @@ class BrokerConnectionExport implements FromCollection, WithHeadings
     public function collection(): Collection
     {
         $records = $this->query
-            ->orderByDesc('joined_at')
+            ->orderByDesc('created_at')
             ->get();
 
         $result = array();
         foreach ($records as $record) {
             $result[] = array(
-                'joined_at' => Carbon::parse($record->joined_at)->format('Y-m-d'),
+                'created_at' => Carbon::parse($record->created_at)->format('Y-m-d'),
                 'name' => $record->user->name ?? '-',
                 'email' => $record->user->email ?? '-',
+                'client_name' => $record->subject_user->email ?? '-',
+                'client_email' => $record->subject_user->email ?? '-',
                 'broker' => $record->broker->name ?? '-',
-                'broker_login' => $record->broker_login,
-                'connection_number' => $record->connection_number,
-                'capital_fund' => $record->capital_fund,
-                'status' => $record->status,
+                'user_broker_login' => $record->broker->user_broker_login ?? '-',
+                'symbol' => $record->symbol,
+                'volume' => $record->volume,
+                'rebate' => $record->rebate,
             );
         }
 
@@ -45,14 +47,16 @@ class BrokerConnectionExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            trans('public.join_date'),
+            trans('public.date'),
             trans('public.name'),
             trans('public.email'),
+            trans('public.client_name'),
+            trans('public.client_email'),
             trans('public.broker'),
-            trans('public.login'),
-            trans('public.connection_number'),
-            trans('public.fund') . ' ($)',
-            trans('public.status'),
+            trans('public.broker_login'),
+            trans('public.symbol'),
+            trans('public.volume'),
+            trans('public.rebate') . ' ($)',
         ];
     }
 }

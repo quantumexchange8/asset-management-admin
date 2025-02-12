@@ -2,15 +2,16 @@
 import Skeleton from "primevue/skeleton";
 import {
     IconDatabaseDollar,
-    IconUserCode
+    IconMedal
 } from "@tabler/icons-vue";
 import Card from "primevue/card";
 import {ref} from "vue";
 import {generalFormat} from "@/Composables/format.js";
+import {max} from "rxjs";
 
 const props = defineProps({
-    totalActiveFund: Number,
-    totalConnections: Number,
+    totalBonusAmount: Number,
+    maxBonusAmount: Number,
 })
 
 const {formatAmount} = generalFormat();
@@ -24,22 +25,22 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                {{ $t('public.total_active_fund') }}
+                                {{ $t('public.total_bonus') }}
                             </div>
                             <div class="text-3xl font-semibold">
-                                <div v-if="totalActiveFund === null">
+                                <div v-if="totalBonusAmount === null">
                                     <Skeleton width="5rem" class="my-0.5" height="2rem"></Skeleton>
                                 </div>
 
                                 <div v-else>
-                                    ${{ formatAmount(totalActiveFund) }}
+                                    ${{ formatAmount(totalBonusAmount, 4) }}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 w-[72px] h-[72px]">
-                        <div class="flex items-center justify-center rounded-full bg-primary-200 dark:bg-primary-700 w-14 h-14 text-primary-600 dark:text-primary-300">
+                    <div class="flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40 w-[72px] h-[72px]">
+                        <div class="flex items-center justify-center rounded-full bg-blue-200 dark:bg-blue-700 w-14 h-14 text-blue-600 dark:text-blue-300">
                             <IconDatabaseDollar size="36" stroke-width="1.5" />
                         </div>
                     </div>
@@ -53,23 +54,23 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                {{ $t('public.total_connections') }}
+                                {{ $t('public.highest_bonus') }}
                             </div>
                             <div class="text-3xl font-semibold">
-                                <div v-if="totalConnections === null">
+                                <div v-if="maxBonusAmount === null">
                                     <Skeleton width="5rem" class="my-0.5" height="2rem"></Skeleton>
                                 </div>
 
                                 <div v-else>
-                                    {{ formatAmount(totalConnections, 0) }}
+                                    ${{ formatAmount(maxBonusAmount, 4) }}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40 w-[72px] h-[72px]">
-                        <div class="flex items-center justify-center rounded-full bg-blue-200 dark:bg-blue-700 w-14 h-14 text-blue-600 dark:text-blue-300">
-                            <IconUserCode size="36" stroke-width="1.5" />
+                    <div class="flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 w-[72px] h-[72px]">
+                        <div class="flex items-center justify-center rounded-full bg-primary-200 dark:bg-primary-700 w-14 h-14 text-primary-600 dark:text-primary-300">
+                            <IconMedal size="36" stroke-width="1.5" />
                         </div>
                     </div>
                 </div>

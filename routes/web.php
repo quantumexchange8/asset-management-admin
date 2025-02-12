@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SelectOptionController;
 use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
@@ -142,14 +143,19 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    //report
+    /**
+     * ==============================
+     *            Report
+     * ==============================
+     */
     Route::prefix('report')->group(function () {
+        // Standard Bonus
+        Route::get('/standard_bonus', [ReportController::class, 'standard_bonus'])->name('report.standard_bonus');
+        Route::get('/getStandardBonusData', [ReportController::class, 'getStandardBonusData'])->name('report.getStandardBonusData');
 
-        //commission
-        Route::get('/get_commissions_list', [TradingController::class, 'getCommissionsList'])->name('report.getCommissionsList');
-        Route::post('/import-commissions', [TradingController::class, 'importCommissions'])->name('report.importCommissions');
-        Route::get('/get_commission_data', [TradingController::class, 'getCommissionData'])->name('report.getCommissionData');
-        Route::get('/download_import_example', [TradingController::class, 'download_import_example'])->name('report.download_import_example');
+        // Rebate Bonus
+        Route::get('/rebate_bonus', [ReportController::class, 'rebate_bonus'])->name('report.rebate_bonus');
+        Route::get('/getRebateBonusData', [ReportController::class, 'getRebateBonusData'])->name('report.getRebateBonusData');
     });
 });
 

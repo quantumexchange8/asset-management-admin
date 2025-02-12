@@ -9,7 +9,8 @@ import {
     IconReportMoney,
     IconUserDollar,
     IconHomeShare,
-    IconHomeDollar
+    IconHomeDollar,
+    IconBusinessplan
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -130,9 +131,19 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarCategoryLabel title="reports" />
 
         <SidebarLink
+            title="standard_bonus"
+            :href="route('report.standard_bonus')"
+            :active="route().current('report.standard_bonus')"
+        >
+            <template #icon>
+                <IconBusinessplan size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
             title="rebate_bonus"
-            :href="route('report.getCommissionsList')"
-            :active="route().current('report.getCommissionsList')"
+            :href="route('report.rebate_bonus')"
+            :active="route().current('report.rebate_bonus')"
         >
             <template #icon>
                 <IconUserDollar size="20" stroke-width="1.5" />
