@@ -56,9 +56,12 @@ Route::middleware('auth')->group(function () {
     Route::prefix('member')->group(function () {
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
+        Route::get('/access_portal/{user}', [MemberController::class, 'access_portal'])->name('member.access_portal');
+
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
         Route::put('/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
+
 
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');

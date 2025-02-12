@@ -92,7 +92,7 @@ class MemberController extends Controller
             $verifiedUser = (clone $query)
                 ->where('kyc_status', 'verified')
                 ->count();
-    
+
             $unverifiedUser = (clone $query)
                 ->whereIn('kyc_status', ['unverified', 'pending'])
                 ->count();
@@ -443,5 +443,31 @@ class MemberController extends Controller
         }
     }
 
+    public function access_portal(User $user)
+    {
+        $dataToHash = $user->name . $user->email . $user->id_number;
+        $hashedToken = md5($dataToHash);
 
+        $currentHost = $_SERVER['HTTP_HOST'];
+
+        // Retrieve the app URL and parse its host
+        $appUrl = parse_url(config('app.url'), PHP_URL_HOST);
+        $memberProductionUrl = config('app.member_production_url');
+
+        if ($currentHost === 'assm-admin.currenttech.pro') {
+            $url = "https://assm-user.currenttech.pro/admin_login/$hashedToken";
+        } elseif ($currentHost === $appUrl) {
+            $url = "$memberProductionUrl/admin_login/$hashedToken";
+        } else {
+            return back();
+        }
+
+        $params = [
+            'admin_id' => Auth::id(),
+            'admin_name' => Auth::user()->name,
+        ];
+
+        $redirectUrl = $url . "?" . http_build_query($params);
+        return Inertia::location($redirectUrl);
+    }
 }

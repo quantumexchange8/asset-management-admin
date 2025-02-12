@@ -29,7 +29,7 @@ const dialogType = ref();
 const items = ref([
     {
         label: 'Member Detail',
-        icon: h(IconId), 
+        icon: h(IconId),
         command: () => {
             window.location.href = `/member/detail/${props.member.id_number}`;
         },
@@ -37,6 +37,9 @@ const items = ref([
     {
         label: 'Access Portal',
         icon: h(IconDeviceLaptop),
+        command: () => {
+            window.open(route('member.access_portal', props.member.id), '_blank');
+        }
     },
     {
         label: 'Change Upline',
@@ -67,7 +70,7 @@ const items = ref([
         label: 'Delete',
         icon: h(IconTrash),
     },
-   
+
 ]);
 
 const toggle = (event) => {
@@ -88,7 +91,7 @@ const toggle = (event) => {
     >
         <IconDotsVertical size="16" stroke-width="1.25" color="#667085" />
     </Button>
-    
+
     <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup>
         <template #item="{ item, props, hasSubmenu }">
             <div
@@ -125,13 +128,13 @@ const toggle = (event) => {
         </template>
 
         <template v-if="dialogType === 'change_upline'">
-            <ChangeUpline 
+            <ChangeUpline
                 :member="member"
                 @update:visible="visible = false"
             />
         </template>
     </Dialog>
-        
+
 </template>
 
 
