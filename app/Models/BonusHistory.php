@@ -13,7 +13,7 @@ class BonusHistory extends Model
     // Relations
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'upline_user_id', 'id');
     }
 
     public function subject_user(): BelongsTo
