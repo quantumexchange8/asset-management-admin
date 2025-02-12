@@ -120,7 +120,7 @@ class ReportController extends Controller
                             $q->where('name', 'like', '%' . $keyword . '%')
                                 ->orWhere('email', 'like', '%' . $keyword . '%');
                         });
-                    })->orWhere('bonus_type', 'like', '%' . $keyword . '%');
+                    })->orWhere('symbol', 'like', '%' . $keyword . '%');
                 });
             }
 
