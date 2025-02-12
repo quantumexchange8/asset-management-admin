@@ -80,88 +80,93 @@ const tabs = ref([
 <template>
     <Card>
         <template #content>
-            <div class="flex flex-col gap-y-4">
-                <div class="flex flex-col gap-1 items-start self-stretch">
-                    <span class="text-lg font-semibold">{{ $t('public.overview') }}</span>
-                    <span class="text-sm text-surface-500">{{ $t('public.overview_caption') }}</span>
-                </div>
-
-                <Tabs value="0">
-                    <TabList>
-                        <Tab v-for="tab in tabs" :key="tab.value" :value="tab.value">
-                            {{ $t(`public.${tab.label}`) }}
-                        </Tab>
-                    </TabList>
-                    <TabPanels>
-                        <TabPanel v-for="tab in tabs" :key="tab.value" :value="tab.value">
-                            <!-- Flex container for deposits/withdrawals (with icons) -->
-                            <div class="flex gap-5 flex-col sm:flex-row items-start">
-                                <!-- Total Deposit/Withdrawal -->
-                                <div class="flex gap-5 items-center">
-                                    <div class="rounded-full flex items-center justify-center w-10 h-10 bg-primary-300">
-                                        <IconCoin size="25" stroke-width="1.25" class="text-primary-700" />
-                                    </div>
-
-                                    <div class="flex flex-col">
-                                        <div class="text-sm text-gray-400 dark:text-gray-500">
-                                            {{ $t(`public.total_${tab.label}`) }}
-                                        </div>
-                                        <div class="text-lg text-gray-900 dark:text-white">
-                                            <span v-if="tab.total !== null">
-                                                $ {{ formatAmount(tab.total ? tab.total : 0) }}
-                                            </span>
-                                            <span v-else>
-                                                Loading...
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Total Deposit/Withdrawal (Month/Year) -->
-                                <div class="flex gap-5 items-center">
-                                    <div :class="`rounded-full flex items-center justify-center w-10 h-10 bg-${tab.icon}-300`">
-                                        <IconCoin size="25" stroke-width="1.25" :class="`text-${tab.icon}-600`" />
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <div class="text-sm text-gray-400 dark:text-gray-500">
-                                            {{ $t(`public.total_${tab.label}`) }} ({{ $t('public.month') }}: {{ selectedMonth }}, {{ $t('public.year') }}: {{ selectedYear }})
-                                        </div>
-                                        <div class="text-lg text-gray-900 dark:text-white">
-                                            <span v-if="tab.totalMonth !== null">
-                                                $ {{ formatAmount(tab.totalMonth ? tab.totalMonth : 0) }}
-                                            </span>
-                                            <span v-else>
-                                                Loading...
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </TabPanel>
-                    </TabPanels>
-                </Tabs>
-
-                <div class="flex flex-col sm:flex-row items-start gap-4">
-                    <!-- Days Select -->
-                    <div class="flex flex-col">
-                        <label class="text-sm text-gray-600 dark:text-gray-300 mb-1">{{ $t('public.days') }}</label>
-                        <SelectButton v-model="daysValue" :options="daysOptions" />
-                    </div>
-
-                    <!-- Date Picker -->
-                    <div class="flex flex-col">
-                        <label class="text-sm text-gray-600 dark:text-gray-300 mb-1">{{ $t('public.date') }}</label>
-                        <DatePicker v-model="date" view="month" dateFormat="mm/yy" />
-                    </div>
-                </div>
-
-                <DashboardOverviewChart 
-                    :selectedMonth="selectedMonth"
-                    :selectedYear="selectedYear"
-                    :selectedDays="selectedDays"
-                    @updateTotal="handleOverview"
-                />
+            <div class="flex flex-col gap-1 items-start self-stretch">
+                <span class="text-lg font-semibold">{{ $t('public.overview') }}</span>
+                <span class="text-sm text-surface-500">{{ $t('public.overview_caption') }}</span>
+<!--                <SelectButton v-model="value" :options="options" />-->
             </div>
+<!--            <div class="flex flex-col gap-y-4">-->
+<!--                <div class="flex flex-col gap-1 items-start self-stretch">-->
+<!--                    <span class="text-lg font-semibold">{{ $t('public.overview') }}</span>-->
+<!--                    <span class="text-sm text-surface-500">{{ $t('public.overview_caption') }}</span>-->
+<!--                </div>-->
+
+<!--                <Tabs value="0">-->
+<!--                    <TabList>-->
+<!--                        <Tab v-for="tab in tabs" :key="tab.value" :value="tab.value">-->
+<!--                            {{ $t(`public.${tab.label}`) }}-->
+<!--                        </Tab>-->
+<!--                    </TabList>-->
+<!--                    <TabPanels>-->
+<!--                        <TabPanel v-for="tab in tabs" :key="tab.value" :value="tab.value">-->
+<!--                            &lt;!&ndash; Flex container for deposits/withdrawals (with icons) &ndash;&gt;-->
+<!--                            <div class="flex gap-5 flex-col sm:flex-row items-start">-->
+<!--                                &lt;!&ndash; Total Deposit/Withdrawal &ndash;&gt;-->
+<!--                                <div class="flex gap-5 items-center">-->
+<!--                                    <div class="rounded-full flex items-center justify-center w-10 h-10 bg-primary-300">-->
+<!--                                        <IconCoin size="25" stroke-width="1.25" class="text-primary-700" />-->
+<!--                                    </div>-->
+
+<!--                                    <div class="flex flex-col">-->
+<!--                                        <div class="text-sm text-gray-400 dark:text-gray-500">-->
+<!--                                            {{ $t(`public.total_${tab.label}`) }}-->
+<!--                                        </div>-->
+<!--                                        <div class="text-lg text-gray-900 dark:text-white">-->
+<!--                                            <span v-if="tab.total !== null">-->
+<!--                                                $ {{ formatAmount(tab.total ? tab.total : 0) }}-->
+<!--                                            </span>-->
+<!--                                            <span v-else>-->
+<!--                                                Loading...-->
+<!--                                            </span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                &lt;!&ndash; Total Deposit/Withdrawal (Month/Year) &ndash;&gt;-->
+<!--                                <div class="flex gap-5 items-center">-->
+<!--                                    <div :class="`rounded-full flex items-center justify-center w-10 h-10 bg-${tab.icon}-300`">-->
+<!--                                        <IconCoin size="25" stroke-width="1.25" :class="`text-${tab.icon}-600`" />-->
+<!--                                    </div>-->
+<!--                                    <div class="flex flex-col">-->
+<!--                                        <div class="text-sm text-gray-400 dark:text-gray-500">-->
+<!--                                            {{ $t(`public.total_${tab.label}`) }} ({{ $t('public.month') }}: {{ selectedMonth }}, {{ $t('public.year') }}: {{ selectedYear }})-->
+<!--                                        </div>-->
+<!--                                        <div class="text-lg text-gray-900 dark:text-white">-->
+<!--                                            <span v-if="tab.totalMonth !== null">-->
+<!--                                                $ {{ formatAmount(tab.totalMonth ? tab.totalMonth : 0) }}-->
+<!--                                            </span>-->
+<!--                                            <span v-else>-->
+<!--                                                Loading...-->
+<!--                                            </span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </TabPanel>-->
+<!--                    </TabPanels>-->
+<!--                </Tabs>-->
+
+<!--                <div class="flex flex-col sm:flex-row items-start gap-4">-->
+<!--                    &lt;!&ndash; Days Select &ndash;&gt;-->
+<!--                    <div class="flex flex-col">-->
+<!--                        <label class="text-sm text-gray-600 dark:text-gray-300 mb-1">{{ $t('public.days') }}</label>-->
+<!--                        <SelectButton v-model="daysValue" :options="daysOptions" />-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Date Picker &ndash;&gt;-->
+<!--                    <div class="flex flex-col">-->
+<!--                        <label class="text-sm text-gray-600 dark:text-gray-300 mb-1">{{ $t('public.date') }}</label>-->
+<!--                        <DatePicker v-model="date" view="month" dateFormat="mm/yy" />-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <DashboardOverviewChart -->
+<!--                    :selectedMonth="selectedMonth"-->
+<!--                    :selectedYear="selectedYear"-->
+<!--                    :selectedDays="selectedDays"-->
+<!--                    @updateTotal="handleOverview"-->
+<!--                />-->
+<!--            </div>-->
         </template>
     </Card>
 </template>
