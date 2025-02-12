@@ -88,7 +88,7 @@ const submitForm = () => {
     <Dialog
         v-model:visible="visible"
         modal
-        :style="{ width: '35rem' }"
+    class="dialog-xs md:dialog-md"
     >
     <template #header>
         <div class="flex items-center gap-4">
@@ -118,7 +118,7 @@ const submitForm = () => {
         <Divider />
 
         <!-- Requested Date, Transaction Number, To, Upline Section -->
-        <div class="space-y-2">
+        <div class="flex flex-col gap-1 self-stretch">
             <div class="flex justify-between text-sm">
                 <div class=" text-gray-500">
                     Requested Date:
@@ -142,7 +142,7 @@ const submitForm = () => {
             </div> -->
         </div>
 
-        <div v-if="dialogType === 'reject'" class="space-y-2">
+        <div v-if="dialogType === 'reject'"  class="flex flex-col gap-1 self-stretch">
             <Divider />
             <InputLabel for="remarks" value="Remarks" />
             <Textarea 

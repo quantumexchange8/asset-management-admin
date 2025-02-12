@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
 import Import from './Import.vue';
+import EmptyData from '@/Components/EmptyData.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -287,9 +288,9 @@ watchEffect(() => {
                         </template>
 
                         <template #empty>
-                            <div class="flex flex-col">
-                                <span>No deposit</span>
-                            </div>
+                            <EmptyData
+                                :title="$t('public.no_deposit_founded')"
+                            />
                         </template>
 
                         <template #loading>

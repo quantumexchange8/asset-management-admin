@@ -18,6 +18,7 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import PendingDepositAction from './PendingDepositAction.vue';
+import EmptyData from '@/Components/EmptyData.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -282,9 +283,9 @@ const refreshTable = () => {
                         </template>
 
                         <template #empty>
-                            <div class="flex flex-col">
-                                <span>No deposit</span>
-                            </div>
+                            <EmptyData
+                                :title="$t('public.no_deposit_founded')"
+                            />
                         </template>
 
                         <template #loading>

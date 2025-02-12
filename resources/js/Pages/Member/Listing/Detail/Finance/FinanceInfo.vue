@@ -29,11 +29,9 @@ onMounted(() => {
     getWalletData();
 });
 
-watchEffect(() => {
-    if (usePage().props.toast !== null) {
-        getWalletData();
-    }
-});
+const refreshWallet = () => {
+    getWalletData();
+};
 
 </script>
 
@@ -76,6 +74,7 @@ watchEffect(() => {
                                 <WalletAdjustment
                                     :user="user"
                                     :wallet="wallet"
+                                    @walletAdjusted="refreshWallet"
                                 />
                             </div>
 

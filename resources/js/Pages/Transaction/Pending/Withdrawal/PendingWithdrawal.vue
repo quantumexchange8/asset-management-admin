@@ -18,7 +18,7 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
-
+import EmptyData from '@/Components/EmptyData.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -283,9 +283,9 @@ const refreshTable = () => {
                         </template>
 
                         <template #empty>
-                            <div class="flex flex-col">
-                                <span>No withdrawal</span>
-                            </div>
+                            <EmptyData
+                                :title="$t('public.no_withdrawal_founded')"
+                            />
                         </template>
 
                         <template #loading>

@@ -18,6 +18,7 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
+import EmptyData from '@/Components/EmptyData.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -288,9 +289,9 @@ watchEffect(() => {
                         </template>
 
                         <template #empty>
-                            <div class="flex flex-col">
-                                <span>No data</span>
-                            </div>
+                            <EmptyData
+                                :title="$t('public.no_withdrawal_founded')"
+                            />
                         </template>
 
                         <template #loading>

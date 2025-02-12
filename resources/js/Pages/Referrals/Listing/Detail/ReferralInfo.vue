@@ -41,7 +41,7 @@ const getSeverity = (status) => {
         <IconFileDescription :size="20" stroke-width="1.5" :style="{ stroke: '#cca05a' }" />
     </Button>
 
-    <Dialog v-model:visible="visible" modal class="dialog-xs md:dialog-md" style="width: 90%; max-width: 45rem;">
+    <Dialog v-model:visible="visible" modal class="dialog-xs md:dialog-md">
         <template #header>
             <div class="flex items-center gap-4">
                 <div class="text-xl font-bold">
