@@ -8,7 +8,6 @@ return [
     "dashboard" => "Dashboard",
     "member" => "Member",
     "member_listing" => "Member Listing",
-    "commission_listing" => "Commission Listing",
     "pending_kyc" => "Pending KYC",
     "member_referrals" => "Member Referrals",
     "marketplace" => "marketplace",
