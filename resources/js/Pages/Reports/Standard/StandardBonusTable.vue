@@ -284,7 +284,7 @@ watchEffect(() => {
                         </div>
                     </template>
 
-                    <template v-if="connections?.length > 0">
+                    <template >
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
@@ -326,7 +326,10 @@ watchEffect(() => {
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
                                     <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
-                                    <span>{{ data.broker.name }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-surface-950 dark:text-white font-medium">{{ data.user_broker_login }}</span>
+                                        <span class="text-surface-500">{{ data.broker.name }}</span>
+                                    </div>
                                 </div>
                             </template>
                         </Column>
@@ -340,6 +343,55 @@ watchEffect(() => {
                                     severity="secondary"
                                     :value="$t(`public.${data.bonus_type}`)"
                                 />
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="close_time"
+                            :header="$t('public.close_time')"
+                            style="width: 10%;"
+                        >
+                            <template #body="{data}">
+                                <div class="flex flex-col">
+                                    <span class="text-surface-950 dark:text-white font-medium">{{ dayjs(data.close_time).format('YYYY-MM-DD') }}</span>
+                                    <span class="text-surface-500">{{ dayjs(data.close_time).format('hh:mm:ss A') }}</span>
+                                </div>
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="symbol"
+                            :header="$t('public.symbol')"
+                        >
+                            <template #body="{data}">
+                                {{ data.symbol }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="net_profit"
+                            :header="$t('public.net_profit')"
+                        >
+                            <template #body="{data}">
+                                {{ formatAmount(data.net_profit) }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="distribute_amount"
+                            :header="$t('public.distribute_amount')"
+                        >
+                            <template #body="{data}">
+                                {{ formatAmount(data.distribute_amount, 4) }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="remaining_percentage"
+                            :header="$t('public.remaining_percentage')"
+                        >
+                            <template #body="{data}">
+                                {{ formatAmount(data.remaining_percentage) }}
                             </template>
                         </Column>
 

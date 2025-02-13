@@ -116,4 +116,8 @@ return [
     "client_email" => "客户邮箱",
     "type" => "类型",
     "broker_login" => "经纪商号码",
+    "close_time" => "关闭时间",
+    "net_profit" => "纯利",
+    "distribute_amount" => "分配金额",
+    "remaining_percentage" => "剩余百分比",
 ];

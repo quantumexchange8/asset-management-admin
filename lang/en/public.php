@@ -116,4 +116,8 @@ return [
     "client_email" => "Client Email",
     "type" => "Type",
     "broker_login" => "Login",
+    "close_time" => "Close Time",
+    "net_profit" => "Net Profit",
+    "distribute_amount" => "Distribute Amount",
+    "remaining_percentage" => "Remaining Percentage",
 ];
