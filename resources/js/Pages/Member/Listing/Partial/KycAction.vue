@@ -9,9 +9,10 @@ import InputError from '@/Components/InputError.vue';
 import { ref, computed } from 'vue';
 import Galleria from 'primevue/galleria';
 import { useForm } from '@inertiajs/vue3';
+import Image from "primevue/image";
 
 const props = defineProps({
-    pending: Object, 
+    pending: Object,
 });
 
 const toast = useToast();
@@ -95,7 +96,7 @@ const imagesToDisplay = computed(() => {
         >
             <IconCheck :size="20" stroke-width="1.5" color="green"/>
         </Button>
-    
+
         <Button
             class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
             size="sm"
@@ -104,7 +105,7 @@ const imagesToDisplay = computed(() => {
         >
             <IconX :size="20" stroke-width="1.5" color="red"/>
         </Button>
-    </div> 
+    </div>
 
     <Dialog
         v-model:visible="visible"
@@ -118,33 +119,35 @@ const imagesToDisplay = computed(() => {
                 </div>
             </div>
         </template>
-        
-        <div class="grid gap-6 py-2">
-            <div class="flex flex-col gap-1 items-start self-stretch">
+
+        <div class="grid gap-6 py-2 w-full">
+            <div class="flex flex-col gap-1 items-start self-stretch w-full">
                 <InputLabel for="ID/Passport" value="ID/Passport" />
-                <Galleria 
-                    :value="imagesToDisplay" 
-                    :responsiveOptions="responsiveOptions" 
-                    :numVisible="5" 
+                <Galleria
+                    :value="imagesToDisplay"
+                    :responsiveOptions="responsiveOptions"
+                    :numVisible="5"
                     :circular="true"
-                    containerStyle="max-width: 640px" 
-                    :showItemNavigators="true" 
+                    :showItemNavigators="true"
                     :showThumbnails="false"
-                    >
+                    container-class="w-full"
+                >
                     <!-- Template for displaying individual images -->
                     <template #item="slotProps">
-                        <img 
-                        :src="slotProps.item" 
-                        alt="Image Preview" 
-                        style="width: 100%; display: block;" 
+                        <Image
+                            :src="slotProps.item"
+                            alt="Image"
+                            imageClass="w-full h-[300px] object-cover"
+                            class="w-full"
+                            preview
                         />
                     </template>
                 </Galleria>
             </div>
-                
+
             <div v-if="dialogType === 'reject'" class="flex flex-col gap-1 items-start self-stretch">
                 <InputLabel for="remarks" value="Remarks" />
-                <Textarea 
+                <Textarea
                     id="remarks"
                     type="text"
                     v-model="form.remarks"

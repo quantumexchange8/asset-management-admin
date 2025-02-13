@@ -420,98 +420,98 @@ const refreshTable = () => {
                     </div>
                 </template>
             </Card>
-
-            <Popover ref="op">
-                <div class="flex flex-col gap-6 w-60">
-                    <!-- Filter Date -->
-                    <div class="flex flex-col gap-2 items-center self-stretch">
-                        <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                            Filter By Date
-                        </div>
-                        <div class="relative w-full">
-                            <DatePicker
-                                v-model="selectedDate"
-                                dateFormat="dd/mm/yy"
-                                selectionMode="range"
-                                placeholder="dd/mm/yyyy - dd/mm/yyyy"
-                                class="w-full"
-                            />
-                            <div
-                                v-if="selectedDate && selectedDate.length > 0"
-                                class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
-                                @click="clearDate"
-                            >
-                                <IconX :size="15" strokeWidth="1.5"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filter Country -->
-                    <div class="flex flex-col gap-2 items-center self-stretch">
-                        <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                            Filter By Country
-                        </div>
-                        <Select
-                            v-model="filters['country'].value"
-                            :options="countries"
-                            optionLabel="name"
-                            placeholder="Select Country"
-                            filter
-                            :filter-fields="['name']"
-                            :loading="loadingCountries"
-                            class="w-full"
-                            showClear
-                        >
-                            <template #value="slotProps">
-                                <div v-if="slotProps.value" class="flex items-center">
-                                    {{ slotProps.value.name }}
-                                </div>
-                                <span v-else>{{ slotProps.placeholder }}</span>
-                            </template>
-                            <template #option="slotProps">
-                                <div>{{ slotProps.option.name }}</div>
-                            </template>
-                        </Select>
-                    </div>
-
-                    <!-- Filter Rank -->
-                    <div class="flex flex-col gap-2 items-center self-stretch">
-                        <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                            Filter By Rank
-                        </div>
-                        <Select
-                            v-model="filters['rank'].value"
-                            :options="ranks"
-                            optionLabel="rank_name"
-                            placeholder="Select Rank"
-                            filter
-                            :filter-fields="['rank_name']"
-                            :loading="loadingRanks"
-                            class="w-full"
-                            showClear
-                        >
-                            <template #value="slotProps">
-                                <div v-if="slotProps.value" class="flex items-center">
-                                    {{ slotProps.value.rank_name }}
-                                </div>
-                                <span v-else>{{ slotProps.placeholder }}</span>
-                            </template>
-                            <template #option="slotProps">
-                                <div>{{ slotProps.option.rank_name }}</div>
-                            </template>
-                        </Select>
-                    </div>
-
-                    <Button
-                        type="button"
-                        outlined
-                        class="w-full"
-                        @click="clearAll"
-                    >
-                    Clear All
-                    </Button>
-                </div>
-            </Popover>
         </div>
+
+        <Popover ref="op">
+            <div class="flex flex-col gap-6 w-60">
+                <!-- Filter Date -->
+                <div class="flex flex-col gap-2 items-center self-stretch">
+                    <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                        Filter By Date
+                    </div>
+                    <div class="relative w-full">
+                        <DatePicker
+                            v-model="selectedDate"
+                            dateFormat="dd/mm/yy"
+                            selectionMode="range"
+                            placeholder="dd/mm/yyyy - dd/mm/yyyy"
+                            class="w-full"
+                        />
+                        <div
+                            v-if="selectedDate && selectedDate.length > 0"
+                            class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
+                            @click="clearDate"
+                        >
+                            <IconX :size="15" strokeWidth="1.5"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Country -->
+                <div class="flex flex-col gap-2 items-center self-stretch">
+                    <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                        Filter By Country
+                    </div>
+                    <Select
+                        v-model="filters['country'].value"
+                        :options="countries"
+                        optionLabel="name"
+                        placeholder="Select Country"
+                        filter
+                        :filter-fields="['name']"
+                        :loading="loadingCountries"
+                        class="w-full"
+                        showClear
+                    >
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value" class="flex items-center">
+                                {{ slotProps.value.name }}
+                            </div>
+                            <span v-else>{{ slotProps.placeholder }}</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div>{{ slotProps.option.name }}</div>
+                        </template>
+                    </Select>
+                </div>
+
+                <!-- Filter Rank -->
+                <div class="flex flex-col gap-2 items-center self-stretch">
+                    <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                        Filter By Rank
+                    </div>
+                    <Select
+                        v-model="filters['rank'].value"
+                        :options="ranks"
+                        optionLabel="rank_name"
+                        placeholder="Select Rank"
+                        filter
+                        :filter-fields="['rank_name']"
+                        :loading="loadingRanks"
+                        class="w-full"
+                        showClear
+                    >
+                        <template #value="slotProps">
+                            <div v-if="slotProps.value" class="flex items-center">
+                                {{ slotProps.value.rank_name }}
+                            </div>
+                            <span v-else>{{ slotProps.placeholder }}</span>
+                        </template>
+                        <template #option="slotProps">
+                            <div>{{ slotProps.option.rank_name }}</div>
+                        </template>
+                    </Select>
+                </div>
+
+                <Button
+                    type="button"
+                    outlined
+                    class="w-full"
+                    @click="clearAll"
+                >
+                    Clear All
+                </Button>
+            </div>
+        </Popover>
     </AuthenticatedLayout>
 </template>

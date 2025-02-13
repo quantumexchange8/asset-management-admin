@@ -169,7 +169,7 @@ class MemberController extends Controller
 
             // Add KYC images to each user
             foreach ($users as $user) {
-                $user->kyc_images = $user->getMedia('kyc_verification')->map(function ($media) {
+                $user->kyc_images = $user->getMedia('kyc_image')->map(function ($media) {
                     return $media->getUrl();  // Return the media URL
                 });
             }
@@ -279,7 +279,7 @@ class MemberController extends Controller
             ->withCount('wallets')
             ->first();
 
-        $kycImages = $user->getMedia('kyc_verification')->map(fn($image) => $image->getUrl());
+        $kycImages = $user->getMedia('kyc_image')->map(fn($image) => $image->getUrl());
 
         $refereeCount = User::where('upline_id', $user->id)->count();
 
