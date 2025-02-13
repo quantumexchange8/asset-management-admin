@@ -289,6 +289,7 @@ watchEffect(() => {
                             field="created_at"
                             :header="$t('public.date')"
                             sortable
+                            style="min-width: 7rem"
                         >
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
@@ -322,6 +323,7 @@ watchEffect(() => {
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -337,6 +339,7 @@ watchEffect(() => {
                         <Column
                             field="bonus_type"
                             :header="$t('public.description')"
+                            style="min-width: 9rem"
                         >
                             <template #body="{ data }">
                                 <Tag
@@ -349,7 +352,7 @@ watchEffect(() => {
                         <Column
                             field="close_time"
                             :header="$t('public.close_time')"
-                            style="width: 10%;"
+                            style="min-width: 8rem"
                         >
                             <template #body="{data}">
                                 <div class="flex flex-col">
@@ -362,6 +365,7 @@ watchEffect(() => {
                         <Column
                             field="symbol"
                             :header="$t('public.symbol')"
+                            style="min-width: 7rem"
                         >
                             <template #body="{data}">
                                 {{ data.symbol }}
@@ -371,6 +375,7 @@ watchEffect(() => {
                         <Column
                             field="net_profit"
                             :header="$t('public.net_profit')"
+                            style="min-width: 7rem"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.net_profit) }}
@@ -380,6 +385,7 @@ watchEffect(() => {
                         <Column
                             field="distribute_amount"
                             :header="$t('public.distribute_amount')"
+                            style="min-width: 7rem"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.distribute_amount, 4) }}
@@ -389,6 +395,7 @@ watchEffect(() => {
                         <Column
                             field="remaining_percentage"
                             :header="$t('public.remaining_percentage')"
+                            style="min-width: 7rem"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.remaining_percentage) }}
@@ -399,6 +406,7 @@ watchEffect(() => {
                             field="bonus_amount"
                             :header="$t('public.amount')"
                             sortable
+                            style="min-width: 7rem"
                         >
                             <template #body="{ data }">
                                 ${{ formatAmount(data.bonus_amount, 4) }}

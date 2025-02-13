@@ -48,11 +48,6 @@ class ReferralController extends Controller
                         $userIds = array_merge($userIds, $this->getDescendants($allUsers, $user->id));
                     }
 
-                    // Include upline hierarchy for the searched users
-                    foreach ($searchedUsers as $user) {
-                        $userIds = array_merge($userIds, $this->getUplineHierarchy($allUsers, $user->upline_id));
-                    }
-
                     // Fetch all relevant users based on hierarchy
                     $users = User::whereIn('id', $userIds)
                         ->with([
@@ -61,6 +56,7 @@ class ReferralController extends Controller
                             'upline:id,name,email,upline_id',
                         ])
                         ->get();
+                    Log::info('users:', ['users' => $users]);
                 }
             } else {
                 // If no global filter, fetch users with a hierarchy only
@@ -86,6 +82,8 @@ class ReferralController extends Controller
             // Build the hierarchy tree
             $referrals = $this->buildTree($users);
 
+            Log::info('referrals:', ['referrals' => $referrals]);
+
             return response()->json([
                 'data' => [
                     'referrals' => $referrals,
@@ -96,49 +94,59 @@ class ReferralController extends Controller
         return response()->json(['success' => false, 'referrals' => []]);
     }
 
-    private function buildTree($users, $parentId = null)
+    private function buildTree($users)
     {
         $tree = [];
 
+        // Index users by ID for quick look-up
+        $userMap = []; // userMap Index is based on user id, e.g: id=[2,4,6,8], usermap index would be the same
         foreach ($users as $user) {
-            if ($user['upline_id'] === $parentId) {
-                // Recursively build the tree for this user's children
-                $children = $this->buildTree($users, $user['id']);
+            $userMap[$user['id']] = $user;
+        }
 
-                // Direct downline count (immediate children)
-                $directDownlineCount = count($children);
-
-                // Total downline count (direct + all descendants)
-                $totalDownlineCount = $directDownlineCount;
-                foreach ($children as $child) {
-                    $totalDownlineCount += $child['total_downlines_count'];
-                }
-
-                // Assign values
-                $user['children'] = $children;
-                $user['downlines_count'] = $directDownlineCount;
-                $user['total_downlines_count'] = $totalDownlineCount;
-
-                $tree[] = $user;
+        // Identify root users (those whose upline_id is not in the user list)
+        $roots = [];
+        foreach ($users as $user) {
+            if (is_null($user['upline_id']) || !array_key_exists($user['upline_id'], $userMap)) { 
+                $roots[] = $user;
             }
+        }
+
+        // Recursively build tree starting from the roots
+        foreach ($roots as $root) {
+            $tree[] = $this->buildSubTree($users, $root);
         }
 
         return $tree;
     }
 
-    private function getUplineHierarchy($allUsers, $uplineId)
+    private function buildSubTree($users, $currentUser)
     {
-        $uplineHierarchy = [];
-        while (!is_null($uplineId)) {
-            $uplineUser = $allUsers->firstWhere('id', $uplineId);
-            if ($uplineUser) {
-                $uplineHierarchy[] = $uplineUser->id;
-                $uplineId = $uplineUser->upline_id;
-            } else {
-                break;
+        $children = [];
+
+        // Recursively find and build children
+        foreach ($users as $user) {
+            if ($user['upline_id'] === $currentUser['id']) {
+                $child = $this->buildSubTree($users, $user);
+                $children[] = $child;
             }
         }
-        return $uplineHierarchy;
+
+        // Direct downline count (immediate children)
+        $directDownlineCount = count($children);
+
+        // Total downline count (direct + all descendants)
+        $totalDownlineCount = $directDownlineCount;
+        foreach ($children as $child) {
+            $totalDownlineCount += $child['total_downlines_count'];
+        }
+
+        // Assign values
+        $currentUser['children'] = $children;
+        $currentUser['downlines_count'] = $directDownlineCount;
+        $currentUser['total_downlines_count'] = $totalDownlineCount;
+
+        return $currentUser;
     }
 
     private function getDescendants($allUsers, $userId)

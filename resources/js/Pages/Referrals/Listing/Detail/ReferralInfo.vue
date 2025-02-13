@@ -6,6 +6,7 @@ import Image from 'primevue/image';
 import Dialog from 'primevue/dialog';
 import { IconFileDescription } from '@tabler/icons-vue';
 import { ref } from 'vue';
+import Button from 'primevue/button';
 
 const props = defineProps({
     referral: Object,

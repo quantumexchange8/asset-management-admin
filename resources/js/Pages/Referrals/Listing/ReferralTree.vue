@@ -53,7 +53,6 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //BE send back result back to FE
             const results = await response.json();
             referrals.value = results?.data?.referrals || [];
-        console.log('Updated referrals:', referrals.value);
             isLoading.value = false;
         }, 100);
     } catch (e) {
