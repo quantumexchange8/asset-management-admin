@@ -110,6 +110,7 @@ watchEffect(() => {
                     :loading="isLoading"
                     :globalFilterFields="['name', 'email']"
                     scrollable
+                    :resizableColumns="true"
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">

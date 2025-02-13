@@ -284,7 +284,7 @@ watchEffect(() => {
                         </div>
                     </template>
 
-                    <template >
+                    <template v-if="connections?.length > 0">
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
