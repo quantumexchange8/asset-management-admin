@@ -22,6 +22,7 @@ import {usePage} from "@inertiajs/vue3";
 import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
+import {useLangObserver} from "@/Composables/localeObserver.js";
 
 const exportStatus = ref(false);
 const isLoading = ref(false);
@@ -32,6 +33,7 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
+const {locale} = useLangObserver();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -339,7 +341,7 @@ watchEffect(() => {
                         <Column
                             field="bonus_type"
                             :header="$t('public.description')"
-                            style="min-width: 9rem"
+                            :class="locale === 'cn' ? 'min-w-24' : 'min-w-40'"
                         >
                             <template #body="{ data }">
                                 <Tag
@@ -352,12 +354,12 @@ watchEffect(() => {
                         <Column
                             field="close_time"
                             :header="$t('public.close_time')"
-                            style="min-width: 8rem"
+                            class="min-w-32"
                         >
                             <template #body="{data}">
                                 <div class="flex flex-col">
                                     <span class="text-surface-950 dark:text-white font-medium">{{ dayjs(data.close_time).format('YYYY-MM-DD') }}</span>
-                                    <span class="text-surface-500">{{ dayjs(data.close_time).format('hh:mm:ss A') }}</span>
+                                    <span class="text-surface-500 text-xs">{{ dayjs(data.close_time).format('hh:mm:ss A') }}</span>
                                 </div>
                             </template>
                         </Column>
@@ -368,14 +370,14 @@ watchEffect(() => {
                             style="min-width: 7rem"
                         >
                             <template #body="{data}">
-                                {{ data.symbol }}
+                                <span class="font-medium">{{ data.symbol }}</span>
                             </template>
                         </Column>
 
                         <Column
                             field="net_profit"
-                            :header="$t('public.net_profit')"
-                            style="min-width: 7rem"
+                            :header="`${$t('public.net_profit')} ($)`"
+                            :class="locale === 'cn' ? 'min-w-24' : 'min-w-36'"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.net_profit) }}
@@ -384,8 +386,9 @@ watchEffect(() => {
 
                         <Column
                             field="distribute_amount"
-                            :header="$t('public.distribute_amount')"
-                            style="min-width: 7rem"
+                            :header="`${$t('public.distribute_amount')} ($)`"
+                            sortable
+                            :class="locale === 'cn' ? 'min-w-36' : 'min-w-44'"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.distribute_amount, 4) }}
@@ -394,8 +397,9 @@ watchEffect(() => {
 
                         <Column
                             field="remaining_percentage"
-                            :header="$t('public.remaining_percentage')"
-                            style="min-width: 7rem"
+                            :header="`${$t('public.allocated')} (%)`"
+                            sortable
+                            :class="locale === 'cn' ? 'min-w-40' : 'min-w-44'"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.remaining_percentage) }}
@@ -404,12 +408,14 @@ watchEffect(() => {
 
                         <Column
                             field="bonus_amount"
-                            :header="$t('public.amount')"
+                            :header="`${$t('public.amount')} ($)`"
                             sortable
-                            style="min-width: 7rem"
+                            frozen
+                            align-frozen="right"
+                            :class="locale === 'cn' ? 'min-w-36' : 'min-w-40'"
                         >
                             <template #body="{ data }">
-                                ${{ formatAmount(data.bonus_amount, 4) }}
+                                <span class="font-semibold">{{ formatAmount(data.bonus_amount, 4) }}</span>
                             </template>
                         </Column>
                     </template>

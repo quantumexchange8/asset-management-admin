@@ -119,5 +119,5 @@ return [
     "close_time" => "关闭时间",
     "net_profit" => "纯利",
     "distribute_amount" => "分配金额",
-    "remaining_percentage" => "剩余百分比",
+    "allocated" => "分配百分比",
 ];
