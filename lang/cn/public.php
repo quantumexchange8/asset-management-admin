@@ -120,4 +120,24 @@ return [
     "net_profit" => "纯利",
     "distribute_amount" => "分配金额",
     "allocated" => "分配百分比",
+
+    "no_referral" => "无推荐",
+    "rank" => "等级",
+    "personal_capital_fund" => "个人资本基金",
+    "team_capital_fund" => "团队资本基金",
+    "direct_downlines" => "直接下线",
+    "action" => "操作",
+
+    "total_downlines" => "总下线",
+    "action" => "操作",
+    "phone" => "电话",
+    "country" => "国家",
+    "referrer" => "推荐人",
+    "referee" => "被推荐人",
+
+    "no_connection" => "未连接经纪商",
+    "connect_with_broker" => "连接经纪商",
+    "total" => "总计",
+
+
 ];

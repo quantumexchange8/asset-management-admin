@@ -120,4 +120,22 @@ return [
     "net_profit" => "Net Profit",
     "distribute_amount" => "Distributed",
     "allocated" => "Allocated",
+    
+    "no_referral" => "No Referral",
+    "rank" => "Rank",
+    "personal_capital_fund" => "Personal Capital Fund",
+    "team_capital_fund" => "Team Capital Fund",
+    "direct_downlines" => "Direct Downlines",
+    
+    "total_downlines" => "Total Downlines",
+    "action" => "Action",
+    "phone" => "Phone",
+    "country" => "Country",
+    "referrer" => "Referrer",
+    "referee" => "Referee",
+
+    "no_connection" => "No Connection with Broker",
+    "connect_with_broker" => "Connect with Broker",
+
+    "total" => "Total",
 ];
