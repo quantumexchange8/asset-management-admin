@@ -159,4 +159,17 @@ return [
     "to" => 'To',
     "approved_at" => "Approved At",
     "from" => "From",
+
+    "filter_by_referrer" => "Filter By Referrer",
+    "select_referrer" => "Select Referrer",
+    "filter_by_country" => "Filter By Country",
+    "filter_by_rank" => "Filter By Rank",
+    "select_rank" => "Select Rank",
+    "filter_by_status" => "Filter By Status",
+    "select_status" => "Select Status",
+    "clear_all" => "Clear All",
+
+    "filter_by_fund_type" => "Filter By Fund Type",
+    "select_fund_type" => "Select Fund Type",
+
 ];

@@ -475,13 +475,13 @@ watchEffect(() => {
             <!-- Filter Referrer -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Referrer
+                    {{ $t('public.filter_by_referrer') }}
                 </div>
                 <Select
                     v-model="filters['referrer'].value"
                     :options="upline"
                     optionLabel="name"
-                    placeholder="Select Referrer"
+                    :placeholder="$t('public.select_referrer')"
                     filter
                     :filter-fields="['name']"
                     :loading="loadingUpline"
@@ -503,7 +503,7 @@ watchEffect(() => {
             <!-- Filter Date -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Date
+                    {{ $t('public.filter_by_date') }}
                 </div>
                 <div class="relative w-full">
                     <DatePicker
@@ -526,13 +526,13 @@ watchEffect(() => {
             <!-- Filter Country -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Country
+                    {{ $t('public.filter_by_country') }}
                 </div>
                 <Select
                     v-model="filters['country'].value"
                     :options="countries"
                     optionLabel="name"
-                    placeholder="Select Country"
+                    :placeholder="$t('public.select_country')"
                     filter
                     :filter-fields="['name']"
                     :loading="loadingCountries"
@@ -554,13 +554,13 @@ watchEffect(() => {
             <!-- Filter Rank -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Rank
+                    {{ $t('public.filter_by_rank') }}
                 </div>
                 <Select
                     v-model="filters['rank'].value"
                     :options="ranks"
                     optionLabel="rank_name"
-                    placeholder="Select Rank"
+                    :placeholder="$t('public.select_rank')"
                     filter
                     :filter-fields="['rank_name']"
                     :loading="loadingRanks"
@@ -582,12 +582,12 @@ watchEffect(() => {
             <!-- Filter kyc Status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Status
+                    {{ $t('public.filter_by_status') }}
                 </div>
                 <Select
                     v-model="filters['status'].value"
                     :options="kycStatus"
-                    placeholder="Select Status"
+                    :placeholder="$t('public.select_status')"
                     class="w-full"
                     showClear
                 >
@@ -603,7 +603,7 @@ watchEffect(() => {
                 class="w-full"
                 @click="clearAll"
             >
-            Clear All
+            {{ $t('public.clear_all') }}
             </Button>
         </div>
     </Popover>

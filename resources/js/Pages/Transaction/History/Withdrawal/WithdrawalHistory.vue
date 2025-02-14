@@ -411,7 +411,7 @@ watchEffect(() => {
                 <!-- Filter Date -->
                 <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Date
+                        {{ $t('public.filter_by_date') }}
                     </div>
                     <div class="relative w-full">
                         <DatePicker
@@ -434,12 +434,12 @@ watchEffect(() => {
                 <!-- Filter fund type -->
                 <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Fund Type
+                        {{ $t('public.filter_by_fund_type') }}
                     </div>
                     <Select
                         v-model="filters['fund_type'].value"
                         :options="fundType"
-                        placeholder="Select Fund Type"
+                        :placeholder="$t('public.select_fund_type')"
                         class="w-full"
                         showClear
                     >
@@ -452,12 +452,12 @@ watchEffect(() => {
                   <!-- Filter status -->
                   <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Status
+                        {{ $t('public.filter_by_status') }}
                     </div>
                     <Select
                         v-model="filters['status'].value"
                         :options="status"
-                        placeholder="Select Status"
+                        :placeholder="$t('public.select_status')"
                         class="w-full"
                         showClear
                     >
@@ -473,7 +473,7 @@ watchEffect(() => {
                     class="w-full"
                     @click="clearAll"
                 >
-                    Clear All
+                    {{ $t('public.clear_all') }}
                 </Button>
             </div>
         </Popover>

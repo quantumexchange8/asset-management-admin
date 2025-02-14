@@ -161,5 +161,16 @@ return [
     "from" => "从",
     "approved_at" => "批准时间",
 
+    "filter_by_referrer" => "按推荐人筛选",
+    "select_referrer" => "选择推荐人",
+    "filter_by_country" => "按国家筛选",
+    "filter_by_rank" => "按等级筛选",
+    "select_rank" => "选择等级",
+    "filter_by_status" => "按状态筛选",
+    "select_status" => "选择状态",
+    "clear_all" => "清除所有",
+    "filter_by_fund_type" => "按基金类型筛选",
+    "select_fund_type" => "选择基金类型",
+
 
 ];

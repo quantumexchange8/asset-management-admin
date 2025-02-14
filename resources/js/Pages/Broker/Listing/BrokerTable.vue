@@ -180,7 +180,7 @@ watchEffect(() => {
                 </InputIcon>
                 <InputText
                     v-model="filters['global'].value"
-                    placeholder="Keyword Search"
+                    :placeholder="$t('public.search_keyword')"
                     type="text"
                     class="block w-full pl-10 pr-10"
                 />
@@ -203,7 +203,7 @@ watchEffect(() => {
                 @click="toggle"
             >
                 <IconAdjustments :size="15"/>
-                Filter
+                {{ $t('public.filter') }}
             </Button>
 
             <Select
@@ -376,12 +376,12 @@ watchEffect(() => {
             <!-- Filter kyc Status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    Filter By Status
+                    {{ $t('public.filter_by_status') }}
                 </div>
                 <Select
                     v-model="filters['status'].value"
                     :options="brokerStatus"
-                    placeholder="Select Status"
+                   :placeholder="$t('public.select_status')"
                     class="w-full"
                     showClear
                 >
@@ -397,7 +397,7 @@ watchEffect(() => {
                 class="w-full"
                 @click="clearAll"
             >
-                Clear All
+            {{ $t('public.clear_all') }}
             </Button>
         </div>
     </Popover>
