@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative text-gray-400 dark:text-gray-500 focus-within:text-primary-500 dark:focus-within:text-primary-400"
+        class="relative text-gray-400 dark:text-gray-500 focus-within:text-primary-500 dark:focus-within:text-primary-400 w-full"
     >
         <div
             aria-hidden="true"

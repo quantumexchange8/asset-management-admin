@@ -243,7 +243,7 @@ const refreshTable = () => {
                                         </InputIcon>
                                         <InputText
                                             v-model="filters['global'].value"
-                                            placeholder="Keyword Search"
+                                           :placeholder="$t('public.search_keyword')"
                                             type="text"
                                             class="block w-full pl-10 pr-10"
                                         />
@@ -264,7 +264,7 @@ const refreshTable = () => {
                                         @click="toggle"
                                     >
                                         <IconAdjustments :size="15"/>
-                                        Filter
+                                        {{ $t('public.filter') }}
                                     </Button>
                                 </div>
 
@@ -275,7 +275,7 @@ const refreshTable = () => {
                                         @click="exportDeposit"
                                         :disabled="exportTable==='yes'"
                                     >
-                                        <span class="pr-1">Export</span>
+                                        <span class="pr-1">{{ $t('public.export') }}</span>
                                         <IconDownload size="16" stroke-width="1.5"/>
                                     </Button>
                                 </div>
@@ -305,7 +305,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">transaction number</span>
+                                    <span class="block">{{ $t('public.transaction_number') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.transaction_number }}
@@ -318,7 +318,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">name</span>
+                                    <span class="block">{{ $t('public.name') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.user.name }}
@@ -335,7 +335,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">amount</span>
+                                    <span class="block">{{ $t('public.amount') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.amount }}
@@ -348,7 +348,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">fund type</span>
+                                    <span class="block">{{ $t('public.fund_type') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.fund_type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
@@ -361,7 +361,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">to</span>
+                                    <span class="block">{{ $t('public.to') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.to_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
@@ -374,7 +374,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">status</span>
+                                    <span class="block">{{ $t('public.status') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     <Tag :value="data.status" :severity="getSeverity(data.status)" />
@@ -388,7 +388,7 @@ const refreshTable = () => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">approval at</span>
+                                    <span class="block">{{ $t('public.approved_at') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}

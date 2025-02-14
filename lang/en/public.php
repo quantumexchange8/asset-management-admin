@@ -5,6 +5,7 @@ return [
     "remember_me" => "Remember Me",
     "reset_password" => "Reset Password",
     "log_in" => "Log In",
+    "login_caption" => "Welcome! Sign in to continue",
     "dashboard" => "Dashboard",
     "member" => "Member",
     "member_listing" => "Member Listing",
@@ -68,6 +69,7 @@ return [
     "descriptions" => "Descriptions",
     "browse" => "Browse",
     "enter_name" => "Enter Name",
+    "enter_email" => "Enter Email",
     "enter_url" => "Enter URL",
     "pending_deposit" => "Pending Deposit",
     "pending_withdrawal" => "Pending Withdrawal",
@@ -136,6 +138,25 @@ return [
 
     "no_connection" => "No Connection with Broker",
     "connect_with_broker" => "Connect with Broker",
-
     "total" => "Total",
+
+    "username" => "Username",
+    "enter_username" => "Enter Username",
+    "upline" => "Upline",
+    "select_upline" => "Select Upline",
+    "select_country" => "Select Country",
+    "phone_number" => "Phone Number",
+    "dial_code" => "Dial Code",
+    "confirm_password" => "Confirm Password",
+    "role" => "Role",
+
+    "all_members" => "All Members",
+    "verified" => "Verified",
+    "unverified" => "Unverified",
+
+    "transaction_number" => "Transaction Number",
+    "fund_type" => "Fund Type",
+    "to" => 'To',
+    "approved_at" => "Approved At",
+    "from" => "From",
 ];

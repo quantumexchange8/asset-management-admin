@@ -5,6 +5,7 @@ return [
     "remember_me" => "记住我",
     "reset_password" => "重置密码",
     "log_in" => "登录",
+    "login_caption" => "欢迎！请登录以继续",
     "dashboard" => "主页",
     "member" => "会员",
     "member_listing" => "会员列表",
@@ -68,6 +69,7 @@ return [
     "descriptions" => "描述",
     "browse" => "浏览",
     "enter_name" => "输入名称",
+    "enter_email" => "输入邮箱",
     "enter_url" => "输入网址",
     "pending_deposit" => "待处理存款",
     "pending_withdrawal" => "待处理提款",
@@ -138,6 +140,26 @@ return [
     "no_connection" => "未连接经纪商",
     "connect_with_broker" => "连接经纪商",
     "total" => "总计",
+
+    "username" => "用户名",
+    "enter_username" => "输入用户名",
+    "upline" => "上线",
+    "select_upline" => "选择上线",
+    "select_country" => "选择国家",
+    "phone_number" => "电话号码",
+    "confirm_password" => "确认密码",
+    "dial_code" => "拨号代码",
+    "role" => "角色",
+
+    "all_members" => "所有成员",
+    "verified" => "已验证",
+    "unverified" => "未验证",
+
+    "transaction_number" => "交易编号",
+    "fund_type" => "资金类型",
+    "to" => "至",
+    "from" => "从",
+    "approved_at" => "批准时间",
 
 
 ];

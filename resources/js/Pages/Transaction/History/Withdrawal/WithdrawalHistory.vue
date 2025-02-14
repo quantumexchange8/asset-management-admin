@@ -248,7 +248,7 @@ watchEffect(() => {
                                         </InputIcon>
                                         <InputText
                                             v-model="filters['global'].value"
-                                            placeholder="Keyword Search"
+                                           :placeholder="$t('public.search_keyword')"
                                             type="text"
                                             class="block w-full pl-10 pr-10"
                                         />
@@ -269,7 +269,7 @@ watchEffect(() => {
                                         @click="toggle"
                                     >
                                         <IconAdjustments :size="15"/>
-                                        Filter
+                                        {{ $t('public.filter') }}
                                     </Button>
                                 </div>
 
@@ -280,7 +280,7 @@ watchEffect(() => {
                                         @click="exportWithdrawal"
                                         :disabled="exportTable==='yes'"
                                     >
-                                        <span class="pr-1">Export</span>
+                                    <span class="pr-1">{{ $t('public.export') }}</span>
                                         <IconDownload size="16" stroke-width="1.5"/>
                                     </Button>
 
@@ -311,7 +311,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">transaction number</span>
+                                    <span class="block">{{ $t('public.transaction_number') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.transaction_number }}
@@ -324,7 +324,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">name</span>
+                                    <span class="block">{{ $t('public.name') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.user.name }}
@@ -338,7 +338,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">amount</span>
+                                    <span class="block">{{ $t('public.amount') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.amount }}
@@ -351,7 +351,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">fund type</span>
+                                    <span class="block">{{ $t('public.fund_type') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.fund_type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
@@ -364,7 +364,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">From</span>
+                                    <span class="block">{{ $t('public.from') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.from_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
@@ -377,7 +377,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">status</span>
+                                    <span class="block">{{ $t('public.status') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     <Tag :value="data.status" :severity="getSeverity(data.status)" />
@@ -391,7 +391,7 @@ watchEffect(() => {
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">approval at</span>
+                                    <span class="block">{{ $t('public.approved_at') }}</span>
                                 </template>
                                 <template #body="{ data }">
                                     {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}

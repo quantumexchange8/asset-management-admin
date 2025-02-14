@@ -123,7 +123,7 @@ watchEffect(() => {
                                     <InputIcon>
                                         <IconSearch :size="16" stroke-width="1.5" />
                                     </InputIcon>
-                                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"
+                                    <InputText v-model="filters['global'].value" :placeholder="$t('public.search_keyword')"
                                         type="text" class="block w-full pl-10 pr-10" />
                                     <!-- Clear filter button -->
                                     <div v-if="filters['global'].value"

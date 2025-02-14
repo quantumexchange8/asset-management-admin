@@ -212,6 +212,15 @@ class MemberController extends Controller
             'phone' => ['required', 'max:255', 'unique:' . User::class],
             'password' => ['required', Password::defaults(), 'confirmed'],
             'upline' => ['nullable'],
+        ], [], [
+            'name' => trans('public.name'),
+            'email' => trans('public.email'),
+            'username' => trans('public.username'),
+            'country' => trans('public.country'),
+            'dial_code' => trans('public.dial_code'),
+            'phone' => trans('public.phone'),
+            'password' => trans('public.password'),
+            'upline' => trans('public.upline'),
         ]);
 
         $dial_code = $request->dial_code;

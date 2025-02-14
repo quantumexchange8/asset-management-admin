@@ -97,11 +97,13 @@ import ScrollPanel from 'primevue/scrollpanel';
             <SidebarCollapsibleItem
                 title="deposit"
                 :href="route('transaction.pending.getPendingDeposit')"
+                :active="route().current('transaction.pending.getPendingDeposit')"
             />
 
             <SidebarCollapsibleItem
                 title="withdrawal"
                 :href="route('transaction.pending.getPendingWithdrawal')"
+                :active="route().current('transaction.pending.getPendingWithdrawal')"
             />
         </SidebarCollapsible>
 

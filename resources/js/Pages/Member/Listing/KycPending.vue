@@ -241,7 +241,7 @@ const refreshTable = () => {
                                             </InputIcon>
                                             <InputText
                                                 v-model="filters['global'].value"
-                                                placeholder="Keyword Search"
+                                                :placeholder="$t('public.search_keyword')"
                                                 type="text"
                                                 class="block w-full pl-10 pr-10"
                                                     />
@@ -262,7 +262,7 @@ const refreshTable = () => {
                                             @click="toggle"
                                         >
                                             <IconAdjustments :size="15"/>
-                                            Filter
+                                            {{ $t('public.filter') }}
                                         </Button>
                                     </div>
                                 </div>
@@ -291,7 +291,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">joined</span>
+                                        <span class="block">{{ $t('public.join_date') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
@@ -306,7 +306,7 @@ const refreshTable = () => {
                                 >
 
                                     <template #header>
-                                        <span class="block">name</span>
+                                        <span class="block">{{ $t('public.name') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         {{ data.name }}
@@ -320,7 +320,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">email</span>
+                                        <span class="block">{{ $t('public.email') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         {{ data.email }}
@@ -333,7 +333,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">referrer</span>
+                                        <span class="block">{{ $t('public.referrer') }}</span>
                                     </template>
 
                                     <template #body="{data}">
@@ -360,7 +360,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">rank</span>
+                                        <span class="block">{{ $t('public.rank') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         {{ data.rank.rank_name }}
@@ -373,7 +373,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">role</span>
+                                        <span class="block">{{ $t('public.role') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         {{ data.role }}
@@ -386,7 +386,7 @@ const refreshTable = () => {
                                     sortable
                                 >
                                     <template #header>
-                                        <span class="block">country</span>
+                                        <span class="block">{{ $t('public.country') }}</span>
                                     </template>
                                     <template #body="{data}">
                                         <span>{{ data.country.name }}</span>
@@ -397,7 +397,7 @@ const refreshTable = () => {
                                     field="kyc_status"
                                 >
                                     <template #header>
-                                        <span class="block">status</span>
+                                        <span class="block">{{ $t('public.status') }}</span>
                                     </template>
                                     <template #body="{ data }">
                                         <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
@@ -406,7 +406,7 @@ const refreshTable = () => {
 
                                 <Column
                                     field="action"
-                                    header="action"
+                                    :header="$t('public.action')"
                                 >
                                     <template #body="{data}">
                                         <KycAction
