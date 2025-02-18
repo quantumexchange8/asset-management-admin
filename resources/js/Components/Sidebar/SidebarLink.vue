@@ -1,7 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { sidebarState } from '@/Composables'
-import {IconCircle} from "@tabler/icons-vue";
+import {IconCircle, IconAlertSquareRoundedFilled} from "@tabler/icons-vue";
 import Badge from 'primevue/badge';
 
 const props = defineProps({
@@ -62,12 +62,12 @@ const Tag = !props.external ? Link : 'a'
         <div class="flex items-center gap-2 w-full">
             <span
                 class="text-sm font-medium w-full"
-                v-show="sidebarState.isOpen || sidebarState.isHovered"
+                v-show="sidebarState.isOpen"
             >
                 {{ $t(`public.${title}`) }}
             </span>
             <Badge
-                v-if="pendingCounts > 0 && (sidebarState.isOpen || sidebarState.isHovered)"
+                v-if="pendingCounts > 0 && sidebarState.isOpen"
                 :value="pendingCounts"
                 severity="info"
             ></Badge>
@@ -106,10 +106,18 @@ const Tag = !props.external ? Link : 'a'
 
         <span
             class="text-sm font-medium dark:text-white"
-            v-show="sidebarState.isOpen || sidebarState.isHovered"
+            v-show="sidebarState.isOpen"
         >
             {{ $t(`public.${title}`) }}
         </span>
+        <div
+            v-if="pendingCounts"
+            class="text-red-500"
+        >
+            <IconAlertSquareRoundedFilled
+                size="20"
+            />
+        </div>
         <slot name="arrow" />
     </button>
 </template>

@@ -10,9 +10,9 @@
 
         <title inertia>{{ config('app.name', 'Volta Asia') }}</title>
 
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico')}}">
-        <link rel="apple-touch-icon" href="{{ asset('favicon.ico')}}">
-        
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/logo/logo_mark.png')}}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/logo/logo_mark.png') }}" />
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -26,4 +26,3 @@
         @inertia
     </body>
 </html>
-    

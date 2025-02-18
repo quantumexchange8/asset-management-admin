@@ -8,16 +8,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SelectOptionController;
-use App\Http\Controllers\TradingController;
 use App\Http\Controllers\TransactionController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
-use Inertia\Inertia;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -46,13 +41,18 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/get_total_deposit_by_days', [DashboardController::class, 'getTotalDepositByDays'])->name('dashboard.getTotalDepositByDays');
+        Route::get('/getPendingCounts', [DashboardController::class, 'getPendingCounts'])->name('dashboard.getPendingCounts');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    //member
+    /**
+     * ==============================
+     *            Member
+     * ==============================
+     */
     Route::prefix('member')->group(function () {
         Route::get('/get_member_list', [MemberController::class, 'getMemberList'])->name('member.getMemberList');
         Route::get('/get_member_data', [MemberController::class, 'getMemberData'])->name('member.getMemberData');
@@ -62,11 +62,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
         Route::put('/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
 
-
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');
         Route::get('/get_pending_kyc_data', [MemberController::class, 'getPendingKycData'])->name('member.getPendingKycData');
-        Route::put('/kycPendingApproval', [MemberController::class, 'kycPendingApproval'])->name('member.kycPendingApproval');
+
+        Route::post('/kycPendingApproval', [MemberController::class, 'kycPendingApproval'])->name('member.kycPendingApproval');
 
         Route::prefix('detail')->group(function () {
             Route::get('/{id_number}', [MemberController::class, 'memberDetail'])->name('member.detail.memberDetail');

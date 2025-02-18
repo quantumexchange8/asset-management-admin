@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import Chart from 'chart.js/auto';
 import ProgressSpinner from 'primevue/progressspinner';
+import {useDark} from "@vueuse/core";
 
 const props = defineProps({
     selectedMonth: Number,
@@ -18,12 +19,7 @@ const isLoading = ref(false);
 const days = ref(props.selectedDays);
 const month = ref(props.selectedMonth);
 const year = ref(props.selectedYear);
-const totalMonthDeposit = ref();
-const totalDeposit = ref();
-const totalMonthWithdrawal = ref();
-const totalWithdrawal = ref();
-
-const emit = defineEmits(['updateTotal'])
+const isDarkMode = useDark();
 
 let chartInstance = null;
 
@@ -33,17 +29,12 @@ const fetchData = async () => {
             chartInstance.destroy();
         }
 
-        const ctx = document.getElementById('TotalDeposit');
+        const ctx = document.getElementById('dashboardOverviewChart');
 
         isLoading.value = true;
 
         const response = await axios.get('/dashboard/get_total_deposit_by_days', { params: { days: days.value, month: month.value, year: year.value } });
         const { labels, datasets } = response.data.chartData;
-        totalMonthDeposit.value = response.data.totalMonthDeposit
-        totalDeposit.value = response.data.totalDeposit
-
-        totalMonthWithdrawal.value = response.data.totalMonthWithdrawal
-        totalWithdrawal.value = response.data.totalWithdrawal
 
         chartData.value.labels = labels;
         chartData.value.datasets = datasets;
@@ -64,12 +55,12 @@ const fetchData = async () => {
                     y: {
                         ticks: {
                             callback: function (value) {
-                                var ranges = [
+                                const ranges = [
                                     { divider: 1e6, suffix: 'M' },
                                     { divider: 1e3, suffix: 'k' }
                                 ];
                                 function formatNumber(n) {
-                                    for (var i = 0; i < ranges.length; i++) {
+                                    for (let i = 0; i < ranges.length; i++) {
                                         if (n >= ranges[i].divider) {
                                             return (n / ranges[i].divider).toString() + ranges[i].suffix;
                                         }
@@ -78,49 +69,40 @@ const fetchData = async () => {
                                 }
                                 return formatNumber(value);
                             },
-                            color: '#9DA4AE',
+                            color: isDarkMode.value ? "#71717a" : "#a1a1aa",
                             font: {
-                                family: 'Inter, sans-serif',
+                                family: "Inter, sans-serif",
                                 size: 14,
                                 weight: 400,
                             },
                         },
-                        grace: '10%',
+                        suggestedMin: 1000,
+                        grace: "50%",
                         beginAtZero: true,
-                        border: {
-                            display: false
-                        },
+                        border: { display: false },
                         grid: {
                             drawTicks: false,
-                            color: (ctx) => {
-                                return '#D0D5DD'
-                            }
+                            color: isDarkMode.value ? "#3f3f46" : "#e4e4e7",
                         },
                     },
                     x: {
                         ticks: {
-                            color: '#9DA4AE',
+                            color: isDarkMode.value ? "#71717a" : "#a1a1aa",
                             font: {
-                                family: 'Inter, sans-serif',
+                                family: "Inter, sans-serif",
                                 size: 14,
                                 weight: 400,
                             },
                         },
                         grid: {
-                            drawTicks: false,
-                            color: (ctx) => {
-                                return 'transparent'
-                            }
+                            drawTicks: true,
+                            color: "transparent",
                         },
-                    }
+                    },
                 },
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            color: '#9DA4AE'
-                        }
+                        display: false,
                     },
                 }
             }
@@ -128,31 +110,19 @@ const fetchData = async () => {
 
 
     } catch (error) {
-        const ctx = document.getElementById('TotalDeposit');
+        const ctx = document.getElementById('dashboardOverviewChart');
 
         isLoading.value = false
         console.error('Error fetching chart data:', error);
     }
 }
 
-// Emit the totals whenever they change
-watch([totalMonthDeposit, totalDeposit, totalMonthWithdrawal, totalWithdrawal], () => {
-    emit('updateTotal', {
-        totalMonthDeposit: totalMonthDeposit.value,
-        totalDeposit: totalDeposit.value,
-        totalMonthWithdrawal: totalMonthWithdrawal.value,
-        totalWithdrawal: totalWithdrawal.value,
-    });
-});
-
 onMounted(async () => {
     await fetchData(); // Fetch data on mount
 
-    // Watch for changes in the date and fetch data when it changes
-
     watch(
-        [() => props.selectedDays, () => props.selectedMonth, () => props.selectedYear], // Array of expressions to watch
-        ([newDay, newMonth, newYear]) => {
+        [() => props.selectedDays, () => props.selectedMonth, () => props.selectedYear, isDarkMode], // Array of expressions to watch
+        ([newDay, newMonth, newYear, newTheme]) => {
             // This callback will be called when selectedMonth or selectedYear changes.
             days.value = newDay;
             month.value = newMonth;
@@ -169,6 +139,6 @@ onMounted(async () => {
         <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
             <ProgressSpinner />
         </div>
-        <canvas id="TotalDeposit" height="350" v-show="!isLoading"></canvas>
+        <canvas id="dashboardOverviewChart" height="350" v-show="!isLoading"></canvas>
     </div>
 </template>

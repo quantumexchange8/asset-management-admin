@@ -172,6 +172,7 @@ export default {
             { 'cursor-default pointer-events-none opacity-60': context.disabled }
         ]
     }),
+    current: 'text-sm',
     contentStart: 'mr-auto',
     contentEnd: 'ml-auto'
 };

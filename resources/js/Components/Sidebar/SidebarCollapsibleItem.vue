@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3'
 import {IconCircle} from "@tabler/icons-vue";
 import {sidebarState} from "@/Composables/index.js";
+import Badge from "primevue/badge";
 
 const props = defineProps({
     href: String,
@@ -13,7 +14,8 @@ const props = defineProps({
     external: {
         type: Boolean,
         default: false,
-    }
+    },
+    pendingCounts: Number
 })
 
 const { external } = props
@@ -56,6 +58,12 @@ const Tag = external ? 'a' : Link
             >
                 {{ $t(`public.${title}`) }}
             </div>
+            <Badge
+                v-if="pendingCounts"
+                :value="pendingCounts"
+                size="small"
+                severity="info"
+            ></Badge>
         </component>
     </li>
 </template>

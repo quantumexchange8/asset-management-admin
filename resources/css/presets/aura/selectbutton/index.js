@@ -1,6 +1,7 @@
 export default {
     root: ({ props }) => ({
         class: [
+            'text-sm',
             'inline-flex select-none align-bottom outline-transparent',
             'border rounded-md [&>button]:rounded-none [&>button]:border-none',
             '[&>button:first-child]:border-r-none [&>button:first-child]:rounded-r-none [&>button:first-child]:rounded-tl-md [&>button:first-child]:rounded-bl-md',

@@ -19,14 +19,16 @@ import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import KycAction from './Partial/KycAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
+import {usePage} from "@inertiajs/vue3";
+import {useLangObserver} from "@/Composables/localeObserver.js";
 
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
 const users = ref([]);
 const totalRecords = ref(0);
+const {locale} = useLangObserver();
 
-//filteration type and methods
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -35,56 +37,47 @@ const filters = ref({
     rank: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-//get user data
-const lazyParams = ref({}); //track table parameters that need to be send to backend
+const lazyParams = ref({});
 
-const loadLazyData = (event) => { // event will retrieve from the datatable attribute
+const loadLazyData = (event) => {
     isLoading.value = true;
 
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; //...lazyParams.value(retain existing properties after update);
-
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    lazyParams.value.filters = filters.value;
     try {
         setTimeout(async () => {
-
-            //pagination, filter, sorting detail done by user through the event are pass into the params
-            const params = { //define query parameters for API
-                page: JSON.stringify(event?.page + 1), //retrieve page number from the event then send to BE
+            const params = {
+                page: JSON.stringify(event?.page + 1),
                 sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
-                include: [], //an empty array for additional query parameters
-                lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
+                include: [],
+                lazyEvent: JSON.stringify(lazyParams.value)
             };
 
-            //send sorting/filter detail to BE
             const url = route('member.getPendingKycData', params);
             const response = await fetch(url);
-
-            //BE send back result back to FE
             const results = await response.json();
+
             users.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
             isLoading.value = false;
         }, 100);
-    } catch (e) {
+    }  catch (e) {
         users.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
 };
-
-// get users filter,paginate,sorting input and pass to the event of lazyParams into each const then to loadLazyData
 const onPage = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
 };
-
 const onSort = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
 };
-
 const onFilter = (event) => {
-    lazyParams.value.fitlers = filters.value;
+    lazyParams.value.filters = filters.value ;
     loadLazyData(event);
 };
 
@@ -96,20 +89,19 @@ const clearDate = () => {
 };
 
 watch(selectedDate, (newDateRange) => {
-    if(Array.isArray(newDateRange)) { //ensure is an array with both start and end date
-        const [startDate, endDate] = newDateRange; // extract data from newDateRange
-        filters.value['start_date'].value = startDate; //update new date selected
+    if (Array.isArray(newDateRange)) {
+        const [startDate, endDate] = newDateRange;
+        filters.value['start_date'].value = startDate;
         filters.value['end_date'].value = endDate;
 
-        if(startDate !== null && endDate !== null){
+        if (startDate !== null && endDate !== null) {
             loadLazyData();
         }
     } else {
         console.warn('Invalid date range format:', newDateRange);
     }
-});
+})
 
-//Country Filter
 const countries = ref();
 const loadingCountries = ref(false);
 
@@ -125,7 +117,6 @@ const getCountries = async () => {
     }
 };
 
-//Rank Filter
 const ranks = ref();
 const loadingRanks = ref(false);
 
@@ -149,7 +140,6 @@ const toggle = (event) => {
     getRanks();
 };
 
-//set a initial parameters when page first loaded then call loadLazyData to send initial parameters to BE
 onMounted(() => {
     lazyParams.value = {
         first: dt.value.first,
@@ -161,7 +151,6 @@ onMounted(() => {
     loadLazyData();
 });
 
-//monitor changes to global filter, debounce ensure loadLazyData tiggered 300ms after user stop typing
 watch(
     filters.value['global'],
     debounce(() => {
@@ -169,12 +158,10 @@ watch(
     }, 300)
 )
 
-//ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
 watch([filters.value['country'], filters.value['rank']], () => {
     loadLazyData();
 });
 
-//clear all selected filter
 const clearAll = () => {
     filters.value['global'].value = null;
     filters.value['start_date'].value = null;
@@ -184,250 +171,190 @@ const clearAll = () => {
     selectedDate.value = [];
 };
 
-//clear global filter
 const clearFilterGlobal = () => {
     filters.value['global'].value = null;
 };
 
-//status severity
-const getSeverity = (status) => {
-    switch (status) {
-        case 'pending':
-            return 'info';
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        loadLazyData();
     }
-};
-
-// Define a method to refresh the table
-const refreshTable = () => {
-    loadLazyData();
-};
-
+});
 </script>
 
 <template>
     <AuthenticatedLayout title="pending_kyc">
-        <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
-           <Card>
-                <template #content>
-                    <div class="w-full">
-                        <DataTable
-                            :value="users"
-                            lazy
-                            paginator
-                            removableSort
-                            :rows="10"
-                            :rowsPerPageOptions="[10, 20, 50, 100]"
-                            :first="first"
-                            paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                            v-model:filters="filters"
-                            ref="dt"
-                            dataKey="id"
-                            :loading="isLoading"
-                            :totalRecords="totalRecords"
-                            @page="onPage($event)"
-                            @sort="onSort($event)"
-                            @filter="onFilter($event)"
-                            :globalFilterFields="['name', 'email', 'username']"
-                        >
-                            <template #header>
-                                <div class="flex flex-wrap justify-between items-center">
-                                    <div class="flex items-center space-x-4 w-full md:w-auto">
-
-                                        <!-- Search bar -->
-                                        <IconField>
-                                            <InputIcon>
-                                                <IconSearch :size="16" stroke-width="1.5" />
-                                            </InputIcon>
-                                            <InputText
-                                                v-model="filters['global'].value"
-                                                placeholder="Keyword Search"
-                                                type="text"
-                                                class="block w-full pl-10 pr-10"
-                                                    />
-                                                <!-- Clear filter button -->
-                                                <div
-                                                    v-if="filters['global'].value"
-                                                    class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
-                                                    @click="clearFilterGlobal"
-                                                >
-                                                    <IconXboxX aria-hidden="true" :size="15" />
-                                                </div>
-                                        </IconField>
-
-                                        <!-- filter button -->
-                                        <Button
-                                            class="w-full md:w-28 flex gap-2"
-                                            outlined
-                                            @click="toggle"
-                                        >
-                                            <IconAdjustments :size="15"/>
-                                            Filter
-                                        </Button>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template #empty>
-                                <EmptyData
-                                    :title="$t('public.no_members_founded')"
-                                    :message="$t('public.add_members_to_proceed')"
-                                />
-                            </template>
-
-                            <template #loading>
-                                <div class="flex flex-col gap-2 items-center justify-center">
-                                    <ProgressSpinner
-                                        strokeWidth="4"
-                                    />
-                                    <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
-                                </div>
-                            </template>
-
-                            <template v-if="users?.length > 0">
-                                <Column
-                                    field="created_at"
-                                    style="min-width: 9rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">joined</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="name"
-                                    style="min-width: 12rem"
-                                    sortable
-                                    frozen
-                                >
-
-                                    <template #header>
-                                        <span class="block">name</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        {{ data.name }}
-                                    </template>
-
-                                </Column>
-
-                                <Column
-                                    field="email"
-                                    style="min-width: 12rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">email</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        {{ data.email }}
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="upline_id"
-                                    style="min-width: 12rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">referrer</span>
-                                    </template>
-
-                                    <template #body="{data}">
-                                        <div
-                                            v-if="data.upline"
-                                            class="flex flex-col items-start"
-                                        >
-                                            <div class="font-medium max-w-[180px] truncate">
-                                                {{ data.upline.name }}
-                                            </div>
-                                            <div class="text-gray-500 text-xs max-w-[180px] truncate">
-                                                {{ data.upline.email }}
-                                            </div>
-                                        </div>
-                                        <div v-else>
-                                            -
-                                        </div>
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="setting_rank_id"
-                                    style="min-width: 10rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">rank</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        {{ data.rank.rank_name }}
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="role"
-                                    style="min-width: 10rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">role</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        {{ data.role }}
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="country_id"
-                                    style="min-width: 12rem"
-                                    sortable
-                                >
-                                    <template #header>
-                                        <span class="block">country</span>
-                                    </template>
-                                    <template #body="{data}">
-                                        <span>{{ data.country.name }}</span>
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="kyc_status"
-                                >
-                                    <template #header>
-                                        <span class="block">status</span>
-                                    </template>
-                                    <template #body="{ data }">
-                                        <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
-                                    </template>
-                                </Column>
-
-                                <Column
-                                    field="action"
-                                    header="action"
-                                >
-                                    <template #body="{data}">
-                                        <KycAction
-                                            :pending="data"
-                                            @kycActionCompleted="refreshTable"
+        <Card>
+            <template #content>
+                <div class="w-full">
+                    <DataTable
+                        :value="users"
+                        lazy
+                        paginator
+                        removableSort
+                        :rows="10"
+                        :rowsPerPageOptions="[10, 20, 50, 100]"
+                        :first="first"
+                        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        v-model:filters="filters"
+                        ref="dt"
+                        dataKey="id"
+                        :loading="isLoading"
+                        :totalRecords="totalRecords"
+                        @page="onPage($event)"
+                        @sort="onSort($event)"
+                        @filter="onFilter($event)"
+                        :globalFilterFields="['name', 'email', 'username', 'id_number']"
+                    >
+                        <template #header>
+                            <div class="flex flex-wrap justify-between items-center">
+                                <div class="flex flex-col md:flex-row items-center self-stretch gap-3 w-full md:w-auto">
+                                    <!-- Search bar -->
+                                    <IconField class="w-full md:w-auto">
+                                        <InputIcon>
+                                            <IconSearch :size="16" stroke-width="1.5" />
+                                        </InputIcon>
+                                        <InputText
+                                            v-model="filters['global'].value"
+                                            :placeholder="$t('public.search_keyword')"
+                                            type="text"
+                                            class="block font-normal w-full pl-10 pr-10"
                                         />
-                                    </template>
-                                </Column>
-                            </template>
-                        </DataTable>
-                    </div>
-                </template>
-            </Card>
-        </div>
+                                        <!-- Clear filter button -->
+                                        <div
+                                            v-if="filters['global'].value"
+                                            class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
+                                            @click="clearFilterGlobal"
+                                        >
+                                            <IconXboxX aria-hidden="true" :size="15" />
+                                        </div>
+                                    </IconField>
+
+                                    <!-- filter button -->
+                                    <Button
+                                        class="w-full md:w-28 flex gap-2"
+                                        outlined
+                                        @click="toggle"
+                                    >
+                                        <IconAdjustments :size="15"/>
+                                        <span class="text-sm">{{ $t('public.filter') }}</span>
+                                    </Button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template #empty>
+                            <EmptyData
+                                :title="$t('public.no_members_founded')"
+                            />
+                        </template>
+
+                        <template #loading>
+                            <div class="flex flex-col gap-2 items-center justify-center">
+                                <ProgressSpinner
+                                    strokeWidth="4"
+                                />
+                            </div>
+                        </template>
+
+                        <template v-if="users?.length > 0">
+                            <Column
+                                field="kyc_requested_at"
+                                :header="$t('public.date')"
+                                sortable
+                                class="min-w-28"
+                            >
+                                <template #body="{ data }">
+                                    {{ dayjs(data.kyc_requested_at).format('YYYY-MM-DD') }}
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="name"
+                                :header="$t('public.name')"
+                                sortable
+                            >
+                                <template #body="{ data }">
+                                    <div class="flex flex-col">
+                                        <span class="text-surface-950 dark:text-white">{{ data.name }}</span>
+                                        <span class="text-surface-500">{{ data.email }}</span>
+                                    </div>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="upline_id"
+                                :header="$t('public.referrer')"
+                            >
+                                <template #body="{data}">
+                                    <div
+                                        v-if="data.upline_id"
+                                        class="flex flex-col"
+                                    >
+                                        <span class="text-surface-950 dark:text-white">{{ data.upline.name }}</span>
+                                        <span class="text-surface-500">{{ data.upline.email }}</span>
+                                    </div>
+                                    <div v-else>
+                                        -
+                                    </div>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="setting_rank_id"
+                                :header="$t('public.rank')"
+                                sortable
+                            >
+                                <template #body="{ data }">
+                                    <Tag
+                                        severity="secondary"
+                                        :value="data.rank.rank_name"
+                                    />
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="country_id"
+                                :header="$t('public.country')"
+                                sortable
+                            >
+                                <template #body="{data}">
+                                    <div class="flex items-center gap-1">
+                                        <img
+                                            v-if="data.country.iso2"
+                                            :src="`https://flagcdn.com/w40/${data.country.iso2.toLowerCase()}.png`"
+                                            :alt="data.country.iso2"
+                                            width="18"
+                                            height="12"
+                                        />
+                                        <div class="max-w-[200px] truncate">{{ JSON.parse(data.country.translations)[locale] || data.country.name }}</div>
+                                    </div>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="action"
+                                :header="$t('public.action')"
+                            >
+                                <template #body="{data}">
+                                    <KycAction
+                                        :pending="data"
+                                    />
+                                </template>
+                            </Column>
+                        </template>
+                    </DataTable>
+                </div>
+            </template>
+        </Card>
 
         <Popover ref="op">
             <div class="flex flex-col gap-6 w-60">
                 <!-- Filter Date -->
                 <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Date
+                        {{ $t('public.filter_by_date' )}}
                     </div>
                     <div class="relative w-full">
                         <DatePicker
@@ -450,27 +377,35 @@ const refreshTable = () => {
                 <!-- Filter Country -->
                 <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Country
+                        {{ $t('public.filter_by_country' )}}
                     </div>
                     <Select
                         v-model="filters['country'].value"
                         :options="countries"
                         optionLabel="name"
-                        placeholder="Select Country"
+                        :placeholder="$t('public.select_country')"
                         filter
-                        :filter-fields="['name']"
+                        :filter-fields="['name', 'iso2']"
                         :loading="loadingCountries"
                         class="w-full"
-                        showClear
                     >
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex items-center">
-                                {{ slotProps.value.name }}
+                                <div class="leading-tight">{{ JSON.parse(slotProps.value.translations)[locale] || slotProps.value.name }}</div>
                             </div>
-                            <span v-else>{{ slotProps.placeholder }}</span>
+                            <span v-else class="text-surface-400 dark:text-surface-500">{{ slotProps.placeholder }}</span>
                         </template>
                         <template #option="slotProps">
-                            <div>{{ slotProps.option.name }}</div>
+                            <div class="flex items-center gap-1">
+                                <img
+                                    v-if="slotProps.option.iso2"
+                                    :src="`https://flagcdn.com/w40/${slotProps.option.iso2.toLowerCase()}.png`"
+                                    :alt="slotProps.option.iso2"
+                                    width="18"
+                                    height="12"
+                                />
+                                <div class="max-w-[200px] truncate">{{ JSON.parse(slotProps.option.translations)[locale] || slotProps.option.name }}</div>
+                            </div>
                         </template>
                     </Select>
                 </div>
@@ -478,27 +413,26 @@ const refreshTable = () => {
                 <!-- Filter Rank -->
                 <div class="flex flex-col gap-2 items-center self-stretch">
                     <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                        Filter By Rank
+                        {{ $t('public.filter_by_rank' )}}
                     </div>
                     <Select
                         v-model="filters['rank'].value"
                         :options="ranks"
                         optionLabel="rank_name"
-                        placeholder="Select Rank"
+                        :placeholder="$t('public.select_rank')"
                         filter
                         :filter-fields="['rank_name']"
                         :loading="loadingRanks"
                         class="w-full"
-                        showClear
                     >
                         <template #value="slotProps">
                             <div v-if="slotProps.value" class="flex items-center">
-                                {{ slotProps.value.rank_name }}
+                                {{ slotProps.value.rank_name === 'member' ? $t(`public.${slotProps.value.rank_name}`) : slotProps.value.rank_name }}
                             </div>
                             <span v-else>{{ slotProps.placeholder }}</span>
                         </template>
                         <template #option="slotProps">
-                            <div>{{ slotProps.option.rank_name }}</div>
+                            <div>{{ slotProps.option.rank_name === 'member' ? $t(`public.${slotProps.option.rank_name}`) : slotProps.option.rank_name }}</div>
                         </template>
                     </Select>
                 </div>
@@ -509,7 +443,7 @@ const refreshTable = () => {
                     class="w-full"
                     @click="clearAll"
                 >
-                    Clear All
+                    {{ $t('public.clear_all') }}
                 </Button>
             </div>
         </Popover>
