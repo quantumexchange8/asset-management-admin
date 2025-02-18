@@ -21,6 +21,10 @@ import { usePage } from '@inertiajs/vue3';
 import Import from './Import.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 
+const props = defineProps({
+    pendingDepositCounts: Number,
+});
+
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
@@ -288,9 +292,11 @@ watchEffect(() => {
                         </template>
 
                         <template #empty>
-                            <EmptyData
+                            <div v-if="pendingDepositCounts === 0">
+                                <EmptyData
                                 :title="$t('public.no_deposit_founded')"
-                            />
+                                />
+                            </div>
                         </template>
 
                         <template #loading>
@@ -298,8 +304,8 @@ watchEffect(() => {
                                 <ProgressSpinner
                                     strokeWidth="4"
                                 />
-                                <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">Loading deposit data. Please wait. </span>
-                                <span v-else class="text-sm text-gray-700 dark:text-gray-300">Exporting Deposit History</span>
+                                <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.deposit_loading_caption') }}</span>
+                                <span v-else class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.export_deposit_caption') }}</span>
                             </div>
                         </template>
 
@@ -353,7 +359,7 @@ watchEffect(() => {
                                     <span class="block">{{ $t('public.fund_type') }}</span>
                                 </template>
                                 <template #body="{ data }">
-                                    {{ data.fund_type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
+                                    {{ $t(`public.${data.fund_type}`) }}
                                 </template>
                             </Column>
 
@@ -366,7 +372,7 @@ watchEffect(() => {
                                     <span class="block">{{ $t('public.to') }}</span>
                                 </template>
                                 <template #body="{ data }">
-                                    {{ data.to_wallet?.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || '-'}}
+                                    {{ $t(`public.${data.to_wallet?.type}`)|| '-'}}
                                 </template>
                             </Column>
 
@@ -379,7 +385,7 @@ watchEffect(() => {
                                     <span class="block">{{ $t('public.status') }}</span>
                                 </template>
                                 <template #body="{ data }">
-                                    <Tag :value="data.status" :severity="getSeverity(data.status)" />
+                                    <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
                                 </template>
                             </Column>
 
@@ -443,7 +449,7 @@ watchEffect(() => {
                         showClear
                     >
                         <template #option="slotProps">
-                            {{ slotProps.option.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
+                            {{ $t(`public.${slotProps.option}`) }}
                         </template>
                     </Select>
                 </div>
@@ -461,7 +467,7 @@ watchEffect(() => {
                         showClear
                     >
                         <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                            <Tag :value="$t(`public.${slotProps.option}`)" :severity="getSeverity(slotProps.option)" />
                         </template>
                     </Select>
                 </div>

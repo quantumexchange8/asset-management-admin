@@ -33,7 +33,6 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
-const {locale} = useLangObserver();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -42,6 +41,7 @@ const filters = ref({
 });
 
 const lazyParams = ref({});
+const {locale} = useLangObserver();
 
 const loadLazyData = (event) => {
     isLoading.value = true;
@@ -58,7 +58,7 @@ const loadLazyData = (event) => {
                 lazyEvent: JSON.stringify(lazyParams.value)
             };
 
-            const url = route('report.getStandardBonusData', params);
+            const url = route('report.getProfitSharingData', params);
             const response = await fetch(url);
             const results = await response.json();
 
@@ -157,38 +157,6 @@ const clearFilter = () => {
     lazyParams.value.filters = filters.value ;
 };
 
-const exportTable = () => {
-    exportStatus.value = true;
-    isLoading.value = true;
-
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    lazyParams.value.filters = filters.value;
-
-    if (filters.value) {
-        lazyParams.value.filters = { ...filters.value };
-    } else {
-        lazyParams.value.filters = {};
-    }
-
-    let params = {
-        include: [],
-        lazyEvent: JSON.stringify(lazyParams.value),
-        exportStatus: true,
-    };
-
-    const url = route('report.getStandardBonusData', params);
-
-    try {
-
-        window.location.href = url;
-    } catch (e) {
-        console.error('Error occurred during export:', e);
-    } finally {
-        isLoading.value = false;
-        exportStatus.value = false;
-    }
-};
-
 watchEffect(() => {
     if (usePage().props.toast !== null) {
         loadLazyData();
@@ -209,7 +177,7 @@ watchEffect(() => {
                     :rowsPerPageOptions="[10, 20, 50, 100]"
                     :first="first"
                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport"
-                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    :currentPageReportTemplate="$t('public.paginator_caption')"
                     v-model:filters="filters"
                     ref="dt"
                     dataKey="id"
@@ -221,54 +189,37 @@ watchEffect(() => {
                     :globalFilterFields="['user.name', 'user.email', 'subject_user.name', 'subject_user.email', 'broker.name']"
                 >
                     <template #header>
-                        <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
-
-                                <!-- Search bar -->
-                                <IconField class="w-full">
-                                    <InputIcon>
-                                        <IconSearch :size="16" stroke-width="1.5" />
-                                    </InputIcon>
-                                    <InputText
-                                        v-model="filters['global'].value"
-                                        :placeholder="$t('public.search_keyword')"
-                                        type="text"
-                                        class="block w-full pl-10 pr-10"
-                                    />
-                                    <!-- Clear filter button -->
-                                    <div
-                                        v-if="filters['global'].value"
-                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
-                                        @click="clearFilterGlobal"
-                                    >
-                                        <IconXboxX aria-hidden="true" :size="15" />
-                                    </div>
-                                </IconField>
-
-                                <!-- filter button -->
-                                <Button
-                                    class="w-full md:w-28 flex gap-2"
-                                    outlined
-                                    @click="toggle"
+                        <div class="flex flex-col md:flex-row items-center self-stretch gap-3 w-full md:w-auto">
+                            <!-- Search bar -->
+                            <IconField class="w-full md:w-auto">
+                                <InputIcon>
+                                    <IconSearch :size="16" stroke-width="1.5" />
+                                </InputIcon>
+                                <InputText
+                                    v-model="filters['global'].value"
+                                    :placeholder="$t('public.search_keyword')"
+                                    type="text"
+                                    class="block w-full pl-10 pr-10"
+                                />
+                                <!-- Clear filter button -->
+                                <div
+                                    v-if="filters['global'].value"
+                                    class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
+                                    @click="clearFilterGlobal"
                                 >
-                                    <IconAdjustments :size="15"/>
-                                    {{ $t('public.filter') }}
-                                </Button>
-                            </div>
+                                    <IconXboxX aria-hidden="true" :size="15" />
+                                </div>
+                            </IconField>
 
-                            <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
-                                <!-- Export button -->
-                                <Button
-                                    type="button"
-                                    severity="info"
-                                    class="w-full md:w-auto"
-                                    @click="exportTable"
-                                    :disabled="exportStatus"
-                                >
-                                    <span class="pr-1">{{ $t('public.export') }}</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
-                            </div>
+                            <!-- filter button -->
+                            <Button
+                                class="w-full md:w-28 flex gap-2"
+                                outlined
+                                @click="toggle"
+                            >
+                                <IconAdjustments :size="15"/>
+                                <span class="text-sm">{{ $t('public.filter') }}</span>
+                            </Button>
                         </div>
                     </template>
 
@@ -290,8 +241,8 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
+                            class="hidden md:table-cell min-w-32"
                             sortable
-                            style="min-width: 7rem"
                         >
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
@@ -299,33 +250,19 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="user.name"
-                            :header="$t('public.name')"
-                        >
-                            <template #body="{ data }">
-                                <div class="flex flex-col">
-                                    <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
-                                </div>
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="subject_user.name"
+                            field="client"
                             :header="$t('public.client')"
+                            class="hidden md:table-cell min-w-32"
                         >
                             <template #body="{ data }">
-                                <div class="flex flex-col">
-                                    <span class="text-surface-950 dark:text-white">{{ data.subject_user.name }}</span>
-                                    <span class="text-surface-500">{{ data.subject_user.email }}</span>
-                                </div>
+                                <span class="text-surface-950 dark:text-white">{{ data.subject_user.username }}</span>
                             </template>
                         </Column>
 
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
-                            style="min-width: 8rem"
+                            class="hidden md:table-cell min-w-32"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -341,6 +278,7 @@ watchEffect(() => {
                         <Column
                             field="bonus_type"
                             :header="$t('public.description')"
+                            class="hidden md:table-cell"
                             :class="locale === 'cn' ? 'min-w-24' : 'min-w-40'"
                         >
                             <template #body="{ data }">
@@ -354,7 +292,7 @@ watchEffect(() => {
                         <Column
                             field="close_time"
                             :header="$t('public.close_time')"
-                            class="min-w-32"
+                            class="min-w-32 hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 <div class="flex flex-col">
@@ -367,6 +305,7 @@ watchEffect(() => {
                         <Column
                             field="symbol"
                             :header="$t('public.symbol')"
+                            class="hidden md:table-cell"
                             style="min-width: 7rem"
                         >
                             <template #body="{data}">
@@ -377,6 +316,7 @@ watchEffect(() => {
                         <Column
                             field="net_profit"
                             :header="`${$t('public.net_profit')} ($)`"
+                            class="hidden md:table-cell"
                             :class="locale === 'cn' ? 'min-w-24' : 'min-w-36'"
                         >
                             <template #body="{data}">
@@ -388,6 +328,7 @@ watchEffect(() => {
                             field="distribute_amount"
                             :header="`${$t('public.distribute_amount')} ($)`"
                             sortable
+                            class="hidden md:table-cell"
                             :class="locale === 'cn' ? 'min-w-36' : 'min-w-44'"
                         >
                             <template #body="{data}">
@@ -399,6 +340,7 @@ watchEffect(() => {
                             field="remaining_percentage"
                             :header="`${$t('public.allocated')} (%)`"
                             sortable
+                            class="hidden md:table-cell"
                             :class="locale === 'cn' ? 'min-w-40' : 'min-w-44'"
                         >
                             <template #body="{data}">
@@ -412,10 +354,37 @@ watchEffect(() => {
                             sortable
                             frozen
                             align-frozen="right"
+                            class="hidden md:table-cell"
                             :class="locale === 'cn' ? 'min-w-36' : 'min-w-40'"
                         >
                             <template #body="{ data }">
                                 <span class="font-semibold">{{ formatAmount(data.bonus_amount, 4) }}</span>
+                            </template>
+                        </Column>
+
+                        <!-- Mobile view -->
+                        <Column
+                            field="mobile"
+                            class="md:hidden"
+                        >
+                            <template #body="{ data }">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col items-start">
+                                        <div class="font-semibold">
+                                            {{ $t(`public.${data.bonus_type}`) }}
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            <span>|</span>
+                                            <span>${{ formatAmount(data.net_profit) }}</span>
+                                            <span>|</span>
+                                            <span>{{ data.remaining_percentage }}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-base font-semibold">
+                                        ${{ formatAmount(data.bonus_amount, 4) }}
+                                    </div>
+                                </div>
                             </template>
                         </Column>
                     </template>

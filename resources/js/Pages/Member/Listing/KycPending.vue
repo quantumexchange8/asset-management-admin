@@ -20,6 +20,10 @@ import { FilterMatchMode } from '@primevue/core/api';
 import KycAction from './Partial/KycAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 
+const props = defineProps({
+    pendingKycCounts: Number,
+});
+
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
@@ -269,10 +273,12 @@ const refreshTable = () => {
                             </template>
 
                             <template #empty>
-                                <EmptyData
+                                <div v-if="pendingKycCounts === 0">
+                                    <EmptyData
                                     :title="$t('public.no_members_founded')"
                                     :message="$t('public.add_members_to_proceed')"
-                                />
+                                    />
+                                </div>
                             </template>
 
                             <template #loading>
@@ -280,7 +286,7 @@ const refreshTable = () => {
                                     <ProgressSpinner
                                         strokeWidth="4"
                                     />
-                                    <span class="text-sm text-gray-700 dark:text-gray-300">Loading user data. Please wait. </span>
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.member_loading_caption') }}</span>
                                 </div>
                             </template>
 
@@ -400,7 +406,7 @@ const refreshTable = () => {
                                         <span class="block">{{ $t('public.status') }}</span>
                                     </template>
                                     <template #body="{ data }">
-                                        <Tag :value="data.kyc_status" :severity="getSeverity(data.kyc_status)" />
+                                        <Tag :value="$t(`public.${data.kyc_status}`)" :severity="getSeverity(data.kyc_status)" />
                                     </template>
                                 </Column>
 

@@ -25,7 +25,7 @@ class Transaction extends Model implements HasMedia
 
     public function approval_by(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'handle_by', 'id');
     }
 
     public function to_wallet(): BelongsTo

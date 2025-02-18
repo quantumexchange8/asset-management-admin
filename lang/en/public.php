@@ -158,6 +158,8 @@ return [
     "fund_type" => "Fund Type",
     "to" => 'To',
     "approved_at" => "Approved At",
+    "approved_by" => "Approved By",
+    "requested_at" => "Requested At",
     "from" => "From",
 
     "filter_by_referrer" => "Filter By Referrer",
@@ -171,5 +173,41 @@ return [
 
     "filter_by_fund_type" => "Filter By Fund Type",
     "select_fund_type" => "Select Fund Type",
+
+    "member_loading_caption" => "Loading user data. Please wait.",
+    "connection_loading_caption" => "Loading connection data. Please wait.",
+    "deposit_loading_caption" => "Loading deposit data. Please wait.",
+    "export_deposit_caption" => "Exporting Deposit",
+    "withdrawal_loading_caption" => "Loading withdrawal data. Please wait.",
+    "export_withdrawal_caption" => "Exporting Withdrawal",
+
+    "real_fund" => "Real Fund",
+    "demo_fund" => "Demo Fund",
+
+    "cash_wallet" => "Cash Wallet",
+    "bonus_wallet" => "Bonus Wallet",
+
+    "unverified" => "Unverified",
+    "verified" => "Verified",
+    "pending" => "Pending",
+    "processing" => "Processing",
+    "success" => "Success",
+    "rejected" => "Rejected",
+    "total_pending_deposit" => "Total Pending Deposit",
+    "total_pending_withdrawal" => "Total Pending Withdrawal",
+    "total_pending_amount" => "Total Pending Amount",
+    "recent_approval" => "Recent Approval",
+    "profit_sharing" => "Profit Sharing",
+    "ib_group_incentive" => "IB Group Incentive",
+
+    "remarks" => "Remarks",
+    "approve_transaction" => "Approve Transaction",
+    "reject_transaction" => "Reject Transaction",
+    "action" => "Action",
+
+    "payment_slip" => "Payment Slip",
+    "wallet" => "Wallet",
+    "fee" => "Fee",
+    "receive" => "Receive",
 
 ];

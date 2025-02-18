@@ -160,6 +160,8 @@ return [
     "to" => "至",
     "from" => "从",
     "approved_at" => "批准时间",
+    "approved_by" => "批准人",
+    "requested_at" => "请求时间",
 
     "filter_by_referrer" => "按推荐人筛选",
     "select_referrer" => "选择推荐人",
@@ -171,6 +173,41 @@ return [
     "clear_all" => "清除所有",
     "filter_by_fund_type" => "按基金类型筛选",
     "select_fund_type" => "选择基金类型",
+
+    "member_loading_caption" => "正在加载用户数据，请稍候。",
+    "connection_loading_caption" => "正在加载连接数据，请稍候。",
+    "deposit_loading_caption" => "正在加载存款数据，请稍候。",
+    "export_deposit_caption" => "正在导出存款",
+    "withdrawal_loading_caption" => "正在加载提现数据，请稍候。",
+    "export_withdrawal_caption" => "正在导出提现",
+
+    "real_fund" => "真实基金",
+    "demo_fund" => "模拟基金",
+    "cash_wallet" => "现金钱包",
+    "bonus_wallet" => "奖金钱包",
+
+    "unverified" => "未验证",
+    "verified" => "已验证",
+    "pending" => "待审核",
+    "processing" => "处理中",
+    "success" => "成功",
+    "rejected" => "拒绝",
+    "total_pending_deposit" => "待审核存款总额",
+    "total_pending_withdrawal" => "待处理提现总额",
+    "total_pending_amount" => "待审核金额总计",
+    "recent_approval" => "最近批准",
+
+    "profit_sharing" => "盈利分成",
+    "ib_group_incentive" => "经纪人团队奖",
+
+    "remarks" => "备注",
+    "approve_transaction" => "批准交易",
+    "reject_transaction" => "拒绝交易",
+    "action" => "操作",
+    "payment_slip" => "付款凭证",
+    "wallet" => "钱包",
+    "fee" => "手续费",
+    "receive" => "收款",
 
 
 ];

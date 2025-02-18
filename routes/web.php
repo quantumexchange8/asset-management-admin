@@ -140,9 +140,12 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('pending')->group(function () {
             Route::get('/get_pending_deposit', [TransactionController::class, 'getPendingDeposit'])->name('transaction.pending.getPendingDeposit');
+            Route::get('/get_deposit_recent_approval', [TransactionController::class, 'getDepositRecentApproval'])->name('transaction.pending.getDepositRecentApproval');
             Route::get('/get_pending_deposit_data', [TransactionController::class, 'getPendingDepositData'])->name('transaction.pending.getPendingDepositData');
             Route::put('/pendingDepositApproval', [TransactionController::class, 'pendingDepositApproval'])->name('transaction.pending.pendingDepositApproval');
+
             Route::get('/get_pending_withdrawal', [TransactionController::class, 'getPendingWithdrawal'])->name('transaction.pending.getPendingWithdrawal');
+            Route::get('/get_withdrawal_recent_approval', [TransactionController::class, 'getWithdrawalRecentApproval'])->name('transaction.pending.getWithdrawalRecentApproval');
             Route::get('/get_pending_withdrawal_data', [TransactionController::class, 'getPendingWithdrawalData'])->name('transaction.pending.getPendingWithdrawalData');
             Route::put('/pendingWithdrawalApproval', [TransactionController::class, 'pendingWithdrawalApproval'])->name('transaction.pending.pendingWithdrawalApproval');
         });
@@ -154,8 +157,12 @@ Route::middleware('auth')->group(function () {
      * ==============================
      */
     Route::prefix('report')->group(function () {
+        //profit sharing
+        Route::get('/profit_sharing', [ReportController::class, 'profit_sharing'])->name('report.profit_sharing');
+        Route::get('/getProfitSharingData', [ReportController::class, 'getProfitSharingData'])->name('report.getProfitSharingData');
+        
         // Standard Bonus
-        Route::get('/standard_bonus', [ReportController::class, 'standard_bonus'])->name('report.standard_bonus');
+        Route::get('/ib_group_incentive', [ReportController::class, 'ib_group_incentive'])->name('report.ib_group_incentive');
         Route::get('/getStandardBonusData', [ReportController::class, 'getStandardBonusData'])->name('report.getStandardBonusData');
 
         // Rebate Bonus

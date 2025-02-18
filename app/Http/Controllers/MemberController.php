@@ -111,7 +111,11 @@ class MemberController extends Controller
 
     public function getPendingKyc()
     {
-        return Inertia::render('Member/Listing/KycPending');
+        $pendingCounts = User::where('kyc_status', 'pending')
+            ->count();
+        return Inertia::render('Member/Listing/KycPending', [
+            'pendingKycCounts' => $pendingCounts,
+        ]);
     }
 
     public function getPendingKycData(Request $request)

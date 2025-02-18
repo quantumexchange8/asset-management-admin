@@ -22,6 +22,11 @@ import {usePage} from "@inertiajs/vue3";
 import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
+import EmptyData from "@/Components/EmptyData.vue";
+
+const props = defineProps({
+    connectionCounts: Number,
+});
 
 const exportStatus = ref(false);
 const isLoading = ref(false);
@@ -284,8 +289,10 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div class="flex flex-col">
-                            <span>{{ $t('public.no_data') }}</span>
+                        <div v-if="connectionCounts === 0">
+                            <EmptyData 
+                                :title="$t('public.no_data')"
+                            />
                         </div>
                     </template>
 
@@ -294,6 +301,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.connection_loading_caption') }}</span>
                         </div>
                     </template>
 

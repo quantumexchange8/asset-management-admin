@@ -17,7 +17,7 @@ const props = defineProps({
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref(''); //reject or approve
+const dialogType = ref('');
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -38,7 +38,7 @@ const submitForm = () => {
         onSuccess: () => {
             visible.value = false;
             form.reset();
-            if(dialogType.value === 'approve'){
+            if(dialogType.value === 'approve_transaction'){
                 toast.add({
                     severity: 'success',
                     summary: 'Approved',
@@ -70,7 +70,7 @@ const submitForm = () => {
             size="sm"
             type="button"
             class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
-            @click="openDialog('approve')"
+            @click="openDialog('approve_transaction')"
         >
             <IconCheck :size="20" stroke-width="1.5" color="green"/>
         </Button>
@@ -79,7 +79,7 @@ const submitForm = () => {
             class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
             size="sm"
             type="button"
-            @click="openDialog('reject')"
+            @click="openDialog('reject_transaction')"
         >
             <IconX :size="20" stroke-width="1.5" color="red"/>
         </Button>
@@ -93,7 +93,7 @@ const submitForm = () => {
     <template #header>
         <div class="flex items-center gap-4">
             <div class="text-xl font-bold">
-                {{ dialogType.replace(/\b\w/g, (char) => char.toUpperCase()) }} Transaction
+                {{ $t(`public.${dialogType}`) }}
             </div>
         </div>
     </template>
@@ -121,7 +121,7 @@ const submitForm = () => {
         <div class="flex flex-col gap-1 self-stretch">
             <div class="flex justify-between text-sm">
                 <div class=" text-gray-500">
-                    Requested Date:
+                    {{ $t('public.requested_at') }}:
                 </div>
                 <div>
                     {{ dayjs(props.pending.approval_at).format('YYYY-MM-DD') }}
@@ -129,20 +129,32 @@ const submitForm = () => {
                 </div>
             </div>
             <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">Transaction Number:</div>
+                <div class=" text-gray-500">{{ $t('public.transaction_number') }}:</div>
                 <div>{{ props.pending.transaction_number }}</div>
             </div>
             <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">To:</div>
-                <div>{{ props.pending.from_wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}</div>
+                <div class=" text-gray-500">{{ $t('public.wallet') }}:</div>
+                <div>{{ $t(`public.${props.pending.from_wallet.type}`) }}</div>
             </div>
-            <!-- <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">Upline:</div>
-                <div>{{ props.pending.user.upline_id || '-' }}</div>
-            </div> -->
+            <div class="flex justify-between text-sm">
+                <div class=" text-gray-500">{{ $t('public.fee') }}:</div>
+                <div>{{ props.pending.transaction_charges || '-' }}</div>
+            </div>
+            <div class="flex justify-between text-sm">
+                <div class=" text-gray-500">{{ $t('public.receive') }}:</div>
+                <div>$ {{ props.pending.transaction_amount || '-' }}</div>
+            </div>
+            <div class="flex justify-between text-sm">
+                <div class=" text-gray-500">{{ $t('public.to') }}:</div>
+                <div>{{ props.pending.user.name || '-' }}</div>
+            </div>
+            <div class="flex justify-between text-sm">
+                <div class=" text-gray-500">{{ $t('public.upline') }}:</div>
+                <div>{{ props.pending.user.upline?.name || '-' }} ({{ props.pending.user.upline?.email }})</div>
+            </div>
         </div>
 
-        <div v-if="dialogType === 'reject'"  class="flex flex-col gap-1 self-stretch">
+        <div v-if="dialogType === 'reject_transaction'"  class="flex flex-col gap-1 self-stretch">
             <Divider />
             <InputLabel for="remarks" value="Remarks" />
             <Textarea 

@@ -18,7 +18,13 @@ class TransactionController extends Controller
 
     public function getDepositHistory()
     {
-        return Inertia::render('Transaction/History/Deposit/DepositHistory');
+        $pendingCounts = Transaction::where('transaction_type', 'deposit')
+            ->whereNot('status', 'processing')
+            ->count();
+
+        return Inertia::render('Transaction/History/Deposit/DepositHistory', [
+            'pendingDepositCounts' => $pendingCounts,
+        ]);
     }
 
     public function getDepositHistoryData(Request $request)
@@ -33,8 +39,8 @@ class TransactionController extends Controller
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
-                ->where('transaction_type', 'deposit');
-
+                ->where('transaction_type', 'deposit')
+                ->where('status', 'success');
 
             //global filter
             if (!empty($data['filters']['global']['value'])) {
@@ -91,7 +97,13 @@ class TransactionController extends Controller
 
     public function getWithdrawalHistory()
     {
-        return Inertia::render('Transaction/History/Withdrawal/WithdrawalHistory');
+        $pendingCounts = Transaction::where('transaction_type', 'withdrawal')
+            ->whereNot('status', 'processing')
+            ->count();
+
+        return Inertia::render('Transaction/History/Withdrawal/WithdrawalHistory', [
+            'pendingWithdrawalCounts' => $pendingCounts,
+        ]);
     }
 
     public function getWithdrawalHistoryData(Request $request)
@@ -106,7 +118,8 @@ class TransactionController extends Controller
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
-                ->where('transaction_type', 'withdrawal');
+                ->where('transaction_type', 'withdrawal')
+                ->where('status', 'success');
 
 
             //global filter
@@ -177,7 +190,30 @@ class TransactionController extends Controller
 
     public function getPendingDeposit()
     {
+
         return Inertia::render('Transaction/Pending/Deposit/PendingDeposit');
+    }
+
+    public function getDepositRecentApproval()
+    {
+        $recentApprovals = Transaction::query()
+            ->select(
+                'id',
+                'transaction_type',
+                'transaction_number',
+                'approval_at',
+                'status',
+                'handle_by'
+            )->with('approval_by:id,name')
+            ->whereNot('status', 'processing')
+            ->where('approval_at', '>=', Carbon::now()->subDay())
+            ->where('transaction_type', 'deposit')
+            ->orderByDesc('approval_at')
+            ->get();
+
+        return response()->json([
+            'recentApprovals' => $recentApprovals,
+        ]);
     }
 
     public function getPendingDepositData(Request $request)
@@ -189,11 +225,12 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
+                    'user.upline:id,name,email',
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'deposit')
-                ->where('status', 'pending');
+                ->where('status', 'processing');
 
 
             //global filter
@@ -218,11 +255,6 @@ class TransactionController extends Controller
             //fund_type filter
             if ($data['filters']['fund_type']['value']) {
                 $query->where('fund_type', $data['filters']['fund_type']['value']);
-            }
-
-            //status filter
-            if ($data['filters']['status']['value']) {
-                $query->where('status', $data['filters']['status']['value']);
             }
 
             //sort field/order
@@ -247,9 +279,18 @@ class TransactionController extends Controller
                 });
             }
 
+            $totalPendingAmount = (clone $query)
+                ->sum('amount');
+
+            $pendingCounts = (clone $query)
+                ->count();
+
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'totalPendingAmount' => $totalPendingAmount,
+                'pendingDepositCounts' => $pendingCounts,
             ]);
         }
 
@@ -261,6 +302,28 @@ class TransactionController extends Controller
         return Inertia::render('Transaction/Pending/Withdrawal/PendingWithdrawal');
     }
 
+    public function getWithdrawalRecentApproval()
+    {
+        $recentApprovals = Transaction::query()
+            ->select(
+                'id',
+                'transaction_type',
+                'transaction_number',
+                'approval_at',
+                'status',
+                'handle_by'
+            )->with('approval_by:id,name')
+            ->whereNot('status', 'processing')
+            ->where('approval_at', '>=', Carbon::now()->subDay())
+            ->where('transaction_type', 'withdrawal')
+            ->orderByDesc('approval_at')
+            ->get();
+
+        return response()->json([
+            'recentApprovals' => $recentApprovals,
+        ]);
+    }
+
     public function getPendingWithdrawalData(Request $request)
     {
         if ($request->has('lazyEvent')) {
@@ -270,11 +333,12 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
+                    'user.upline:id,name,email',
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'withdrawal')
-                ->where('status', 'pending');;
+                ->where('status', 'processing');;
 
 
             //global filter
@@ -301,11 +365,6 @@ class TransactionController extends Controller
                 $query->where('fund_type', $data['filters']['fund_type']['value']);
             }
 
-            //status filter
-            if ($data['filters']['status']['value']) {
-                $query->where('status', $data['filters']['status']['value']);
-            }
-
             //sort field/order
             if ($data['sortField'] && $data['sortOrder']) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
@@ -321,9 +380,17 @@ class TransactionController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $totalPendingAmount = (clone $query)
+                ->sum('amount');
+
+            $pendingCounts = (clone $query)
+                ->count();
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'totalPendingAmount' => $totalPendingAmount,
+                'pendingWithdrawalCounts' => $pendingCounts,
             ]);
         }
 
@@ -333,12 +400,20 @@ class TransactionController extends Controller
     public function pendingDepositApproval(Request $request)
     {
         $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject'],
+            'remarks' => ['required_if:action,reject_transaction'],
+        ], [
+            'remarks.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.remarks'),
+                'other' => trans('public.action'),
+                'value' => trans('public.reject_transaction')
+            ])
+        ], [
+            'remarks' => trans('public.remarks')
         ]);
 
         $transaction = Transaction::find($request->transaction_id);
 
-        if ($request->action == 'approve') {
+        if ($request->action == 'approve_transaction') {
             $transaction->status = 'success';
             $transaction->update();
         } else {
@@ -351,7 +426,15 @@ class TransactionController extends Controller
     public function pendingWithdrawalApproval(Request $request)
     {
         $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject'],
+            'remarks' => ['required_if:action,reject_transaction'],
+        ], [
+            'remarks.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.remarks'),
+                'other' => trans('public.action'),
+                'value' => trans('public.reject_transaction')
+            ])
+        ], [
+            'remarks' => trans('public.remarks')
         ]);
 
         $transaction = Transaction::find($request->transaction_id);

@@ -17,7 +17,9 @@ class ConnectionController extends Controller
 {
     public function broker_connection()
     {
-        return Inertia::render('Connection/BrokerConnection/BrokerConnection');
+        return Inertia::render('Connection/BrokerConnection/BrokerConnection',[
+            'connectionCounts' => BrokerConnection::count(),
+        ]);
     }
 
     public function getConnections(Request $request)

@@ -5,6 +5,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import Divider from 'primevue/divider';
+import Image from "primevue/image";
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import { ref, computed } from 'vue';
@@ -18,7 +19,7 @@ const props = defineProps({
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref(''); //reject or approve
+const dialogType = ref(''); 
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -39,7 +40,7 @@ const submitForm = () => {
         onSuccess: () => {
             visible.value = false;
             form.reset();
-            if(dialogType.value === 'approve'){
+            if(dialogType.value === 'approve_transaction'){
                 toast.add({
                     severity: 'success',
                     summary: 'Approved',
@@ -92,7 +93,7 @@ const imagesToDisplay = computed(() => {
             size="sm"
             type="button"
             class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
-            @click="openDialog('approve')"
+            @click="openDialog('approve_transaction')"
         >
             <IconCheck :size="20" stroke-width="1.5" color="green"/>
         </Button>
@@ -101,7 +102,7 @@ const imagesToDisplay = computed(() => {
             class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
             size="sm"
             type="button"
-            @click="openDialog('reject')"
+            @click="openDialog('reject_transaction')"
         >
             <IconX :size="20" stroke-width="1.5" color="red"/>
         </Button>
@@ -115,7 +116,7 @@ const imagesToDisplay = computed(() => {
     <template #header>
         <div class="flex items-center gap-4">
             <div class="text-xl font-bold">
-                {{ dialogType.replace(/\b\w/g, (char) => char.toUpperCase()) }} Transaction
+                {{ $t(`public.${dialogType}`) }}
             </div>
         </div>
     </template>
@@ -143,7 +144,7 @@ const imagesToDisplay = computed(() => {
         <div class="flex flex-col gap-1 self-stretch">
             <div class="flex justify-between text-sm">
                 <div class=" text-gray-500">
-                    Requested Date:
+                   {{ $t('public.requested_at') }}:
                 </div>
                 <div>
                     {{ dayjs(props.pending.approval_at).format('YYYY-MM-DD') }}
@@ -151,17 +152,17 @@ const imagesToDisplay = computed(() => {
                 </div>
             </div>
             <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">Transaction Number:</div>
+                <div class=" text-gray-500">{{ $t('public.transaction_number') }}:</div>
                 <div>{{ props.pending.transaction_number }}</div>
             </div>
             <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">To:</div>
-                <div>{{ props.pending.to_wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}</div>
+                <div class=" text-gray-500">{{ $t('public.to') }}:</div>
+                <div>{{ $t(`public.${props.pending.to_wallet.type}`) }}</div>
             </div>
-            <!-- <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">Upline:</div>
-                <div>{{ props.pending.user.upline_id || '-' }}</div>
-            </div> -->
+            <div class="flex justify-between text-sm">
+                <div class=" text-gray-500">{{ $t('public.upline') }}:</div>
+                <div>{{ props.pending.user.upline?.name || '-' }}</div>
+            </div>
         </div>
 
         <Divider />
@@ -169,7 +170,7 @@ const imagesToDisplay = computed(() => {
         <!-- Payment Slip Section -->
         <div class="flex flex-col gap-1 self-stretch">
             <div class="text-lg text-gray-500 mb-4">
-                Payment Slip
+                {{ $t('public.payment_slip') }}
             </div>
             <Galleria 
                 :value="imagesToDisplay" 
@@ -182,16 +183,17 @@ const imagesToDisplay = computed(() => {
             >
                 <!-- Template for displaying individual images -->
                 <template #item="slotProps">
-                    <img 
+                    <Image 
                         :src="slotProps.item" 
-                        alt="Image Preview" 
+                        alt="Image" 
                         style="width: 100%; display: block;" 
+                        preview
                     />
                 </template>
             </Galleria>
         </div>
 
-        <div v-if="dialogType === 'reject'" class="flex flex-col gap-1 self-stretch">
+        <div v-if="dialogType === 'reject_transaction'" class="flex flex-col gap-1 self-stretch">
             <Divider />
             <InputLabel for="remarks" value="Remarks" />
             <Textarea 
