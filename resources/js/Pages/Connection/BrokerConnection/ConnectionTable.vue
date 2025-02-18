@@ -242,7 +242,7 @@ watchEffect(() => {
                                     </InputIcon>
                                     <InputText
                                         v-model="filters['global'].value"
-                                        placeholder="Keyword Search"
+                                        :placeholder="$t('public.search_keyword')"
                                         type="text"
                                         class="block w-full pl-10 pr-10"
                                     />
@@ -412,7 +412,7 @@ watchEffect(() => {
                 outlined
                 @click="clearFilter"
             >
-                Clear All
+            {{ $t('public.clear_all') }}
             </Button>
         </div>
     </Popover>

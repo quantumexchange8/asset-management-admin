@@ -6,16 +6,18 @@ import Button from 'primevue/button';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
-import Popover from 'primevue/popover';
-import Select from 'primevue/select';
 import ProgressSpinner from 'primevue/progressspinner';
 import { IconXboxX, IconX, IconSearch, IconAdjustments, IconFileDescription } from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage, Link } from '@inertiajs/vue3';
 import debounce from "lodash/debounce.js";
-import ReferralInfo from './Detail/ReferralInfo.vue';
+import { generalFormat } from '@/Composables/format';
+import { useLangObserver } from '@/Composables/localeObserver';
+import ReferralDetail from './Detail/ReferralDetail.vue';
 
+const {formatAmount} = generalFormat();
+const {locale} = useLangObserver();
 const isLoading = ref(false);
 const referrals = ref([]);
 const dt = ref(null);
@@ -53,6 +55,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             //BE send back result back to FE
             const results = await response.json();
             referrals.value = results?.data?.referrals || [];
+            console.log(results?.data?.referrals);
             isLoading.value = false;
         }, 100);
     } catch (e) {
@@ -120,7 +123,7 @@ watchEffect(() => {
                                     <InputIcon>
                                         <IconSearch :size="16" stroke-width="1.5" />
                                     </InputIcon>
-                                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"
+                                    <InputText v-model="filters['global'].value" :placeholder="$t('public.search_keyword')"
                                         type="text" class="block w-full pl-10 pr-10" />
                                     <!-- Clear filter button -->
                                     <div v-if="filters['global'].value"
@@ -135,7 +138,7 @@ watchEffect(() => {
 
                     <template #empty>
                         <div class="flex flex-col">
-                            <span>No referral</span>
+                            <span>{{ $t('public.no_referral') }}</span>
                         </div>
                     </template>
 
@@ -154,22 +157,22 @@ watchEffect(() => {
                             expander
                         >
                             <template #header>
-                                <span class="block">Name</span>
+                                <span class="block">{{ $t('public.name') }}</span>
                             </template>
                             <template #body="{ node }">
-                                {{ node.name }}
-                                <div class="text-sm text-gray-500 mt-1">
-                                    {{ node.email }}
+                                <div class="flex flex-col">
+                                    <span class="text-surface-950 dark:text-white">{{ node.name }}</span> 
+                                    <span class="text-surface-500 text-sm">{{ node.email }}</span> 
                                 </div>
                             </template>
                         </Column>
 
                         <Column 
                             field="setting_rank_id"
-                            style="min-width: 200px"
+                            :style="locale === 'cn' ? 'min-width: 0px' : 'min-width: 100px'"
                         >
                             <template #header>
-                                <span class="block">Rank</span>
+                                <span class="block">{{ $t('public.rank') }}</span>
                             </template>
                             <template #body="{ node }">
                                 {{ node.rank.rank_name }}
@@ -177,11 +180,36 @@ watchEffect(() => {
                         </Column>
 
                         <Column 
-                            field="direct_down_line"
-                            style="min-width: 200px"
+                            field="total_personal_fund"
+                            :style="locale === 'cn' ? 'min-width: 20px' : 'min-width: 240px'"
                         >
                             <template #header>
-                                <span class="block">Direct Downlines</span>
+                                <span class="block">{{ $t('public.personal_capital_fund') }} ($)</span>
+                            </template>
+                            <template #body="{ node }">
+                                {{ formatAmount(node.total_personal_fund) }}
+                            </template>
+                        </Column>
+
+                        <Column 
+                            field="total_team_fund"
+                             :style="locale === 'cn' ? 'min-width: 20px' : 'min-width: 200px'"
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.team_capital_fund') }} ($)</span>
+                            </template>
+                            <template #body="{ node }">
+                                {{ formatAmount(node.total_team_fund) }}
+                            </template>
+                        </Column>
+
+                        <Column 
+                            field="downlines_count"
+                            style="min-width: 200px"
+                            :style="locale === 'cn' ? 'min-width: 20px' : 'min-width: 190px'"
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.direct_downlines') }}</span>
                             </template>
                             <template #body="{ node }">
                                 {{ node.downlines_count }}
@@ -190,16 +218,13 @@ watchEffect(() => {
 
                         <Column 
                             field="action"
-                            style="min-width: 200px"
                         >
                             <template #header>
-                                <span class="block">Action</span>
+                                <span class="block">{{ $t('public.action') }}</span>
                             </template>
                             <template #body="{ node }">
-                                <ReferralInfo 
+                                <ReferralDetail
                                     :referral="node"
-                                    :refereeCount="node.downlines_count"
-                                    :totalDownline="node.total_downlines_count"
                                 />
                             </template>
                         </Column>

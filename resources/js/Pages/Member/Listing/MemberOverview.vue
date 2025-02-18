@@ -4,9 +4,8 @@ import {
     IconUsers, 
     IconUserX,
     IconUserCheck } from '@tabler/icons-vue';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import Skeleton from 'primevue/skeleton';
-import {generalFormat} from "@/Composables/format.js";
 
 const props = defineProps({
     totalRecords: Number,
@@ -14,7 +13,6 @@ const props = defineProps({
     unverifiedUser: Number,
 });
 const isLoading = ref(false);
-const {formatAmount} = generalFormat();
 </script>
 
 <template>
@@ -26,7 +24,7 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                All Members
+                                {{ $t('public.all_members') }}
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="isLoading">
@@ -56,7 +54,7 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                Verified
+                                {{ $t('public.verified') }}
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="isLoading">
@@ -86,7 +84,7 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                Unverified
+                                {{ $t('public.unverified') }}
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="isLoading">

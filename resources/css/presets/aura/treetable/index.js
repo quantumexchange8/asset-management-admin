@@ -219,7 +219,7 @@ export default {
         bodyCell: ({ context }) => ({
             class: [
                 // Font
-                'leading-[normal]',
+                'text-sm leading-[normal]',
 
                 // Position
                 {

@@ -123,45 +123,45 @@ const closeDialog = () => {
                 <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ 'Basics' }}</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel for="name" value="Name"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.name')" for="name" />
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconUser :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText id="name" type="text" class="pl-10 block w-full" v-model="form.name" placeholder="Name" :invalid="!!form.errors.name" autofocus/>
+                            <InputText id="name" type="text" class="pl-10 block w-full" v-model="form.name" :placeholder="$t('public.enter_name')" :invalid="!!form.errors.name" autofocus/>
                         </InputIconWrapper>
                         <InputError :message="form.errors.name"/>
                     </div>
 
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Email" for="email"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.email')" for="email"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconMail :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText id="email" type="text" class="pl-10 block w-full" v-model="form.email" placeholder="Email" :invalid="!!form.errors.email"/>
+                            <InputText id="email" type="text" class="pl-10 block w-full" v-model="form.email" :placeholder="$t('public.enter_email')" :invalid="!!form.errors.email"/>
                         </InputIconWrapper>
                         <InputError :message="form.errors.email"/>
                     </div>
 
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Username" for="username"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.username')" for="username"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconLabel :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText id="username" type="text" class="pl-10 block w-full" v-model="form.username" placeholder="Username" :invalid="!!form.errors.username"/>
+                            <InputText id="username" type="text" class="pl-10 block w-full" v-model="form.username" :placeholder="$t('public.enter_username')" :invalid="!!form.errors.username"/>
                         </InputIconWrapper>
                         <InputError :message="form.errors.username"/>
                     </div>
 
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Upline" for="upline"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.upline')" for="upline"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconUsersPlus :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select v-model="selectedUpline" :options="users" :loading="loadingUsers" optionLabel="name" placeholder="Select Upline" class="pl-7 block w-full" :invalid="!!form.errors.upline" filter>
+                            <Select v-model="selectedUpline" :options="users" :loading="loadingUsers" optionLabel="name" :placeholder="$t('public.select_upline')" class="pl-7 block w-full" :invalid="!!form.errors.upline" filter>
                                 <template #option="slotProps">
                                     <div class="flex items-center gap-1 max-w-[220px] truncate">
                                         <span>{{ slotProps.option.name }}</span>
@@ -174,12 +174,12 @@ const closeDialog = () => {
                     </div>
 
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Country" for="country"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.country')" for="country"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconFlag :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select v-model="selectedCountry" :options="countries" :loading="loadingCountries" optionLabel="name" placeholder="Select Country" class="pl-7 block w-full" :invalid="!!form.errors.country" filter>
+                            <Select v-model="selectedCountry" :options="countries" :loading="loadingCountries" optionLabel="name" :placeholder="$t('public.select_country')" class="pl-7 block w-full" :invalid="!!form.errors.country" filter>
                                 <template #option="slotProps">
                                     <div class="flex items-center gap-1">
                                         <div>{{ slotProps.option.emoji }}</div>
@@ -192,23 +192,23 @@ const closeDialog = () => {
                     </div>
 
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Phone Number" for="phone"/>
+                        <InputLabel :value="$t('public.phone_number')" for="phone"/>
                         <div class="flex gap-2 items-center self-stretch relative">
+                            <Select v-model="selectedPhoneCode" :options="countries" :loading="loadingCountries" optionLabel="name" placeholder="60" class="w-[100px]" :invalid="!!form.errors.dial_code" filter>
+                                <template #option="slotProps">
+                                    <div class="flex items-center gap-1">
+                                        <div>{{ slotProps.option.emoji }}</div>
+                                        <div>{{ slotProps.option.iso2 }}</div>
+                                        <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.phone_code }})</div>
+                                    </div>
+                                </template>
+                            </Select>
                             <InputIconWrapper>
                                 <template #icon>
                                     <IconPhone :size="20" stroke-width="1.5"/>
                                 </template>
-                                <Select v-model="selectedPhoneCode" :options="countries" :loading="loadingCountries" optionLabel="name" placeholder="Phone Code" class="pl-7 w-[100px]" :invalid="!!form.errors.dial_code" filter>
-                                    <template #option="slotProps">
-                                        <div class="flex items-center gap-1">
-                                            <div>{{ slotProps.option.emoji }}</div>
-                                            <div>{{ slotProps.option.iso2 }}</div>
-                                            <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.phone_code }})</div>
-                                        </div>
-                                    </template>
-                                </Select>
+                                <InputText id="phone" type="text" class="block w-full pl-10" v-model="form.phone" placeholder="1234567" :invalid="!!form.errors.phone"/>
                             </InputIconWrapper>
-                            <InputText id="phone" type="text" class="block w-full" v-model="form.phone" placeholder="Phone Number" :invalid="!!form.errors.phone"/>
                         </div>
                         <InputError :message="form.errors.phone"/>
                         <InputError :message="form.errors.dial_code"/>
@@ -220,22 +220,22 @@ const closeDialog = () => {
                 <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ 'Credentials' }}</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Password" for="password"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.password')" for="password"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconLock :size="20" stroke-width="1.5"/>
                             </template>
-                            <Password v-model="form.password" :invalid="!!form.errors.password" class="block w-full" placeholder="Password" toggleMask autofocus/>
+                            <Password v-model="form.password" :invalid="!!form.errors.password" class="block w-full" placeholder="••••••••" toggleMask autofocus/>
                         </InputIconWrapper>
                         <InputError :message="form.errors.password"/>
                     </div>
                     <div class="flex flex-col gap-1 items-start self-stretch">
-                        <InputLabel value="Confirm Password" for="password_confirmation"/>
-                        <InputIconWrapper class="w-full">
+                        <InputLabel :value="$t('public.confirm_password')" for="password_confirmation"/>
+                        <InputIconWrapper>
                             <template #icon>
                                 <IconLock :size="20" stroke-width="1.5"/>
                             </template>
-                            <Password v-model="form.password_confirmation" :invalid="!!form.errors.password" class="block w-full" placeholder="Confirm Password" toggleMask/>
+                            <Password v-model="form.password_confirmation" :invalid="!!form.errors.password" class="block w-full" placeholder="••••••••" toggleMask/>
                         </InputIconWrapper>
                     </div>
                 </div>

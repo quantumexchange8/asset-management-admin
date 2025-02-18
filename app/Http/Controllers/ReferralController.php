@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrokerConnection;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -56,7 +57,6 @@ class ReferralController extends Controller
                             'upline:id,name,email,upline_id',
                         ])
                         ->get();
-                    Log::info('users:', ['users' => $users]);
                 }
             } else {
                 // If no global filter, fetch users with a hierarchy only
@@ -107,7 +107,7 @@ class ReferralController extends Controller
         // Identify root users (those whose upline_id is not in the user list)
         $roots = [];
         foreach ($users as $user) {
-            if (is_null($user['upline_id']) || !array_key_exists($user['upline_id'], $userMap)) { 
+            if (is_null($user['upline_id']) || !array_key_exists($user['upline_id'], $userMap)) {
                 $roots[] = $user;
             }
         }
@@ -141,13 +141,64 @@ class ReferralController extends Controller
             $totalDownlineCount += $child['total_downlines_count'];
         }
 
+        // Calculate capital funds
+        $activeConnections = BrokerConnection::with('broker')
+            ->where('status', 'active');
+
+        $total_personal_fund = (clone $activeConnections)
+            ->where('user_id', $currentUser['id'])
+            ->sum('capital_fund');
+
+        // Get all descendant IDs including the current user's ID
+        $allDescendantIds = $this->getDescendants($users, $currentUser['id']);
+        $total_team_fund = (clone $activeConnections)
+            ->whereIn('user_id', $allDescendantIds)
+            ->sum('capital_fund');
+        $allDescendantIds[] = $currentUser['id']; // Include the current user
+
+        // Get all active connections for the user and their descendants
+        $allConnections = (clone $activeConnections)
+            ->whereIn('user_id', $allDescendantIds)
+            ->get();
+
+        // Organize data by broker
+        $brokerData = [];
+
+        foreach ($allConnections as $connection) {
+            $brokerName = $connection->broker->name ?? 'Unknown';
+
+            if (!isset($brokerData[$brokerName])) {
+                $brokerData[$brokerName] = [
+                    'broker_name' => $brokerName,
+                    'personal_funds' => 0,
+                    'team_funds' => 0
+                ];
+            }
+
+            if ($connection->user_id === $currentUser['id']) {
+                // If the connection belongs to the current user, add to personal funds
+                $brokerData[$brokerName]['personal_funds'] += $connection->capital_fund;
+            } else {
+                // Otherwise, add to team funds
+                $brokerData[$brokerName]['team_funds'] += $connection->capital_fund;
+            }
+        }
+
+        // Convert to indexed array for easier usage in frontend
+        $brokerDetails = array_values($brokerData);
+
         // Assign values
         $currentUser['children'] = $children;
         $currentUser['downlines_count'] = $directDownlineCount;
         $currentUser['total_downlines_count'] = $totalDownlineCount;
+        $currentUser['broker_details'] = $brokerDetails;
+        $currentUser['total_personal_fund'] = $total_personal_fund;
+        $currentUser['total_team_fund'] = $total_team_fund;
 
         return $currentUser;
     }
+
+
 
     private function getDescendants($allUsers, $userId)
     {
