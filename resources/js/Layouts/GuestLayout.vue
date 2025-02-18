@@ -7,6 +7,7 @@ import { Head } from '@inertiajs/vue3';
 import {ref} from "vue";
 import {loadLanguageAsync} from "laravel-vue-i18n";
 import Menu from "primevue/menu";
+import Toast from "primevue/toast";
 
 const props = defineProps({
     title: String
@@ -67,6 +68,7 @@ const changeLanguage = async (langVal) => {
         <div class="flex flex-col justify-center items-center pb-12 md:px-8 w-full">
             <div class="w-full flex flex-col gap-8 justify-center items-center">
                 <ApplicationLogo class="h-16 w-fit fill-current text-primary" />
+                <Toast/>
                 <slot />
             </div>
         </div>

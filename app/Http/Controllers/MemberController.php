@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -121,34 +122,35 @@ class MemberController extends Controller
     public function getPendingKycData(Request $request)
     {
         if ($request->has('lazyEvent')) {
-            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-            //user query
             $query = User::query()
                 ->with([
-                    'country:id,name,emoji',
+                    'country:id,name,iso2,translations',
                     'rank:id,rank_name',
                     'upline:id,name,email,upline_id',
+                    'media'
                 ])
-                ->where('kyc_status', '=', 'pending');
-
+                ->where('kyc_status', 'pending');
 
             //global filter
             if ($data['filters']['global']['value']) {
-                $query->where(function ($q) use ($data) { //function() allow to add more condition' use ($data) means $data is passed into the clause to be use
+                $query->where(function ($q) use ($data) {
                     $keyword = $data['filters']['global']['value'];
 
                     $q->where('name', 'like', '%' . $keyword . '%')
-                        ->orWhere('email', 'like', '%' . $keyword . '%');
+                        ->orWhere('email', 'like', '%' . $keyword . '%')
+                        ->orWhere('username', 'like', '%' . $keyword . '%')
+                        ->orWhere('id_number', 'like', '%' . $keyword . '%');
                 });
             }
 
             //date filter
             if (!empty($data['filters']['start_date']['value']) && !empty($data['filters']['end_date']['value'])) {
-                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay(); //add day to ensure capture entire day
+                $start_date = Carbon::parse($data['filters']['start_date']['value'])->addDay()->startOfDay();
                 $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
 
-                $query->whereBetween('created_at', [$start_date, $end_date]);
+                $query->whereBetween('kyc_requested_at', [$start_date, $end_date]);
             }
 
             //country filter
@@ -161,22 +163,21 @@ class MemberController extends Controller
                 $query->where('setting_rank_id', $data['filters']['rank']['value']);
             }
 
-            //sort field/order
             if ($data['sortField'] && $data['sortOrder']) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
                 $query->orderBy($data['sortField'], $order);
             } else {
-                $query->latest();
+                $query->orderByDesc('kyc_requested_at');
             }
 
             $users = $query->paginate($data['rows']);
 
-            // Add KYC images to each user
-            foreach ($users as $user) {
-                $user->kyc_images = $user->getMedia('kyc_image')->map(function ($media) {
-                    return $media->getUrl();  // Return the media URL
-                });
-            }
+            $users->each(function ($user) {
+                $user->kyc_images = $user->getMedia('kyc_image')
+                    ->map(function ($media) {
+                        return $media->getUrl();
+                    });
+            });
 
             return response()->json([
                 'success' => true,
@@ -189,20 +190,24 @@ class MemberController extends Controller
 
     public function kycPendingApproval(Request $request)
     {
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'remarks' => ['required_if:action,reject'],
-        ]);
+        ])->setAttributeNames([
+            'remarks' => trans('public.remarks')
+        ])->validate();
 
         $user = User::find($request->user_id);
 
         if ($request->action == 'approve') {
             $user->kyc_status = 'verified';
-            $user->update();
+            $user->kyc_approval_at = now();
         } else {
             $user->kyc_status = 'rejected';
-            $user->remarks = $validatedData['remarks'];
-            $user->update();
+            $user->kyc_approval_description = $validator['remarks'];
         }
+        $user->update();
+
+        return back()->with('toast', 'success');
     }
 
     public function addNewMember(Request $request)

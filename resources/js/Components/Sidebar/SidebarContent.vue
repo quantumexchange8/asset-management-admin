@@ -15,6 +15,27 @@ import {
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
+import {usePage} from "@inertiajs/vue3";
+import {ref, watchEffect} from "vue";
+
+const page = usePage();
+const pendingKycCount = ref(page.props.getPendingKycCount);
+
+// Update pending counts
+const getPendingCounts = async () => {
+    try {
+        const response = await axios.get(route('dashboard.getPendingCounts'));
+        pendingKycCount.value = response.data.pendingKycCount
+    } catch (error) {
+        console.error('Error pending counts:', error);
+    }
+};
+
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        getPendingCounts();
+    }
+});
 </script>
 
 <template>
@@ -35,6 +56,7 @@ import ScrollPanel from 'primevue/scrollpanel';
         <SidebarCollapsible
             title="member"
             :active="route().current('member.*')"
+            :pending-counts="pendingKycCount"
         >
             <template #icon>
                 <IconUsers size="20" stroke-width="1.5" />
@@ -48,6 +70,7 @@ import ScrollPanel from 'primevue/scrollpanel';
                 title="pending_kyc"
                 :href="route('member.getPendingKyc')"
                 :active="route().current('member.getPendingKyc')"
+                :pendingCounts="pendingKycCount"
             />
             <SidebarCollapsibleItem
                 title="member_referrals"

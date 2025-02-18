@@ -5,7 +5,6 @@ return [
     "remember_me" => "Remember Me",
     "reset_password" => "Reset Password",
     "log_in" => "Log In",
-    "login_caption" => "Welcome! Sign in to continue",
     "dashboard" => "Dashboard",
     "member" => "Member",
     "member_listing" => "Member Listing",
@@ -122,24 +121,28 @@ return [
     "net_profit" => "Net Profit",
     "distribute_amount" => "Distributed",
     "allocated" => "Allocated",
-    
+    "admin_panel" => "Admin Panel",
+    "paginator_caption" => "Showing {first} to {last} of {totalRecords} entries",
+    "proof_of_identity" => "Proof of Identity",
+    "approve_kyc" => "Approve KYC",
+    "reject_kyc" => "Reject KYC",
+    "toast_approve_kyc_success" => "Successfully Approved KYC",
+    "toast_reject_kyc_success" => "Successfully Rejected KYC",
+    "remarks" => "Remarks",
     "no_referral" => "No Referral",
     "rank" => "Rank",
     "personal_capital_fund" => "Personal Capital Fund",
     "team_capital_fund" => "Team Capital Fund",
     "direct_downlines" => "Direct Downlines",
-    
     "total_downlines" => "Total Downlines",
     "action" => "Action",
     "phone" => "Phone",
     "country" => "Country",
     "referrer" => "Referrer",
     "referee" => "Referee",
-
     "no_connection" => "No Connection with Broker",
     "connect_with_broker" => "Connect with Broker",
     "total" => "Total",
-
     "username" => "Username",
     "enter_username" => "Enter Username",
     "upline" => "Upline",
@@ -149,11 +152,9 @@ return [
     "dial_code" => "Dial Code",
     "confirm_password" => "Confirm Password",
     "role" => "Role",
-
     "all_members" => "All Members",
     "verified" => "Verified",
     "unverified" => "Unverified",
-
     "transaction_number" => "Transaction Number",
     "fund_type" => "Fund Type",
     "to" => 'To',
@@ -161,7 +162,6 @@ return [
     "approved_by" => "Approved By",
     "requested_at" => "Requested At",
     "from" => "From",
-
     "filter_by_referrer" => "Filter By Referrer",
     "select_referrer" => "Select Referrer",
     "filter_by_country" => "Filter By Country",
@@ -169,11 +169,8 @@ return [
     "select_rank" => "Select Rank",
     "filter_by_status" => "Filter By Status",
     "select_status" => "Select Status",
-    "clear_all" => "Clear All",
-
     "filter_by_fund_type" => "Filter By Fund Type",
     "select_fund_type" => "Select Fund Type",
-
     "member_loading_caption" => "Loading user data. Please wait.",
     "connection_loading_caption" => "Loading connection data. Please wait.",
     "deposit_loading_caption" => "Loading deposit data. Please wait.",

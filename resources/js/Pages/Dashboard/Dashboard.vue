@@ -20,11 +20,11 @@ const {formatAmount} = generalFormat();
                 <span class="text-sm text-surface-500">{{ $t('public.total_active_fund_from_broker') }}</span>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-5 items-center self-stretch w-full">
+            <div class="flex flex-col gap-5 items-center self-stretch w-full">
                 <div class="flex flex-col gap-3 w-full">
                     <DashboardOverview />
                 </div>
-                <div class="flex flex-col gap-3 w-full md:max-w-[380px] xl:max-w-[420px]">
+                <div class="flex flex-col gap-3 w-full">
                     <DashboardPayout />
                 </div>
             </div>

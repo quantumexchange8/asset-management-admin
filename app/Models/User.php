@@ -46,6 +46,8 @@ class User extends Authenticatable implements HasMedia
     {
         return [
             'email_verified_at' => 'datetime',
+            'kyc_requested_at' => 'datetime',
+            'kyc_approval_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

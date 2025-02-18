@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BrokerConnection;
 use App\Models\Transaction;
+use App\Services\SidebarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -24,74 +25,73 @@ class DashboardController extends Controller
 
     public function getTotalDepositByDays(Request $request)
     {
-        $query = Transaction::query()
-            ->where('status', '=', 'success')
-            ->where('fund_type', '=', 'real_fund')
-            ->whereIn('transaction_type', ['deposit', 'withdrawal']);
+        $query = BrokerConnection::query()
+            ->whereIn('status', ['active', 'removed']);
 
-        $totalDeposit = (clone $query)->where('transaction_type', 'deposit')->sum('transaction_amount');
-        $totalWithdrawal = (clone $query)->where('transaction_type', 'withdrawal')->sum('transaction_amount');
+        // Get the selected month/year (default: current month/year)
+        $month = (int) $request->input('month', date('m'));
+        $year = (int) $request->input('year', date('Y'));
+        $days = (int) $request->input('days', cal_days_in_month(CAL_GREGORIAN, $month, $year));
 
-        // Apply filters only if values are selected
-        $filteredQuery = $query->when($request->filled('days'), function ($dayQuery) use ($request) {
-            $days = (int) $request->input('days'); // Convert to integer
-            $month = (int) $request->input('month'); // Selected month
-            $year = (int) $request->input('year'); // Selected year
-
-            // Start of the selected month
+        if ($days <= 14) {
+            // Last X days from today
+            $endDate = Carbon::now()->endOfDay();
+            $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+        } else {
             $startDate = Carbon::create($year, $month, 1)->startOfDay();
-            // End of the selected period (first X days)
-            $endDate = Carbon::create($year, $month, min($days, cal_days_in_month(CAL_GREGORIAN, $month, $year)))->endOfDay();
+            $endDate = Carbon::create($year, $month, date('d'))->endOfDay();
+        }
 
-            $dayQuery->whereBetween('created_at', [$startDate, $endDate]);
-        })->when($request->filled('month') && $request->filled('year'), function ($dayQuery) use ($request) {
-            $month = $request->input('month');
-            $year = $request->input('year');
-
-            $dayQuery->whereYear('created_at', $year)
-                ->whereMonth('created_at', $month);
-        });
-
-        $totalMonthDeposit = (clone $filteredQuery)->where('transaction_type', 'deposit')->sum('transaction_amount');
-        $totalMonthWithdrawal = (clone $filteredQuery)->where('transaction_type', 'withdrawal')->sum('transaction_amount');
+        $filteredQuery = $query->whereBetween('joined_at', [$startDate, $endDate]);
 
         $chartResults = $filteredQuery->select(
-            DB::raw('DAY(created_at) as day'),
-            'transaction_type',
-            DB::raw('SUM(transaction_amount) as amount')
-        )->groupBy('day', 'transaction_type')->get();
+            DB::raw('DATE(joined_at) as date'),
+            'status',
+            DB::raw('SUM(capital_fund) as amount')
+        )->groupBy('date', 'status')->get();
 
-        $uniqueTransactionType = $chartResults->pluck('transaction_type')->unique();
-        $year = $request->year ?? Carbon::now()->year;
-        $month = $request->month ?? Carbon::now()->month;
+        $connectionsStatus = $chartResults->pluck('status')->unique();
 
-        // Initialize the chart data structure
+        // Generate Labels:
+        if ($days === 7) {
+            // Latest 7 weekdays (e.g., Sun, Mon, Tue)
+            $labels = collect(range(0, 6))->map(fn($i) => Carbon::now()->subDays(6 - $i)->format('D'))->toArray();
+        } elseif ($days === 14) {
+            $labels = collect(range(0, 13))->map(fn($i) => Carbon::now()->subDays(13 - $i)->format('j'))->toArray();
+        } else {
+            $labels = collect(range(1, date('d')))->toArray();
+        }
+
         $chartData = [
-            'labels' => range(1, $request->input('days', cal_days_in_month(CAL_GREGORIAN, $month, $year))), // Generate an array of days
+            'labels' => $labels,
             'datasets' => [],
         ];
 
-        //color
+        // Color mapping
         $colors = [
-            'deposit' => ['border' => '#12B76A', 'background' => 'rgba(18, 183, 106, 0.3)'],
-            'withdrawal' => ['border' => '#FF2D55', 'background' => 'rgba(255, 45, 85, 0.3)']
+            'active' => ['border' => '#12B76A', 'background' => 'rgba(18, 183, 106, 0.3)'],
+            'removed' => ['border' => '#FF2D55', 'background' => 'rgba(255, 45, 85, 0.3)']
         ];
 
-        // Loop through each unique type and create a dataset
-        foreach ($uniqueTransactionType as $transactionType) {
-            $transactionData = $chartResults->where('transaction_type', $transactionType);
+        // Loop through each unique status and create a dataset
+        foreach ($connectionsStatus as $status) {
+            $data = $chartResults->where('status', $status);
 
             $dataset = [
-                'label' => trans("public.$transactionType"), // Capitalize first letter (Deposit, Withdrawal)
-                'data' => array_map(function ($day) use ($transactionData) {
-                    return $transactionData->firstWhere('day', $day)->amount ?? 0;
+                'label' => $status == 'active' ? trans('public.deposit') : trans('public.withdrawal'),
+                'data' => array_map(function ($label) use ($month, $year, $chartData, $data, $days) {
+                    $date = ($days <= 14)
+                        ? Carbon::now()->subDays($days - 1 - array_search($label, $chartData['labels']))->toDateString()
+                        : Carbon::create($year, $month, $label)->toDateString();
+
+                    return $data->firstWhere('date', $date)->amount ?? 0;
                 }, $chartData['labels']),
-                'borderColor' => $colors[$transactionType]['border'],
-                'backgroundColor' => $colors[$transactionType]['background'],
+                'borderColor' => $colors[$status]['border'],
+                'backgroundColor' => $colors[$status]['background'],
                 'borderWidth' => 2,
                 'pointStyle' => false,
                 'fill' => true,
-                'tension' => 0.4, // Make the line smooth
+                'tension' => 0.4,
             ];
 
             $chartData['datasets'][] = $dataset;
@@ -99,10 +99,13 @@ class DashboardController extends Controller
 
         return response()->json([
             'chartData' => $chartData,
-            'totalDeposit' => $totalDeposit,
-            'totalMonthDeposit' => $totalMonthDeposit,
-            'totalWithdrawal' => $totalWithdrawal,
-            'totalMonthWithdrawal' => $totalMonthWithdrawal,
+        ]);
+    }
+
+    public function getPendingCounts()
+    {
+        return response()->json([
+            'pendingKycCount' => (new SidebarService())->getPendingKycCount(),
         ]);
     }
 }

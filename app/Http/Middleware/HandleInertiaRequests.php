@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\SidebarService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,11 +30,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $sidebarService = new SidebarService();
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'toast' => session('toast'),
+            'getPendingKycCount' => $sidebarService->getPendingKycCount(),
         ];
     }
 }

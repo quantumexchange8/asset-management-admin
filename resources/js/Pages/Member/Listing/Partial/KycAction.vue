@@ -6,10 +6,11 @@ import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import Galleria from 'primevue/galleria';
-import { useForm } from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import Image from "primevue/image";
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     pending: Object,
@@ -17,7 +18,7 @@ const props = defineProps({
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref(''); //reject or approve
+const dialogType = ref('');
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -30,31 +31,18 @@ const form = useForm({
     remarks: '',
 });
 
-const emit = defineEmits(['kycActionCompleted']);
-
 const submitForm = () => {
     form.action = dialogType.value;
-    form.put(route('member.kycPendingApproval'), {
+    form.post(route('member.kycPendingApproval'), {
         onSuccess: () => {
-            visible.value = false;
+            closeDialog();
             form.reset();
-            if(dialogType.value === 'approve'){
-                toast.add({
-                    severity: 'success',
-                    summary: 'Approved',
-                    detail: 'Approved successfully!',
-                    life: 3000,
-                });
-            } else {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Rejected',
-                    detail: 'Rejected successfully!',
-                    life: 3000,
-                });
-            }
-            // Emit the custom event to parent
-            emit('kycActionCompleted');
+            toast.add({
+                severity: 'success',
+                summary: trans('public.success'),
+                detail: trans(`public.toast_${dialogType.value}_kyc_success`),
+                life: 3000,
+            });
         },
         onError: (errors) => {
             console.error(errors);
@@ -62,48 +50,36 @@ const submitForm = () => {
     });
 }
 
-const responsiveOptions = ref([
-    {
-        breakpoint: '991px',
-        numVisible: 4
-    },
-    {
-        breakpoint: '767px',
-        numVisible: 3
-    },
-    {
-        breakpoint: '575px',
-        numVisible: 1
-    }
-]);
-
-// Use a placeholder image if kycImages is empty
-const imagesToDisplay = computed(() => {
-    return props.pending.kyc_images.length > 0
-        ? props.pending.kyc_images
-        : ['/image-not-found.jpg']; // Replace with the path to your placeholder image
-});
-
+const closeDialog = () => {
+    visible.value = false
+}
 </script>
 
 <template>
-    <div class="flex items-center self-stretch gap-x-2">
+    <div class="flex items-center self-stretch gap-2">
         <Button
-            size="sm"
             type="button"
-            class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
+            severity="success"
+            text
+            rounded
+            aria-label="approve"
+            size="small"
+            class="!p-2"
             @click="openDialog('approve')"
         >
-            <IconCheck :size="20" stroke-width="1.5" color="green"/>
+            <IconCheck :size="20" stroke-width="1.5" />
         </Button>
-
         <Button
-            class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
-            size="sm"
             type="button"
+            severity="danger"
+            text
+            rounded
+            aria-label="reject"
+            size="small"
+            class="!p-2"
             @click="openDialog('reject')"
         >
-            <IconX :size="20" stroke-width="1.5" color="red"/>
+            <IconX :size="20" stroke-width="1.5" />
         </Button>
     </div>
 
@@ -115,21 +91,26 @@ const imagesToDisplay = computed(() => {
         <template #header>
             <div class="flex items-center gap-4">
                 <div class="text-xl font-bold">
-                    {{ dialogType.replace(/\b\w/g, (char) => char.toUpperCase()) }} KYC
+                    {{ $t(`public.${dialogType}_kyc`) }}
                 </div>
             </div>
         </template>
 
-        <div class="grid gap-6 py-2 w-full">
+        <div class="flex flex-col gap-5 self-stretch items-start w-full">
             <div class="flex flex-col gap-1 items-start self-stretch w-full">
-                <InputLabel for="ID/Passport" value="ID/Passport" />
+                <InputLabel for="kyc">
+                    {{ $t('public.proof_of_identity') }}
+                </InputLabel>
                 <Galleria
-                    :value="imagesToDisplay"
-                    :responsiveOptions="responsiveOptions"
+                    :value="pending.kyc_images"
                     :numVisible="5"
                     :circular="true"
-                    :showItemNavigators="true"
                     :showThumbnails="false"
+                    :showIndicators="true"
+                    :showItemNavigators="true"
+                    :changeItemOnIndicatorHover="true"
+                    :showIndicatorsOnItem="true"
+                    indicatorsPosition="bottom"
                     container-class="w-full"
                 >
                     <!-- Template for displaying individual images -->
@@ -137,7 +118,7 @@ const imagesToDisplay = computed(() => {
                         <Image
                             :src="slotProps.item"
                             alt="Image"
-                            imageClass="w-full h-[300px] object-cover"
+                            imageClass="w-full h-[250px] object-cover"
                             class="w-full"
                             preview
                         />
@@ -163,19 +144,19 @@ const imagesToDisplay = computed(() => {
 
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
                 <Button
+                    type="button"
                     severity="secondary"
-                    class="text-center mr-3"
-                    @click="visible = false"
-                >
-                    Cancel
-                </Button>
+                    class="w-full md:w-fit"
+                    @click="closeDialog"
+                    :label="$t('public.cancel')"
+                />
                 <Button
-                    class="text-center"
+                    type="submit"
+                    class="w-full md:w-fit"
                     :disabled="form.processing"
                     @click.prevent="submitForm"
-                >
-                    Submit
-                </Button>
+                    :label="$t('public.confirm')"
+                />
             </div>
         </div>
     </Dialog>

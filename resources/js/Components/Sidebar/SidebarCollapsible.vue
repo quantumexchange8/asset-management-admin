@@ -15,12 +15,12 @@ const props = defineProps({
     active: {
         type: Boolean,
     },
+    pendingCounts: Number
 })
 
 const { active } = props
 
 const isOpen = ref(active)
-
 const beforeEnter = (el) => {
     el.style.maxHeight = `0px`
 }
@@ -40,7 +40,12 @@ const leave = (el) => {
 
 <template>
     <div class="relative w-full">
-        <SidebarLink @click="isOpen = !isOpen" :title="title" :active="active">
+        <SidebarLink
+            @click="isOpen = !isOpen"
+            :title="title"
+            :active="active"
+            :pending-counts="pendingCounts"
+        >
             <template #icon>
                 <slot name="icon">
                     <IconCircle
