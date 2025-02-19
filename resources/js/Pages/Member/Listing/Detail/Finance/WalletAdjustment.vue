@@ -173,7 +173,7 @@ const submitForm = () => {
                         type="text"
                         class="flex flex-1 self-stretch"
                         v-model="form.remarks"
-                        placeholder="Enter Remarks"
+                        :placeholder="$t('public.enter_remarks')"
                         :invalid="form.errors.remarks"
                         rows="5"
                         cols="30"
@@ -183,8 +183,8 @@ const submitForm = () => {
             </div>
 
             <div class="flex justify-end items-center pt-10 md:pt-7 gap-3 md:gap-4 self-stretch">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
-                <Button type="submit" label="Save" :disabled="form.processing" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
+                <Button type="button" :label="$t('public.cancel')" severity="secondary" @click="visible = false" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
+                <Button type="submit" :label="$t('public.save')" :disabled="form.processing" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
             </div>
         </form>
     </Dialog>

@@ -4,6 +4,7 @@ import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import IconField from 'primevue/iconfield';
+import Tag from 'primevue/tag';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -175,7 +176,10 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.rank') }}</span>
                             </template>
                             <template #body="{ node }">
-                                {{ node.rank.rank_name }}
+                                <Tag
+                                    severity="secondary"
+                                    :value="node.rank.rank_name === 'member' ? $t(`public.${node.rank.rank_name}`) : node.rank.rank_name"
+                                />
                             </template>
                         </Column>
 

@@ -115,7 +115,7 @@ const toggle = (event) => {
         <template #header>
             <div class="flex items-center gap-4">
                 <div class="text-xl font-bold">
-                    {{dialogType.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase())}}
+                    {{$t(`public.${dialogType}`)}}
                 </div>
             </div>
         </template>

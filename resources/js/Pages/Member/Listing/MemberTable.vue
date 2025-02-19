@@ -419,7 +419,10 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.rank') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.rank.rank_name }}
+                                <Tag
+                                    severity="secondary"
+                                    :value="data.rank.rank_name === 'member' ? $t(`public.${data.rank.rank_name}`) : data.rank.rank_name"
+                                />
                             </template>
                         </Column>
 

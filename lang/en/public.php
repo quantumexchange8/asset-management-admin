@@ -129,6 +129,7 @@ return [
     "toast_approve_kyc_success" => "Successfully Approved KYC",
     "toast_reject_kyc_success" => "Successfully Rejected KYC",
     "remarks" => "Remarks",
+    "enter_remarks" => "Enter Remarks",
     "no_referral" => "No Referral",
     "rank" => "Rank",
     "personal_capital_fund" => "Personal Capital Fund",
@@ -209,5 +210,8 @@ return [
     "investment" => "Investment",
     "contact_information" => "Contact Information",
     "balance" => "Balance",
-    "wallet_adjustment" => "Wallet Adjustment"
+    "wallet_adjustment" => "Wallet Adjustment",
+    "select_new_upline" => "Select New Upline",
+    "upgrade_rank" => "Upgrade Rank",
+    "select_new_rank" => "Select New Rank",
 ];

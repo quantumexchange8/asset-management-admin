@@ -95,8 +95,15 @@ class MemberController extends Controller
                 ->count();
 
             $unverifiedUser = (clone $query)
-                ->whereIn('kyc_status', ['unverified', 'pending'])
+                ->whereIn('kyc_status', ['unverified', 'pending', 'rejected'])
                 ->count();
+
+            $users->each(function ($user) {
+                $user->profile_photo = $user->getMedia('profile_photo')
+                    ->map(function ($media) {
+                        return $media->getUrl();
+                    });
+            });
 
             return response()->json([
                 'success' => true,

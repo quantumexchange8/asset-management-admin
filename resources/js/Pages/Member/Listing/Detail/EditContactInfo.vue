@@ -240,8 +240,8 @@ const submitForm = () => {
                 </div>
             </div>
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                <Button type="submit" label="Save" :disabled="form.processing"></Button>
+                <Button type="button" :label="$t('public.cancel')" severity="secondary" @click="visible = false"></Button>
+                <Button type="submit" :label="$t('public.save')" :disabled="form.processing"></Button>
             </div>
         </form> 
     </Dialog>
