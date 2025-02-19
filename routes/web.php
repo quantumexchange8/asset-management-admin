@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SelectOptionController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
@@ -160,7 +161,7 @@ Route::middleware('auth')->group(function () {
         //profit sharing
         Route::get('/profit_sharing', [ReportController::class, 'profit_sharing'])->name('report.profit_sharing');
         Route::get('/getProfitSharingData', [ReportController::class, 'getProfitSharingData'])->name('report.getProfitSharingData');
-        
+
         // Standard Bonus
         Route::get('/ib_group_incentive', [ReportController::class, 'ib_group_incentive'])->name('report.ib_group_incentive');
         Route::get('/getStandardBonusData', [ReportController::class, 'getStandardBonusData'])->name('report.getStandardBonusData');
@@ -168,6 +169,19 @@ Route::middleware('auth')->group(function () {
         // Rebate Bonus
         Route::get('/rebate_bonus', [ReportController::class, 'rebate_bonus'])->name('report.rebate_bonus');
         Route::get('/getRebateBonusData', [ReportController::class, 'getRebateBonusData'])->name('report.getRebateBonusData');
+    });
+
+    /**
+     * ==============================
+     *           Settings
+     * ==============================
+     */
+    Route::prefix('settings')->group(function () {
+        // Admin
+        Route::get('/admin_listing', [SettingController::class, 'admin_listing'])->name('settings.admin_listing');
+        Route::get('/getAdminListingData', [SettingController::class, 'getAdminListingData'])->name('settings.getAdminListingData');
+
+        Route::post('addAdmin', [SettingController::class, 'addAdmin'])->name('settings.addAdmin');
     });
 });
 

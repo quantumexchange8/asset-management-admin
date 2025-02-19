@@ -15,6 +15,7 @@
         "maatwebsite/excel": "^3.1",
         "opcodesio/log-viewer": "^3.14",
         "spatie/laravel-medialibrary": "^11.11",
+        "spatie/laravel-permission": "^6.15",
         "spatie/laravel-translatable": "^6.10",
         "tightenco/ziggy": "^2.0"
     },

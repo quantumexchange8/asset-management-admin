@@ -12,6 +12,7 @@ import {
     IconHomeDollar,
     IconBusinessplan,
     IconCoin,
+    IconUserCog
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -189,5 +190,19 @@ watchEffect(() => {
                 <IconUserDollar size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
+
+        <!-- Settings -->
+        <SidebarCategoryLabel title="settings" />
+
+        <SidebarLink
+            title="admin_listing"
+            :href="route('settings.admin_listing')"
+            :active="route().current('settings.admin_listing')"
+        >
+            <template #icon>
+                <IconUserCog size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
     </ScrollPanel>
 </template>
