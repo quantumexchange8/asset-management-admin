@@ -206,5 +206,6 @@ return [
     "wallet" => "Wallet",
     "fee" => "Fee",
     "receive" => "Receive",
+    "identity_number" => "Identity Number",
 
 ];

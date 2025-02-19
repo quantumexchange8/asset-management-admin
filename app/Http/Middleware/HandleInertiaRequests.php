@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'toast' => session('toast'),
             'getPendingKycCount' => $sidebarService->getPendingKycCount(),
+            'getPendingDepositCount' => $sidebarService->getPendingDepositCount(),
         ];
     }
 }

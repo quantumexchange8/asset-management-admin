@@ -22,6 +22,10 @@ import EmptyData from '@/Components/EmptyData.vue';
 import {usePage} from "@inertiajs/vue3";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 
+const props = defineProps({
+    pendingKycCounts: Number,
+})
+
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
@@ -245,9 +249,11 @@ watchEffect(() => {
                         </template>
 
                         <template #empty>
-                            <EmptyData
+                            <div v-if="pendingKycCounts === 0">
+                                <EmptyData
                                 :title="$t('public.no_members_founded')"
-                            />
+                                />
+                            </div>
                         </template>
 
                         <template #loading>
@@ -280,6 +286,18 @@ watchEffect(() => {
                                         <span class="text-surface-950 dark:text-white">{{ data.name }}</span>
                                         <span class="text-surface-500">{{ data.email }}</span>
                                     </div>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="identity_number"
+                                :header="$t('public.identity_number')"
+                            >
+                                <template #body="{data}">
+                                    <Tag
+                                        severity="secondary"
+                                        :value="data.identity_number"
+                                    />
                                 </template>
                             </Column>
 

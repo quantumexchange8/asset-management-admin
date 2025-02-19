@@ -1,27 +1,13 @@
 <script setup>
 import Card from 'primevue/card';
 import Galleria from 'primevue/galleria';
+import Image from 'primevue/image';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
     user: Object,
     kycImages: Array, // This should be an array of image URLs
 });
-
-const responsiveOptions = ref([
-    {
-        breakpoint: '991px',
-        numVisible: 4
-    },
-    {
-        breakpoint: '767px',
-        numVisible: 3
-    },
-    {
-        breakpoint: '575px',
-        numVisible: 1
-    }
-]);
 
 // Use a placeholder image if kycImages is empty
 const imagesToDisplay = computed(() => {
@@ -35,26 +21,31 @@ const imagesToDisplay = computed(() => {
     <Card class="w-full self-stretch relative">
         <template #content>
             <div class="flex flex-wrap gap-4 h-full justify-center">
-                <div class="flex flex-col justify-center items-center text-center">
+                <div class="flex flex-col gap-1 items-start self-stretch w-full">
                     <div class="text-lg text-surface-950 dark:text-white mb-4">
                             ID/Passport
                     </div>
                     <!-- Galleria Component -->
                     <Galleria 
-                        :value="imagesToDisplay" 
-                        :responsiveOptions="responsiveOptions" 
-                        :numVisible="5" 
+                        :value="imagesToDisplay"
+                        :numVisible="5"
                         :circular="true"
-                        containerStyle="max-width: 640px" 
-                        :showItemNavigators="true" 
                         :showThumbnails="false"
+                        :showIndicators="true"
+                        :showItemNavigators="true"
+                        :changeItemOnIndicatorHover="true"
+                        :showIndicatorsOnItem="true"
+                        indicatorsPosition="bottom"
+                        container-class="w-full"
                     >
                         <!-- Template for displaying individual images -->
                         <template #item="slotProps">
-                            <img 
+                            <Image 
                                 :src="slotProps.item" 
-                                alt="Image Preview" 
-                                style="width: 100%; display: block;" 
+                                alt="Image" 
+                                imageClass="w-full h-[350px] object-contain"
+                                class="w-full"
+                                preview
                             />
                         </template>
                     </Galleria>

@@ -51,7 +51,7 @@ const tabs = ref([
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'Member Listing'">
+    <AuthenticatedLayout :title="'member_listing'">
         <div class="flex flex-col gap-5">
             <Breadcrumb :home="home" :model="items">
                 <template #item="{ item }">

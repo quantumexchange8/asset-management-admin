@@ -20,12 +20,14 @@ import {ref, watchEffect} from "vue";
 
 const page = usePage();
 const pendingKycCount = ref(page.props.getPendingKycCount);
+const pendingDepositCounts = ref(page.props.getPendingDepositCount);
 
 // Update pending counts
 const getPendingCounts = async () => {
     try {
         const response = await axios.get(route('dashboard.getPendingCounts'));
-        pendingKycCount.value = response.data.pendingKycCount
+        pendingKycCount.value = response.data.pendingKycCount;
+        pendingDepositCounts.value = response.data.pendingDepositCounts;
     } catch (error) {
         console.error('Error pending counts:', error);
     }
@@ -114,6 +116,7 @@ watchEffect(() => {
         <SidebarCollapsible
             title="pending"
             :active="route().current('transaction.pending.*')"
+            :pending-counts="pendingDepositCounts"
         >
             <template #icon>
                 <IconClockDollar size="20" stroke-width="1.5" />
@@ -122,6 +125,7 @@ watchEffect(() => {
                 title="deposit"
                 :href="route('transaction.pending.getPendingDeposit')"
                 :active="route().current('transaction.pending.getPendingDeposit')"
+                :pendingCounts="pendingDepositCounts"
             />
 
             <SidebarCollapsibleItem

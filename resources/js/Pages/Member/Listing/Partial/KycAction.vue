@@ -11,6 +11,7 @@ import Galleria from 'primevue/galleria';
 import {useForm} from '@inertiajs/vue3';
 import Image from "primevue/image";
 import {trans} from "laravel-vue-i18n";
+import { useLangObserver } from '@/Composables/localeObserver';
 
 const props = defineProps({
     pending: Object,
@@ -19,6 +20,7 @@ const props = defineProps({
 const toast = useToast();
 const visible = ref(false);
 const dialogType = ref('');
+const {locale} = useLangObserver();
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -96,10 +98,43 @@ const closeDialog = () => {
             </div>
         </template>
 
-        <div class="flex flex-col gap-5 self-stretch items-start w-full">
+        <div class="flex flex-col gap-4 self-stretch items-start w-full">
+            <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                <div class="flex items-center w-full gap-4">
+                    <InputLabel for="name">
+                        {{ $t('public.name') }}:
+                    </InputLabel>
+                    <div class="flex-1 text-sm text-surface-500">
+                        {{ pending.name }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                <div class="flex items-center w-full gap-4">
+                    <InputLabel>
+                        {{ $t('public.country') }}:
+                    </InputLabel>
+                    <div class="flex-1 text-sm text-surface-500">
+                        {{ JSON.parse(pending.country.translations)[locale] || pending.country.name }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                <div class="flex items-center w-full gap-4">
+                    <InputLabel>
+                        {{ $t('public.identity_number') }}:
+                    </InputLabel>
+                    <div class="flex-1 text-sm text-surface-500">
+                        {{ pending.identity_number }}
+                    </div>
+                </div>
+            </div>
+
             <div class="flex flex-col gap-1 items-start self-stretch w-full">
                 <InputLabel for="kyc">
-                    {{ $t('public.proof_of_identity') }}
+                    {{ $t('public.proof_of_identity') }}:
                 </InputLabel>
                 <Galleria
                     :value="pending.kyc_images"
@@ -118,7 +153,7 @@ const closeDialog = () => {
                         <Image
                             :src="slotProps.item"
                             alt="Image"
-                            imageClass="w-full h-[250px] object-cover"
+                            imageClass="w-full h-[300px] object-contain"
                             class="w-full"
                             preview
                         />

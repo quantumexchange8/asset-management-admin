@@ -206,6 +206,7 @@ return [
     "wallet" => "钱包",
     "fee" => "手续费",
     "receive" => "收款",
+    "identity_number" => "身份证号码",
 
 
 ];

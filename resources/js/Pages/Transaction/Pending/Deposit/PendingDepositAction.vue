@@ -90,21 +90,29 @@ const imagesToDisplay = computed(() => {
 <template>
     <div class="flex items-center self-stretch gap-x-2">
         <Button
-            size="sm"
             type="button"
-            class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
+            severity="success"
+            text
+            rounded
+            aria-label="approve"
+            size="small"
+            class="!p-2"
             @click="openDialog('approve_transaction')"
         >
-            <IconCheck :size="20" stroke-width="1.5" color="green"/>
+            <IconCheck :size="20" stroke-width="1.5"/>
         </Button>
     
         <Button
-            class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
-            size="sm"
             type="button"
+            severity="danger"
+            text
+            rounded
+            aria-label="reject"
+            size="small"
+            class="!p-2"
             @click="openDialog('reject_transaction')"
         >
-            <IconX :size="20" stroke-width="1.5" color="red"/>
+            <IconX :size="20" stroke-width="1.5"/>
         </Button>
     </div> 
 
