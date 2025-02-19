@@ -294,10 +294,7 @@ watchEffect(() => {
                                 :header="$t('public.identity_number')"
                             >
                                 <template #body="{data}">
-                                    <Tag
-                                        severity="secondary"
-                                        :value="data.identity_number"
-                                    />
+                                    {{ data.identity_number }}
                                 </template>
                             </Column>
 
@@ -327,7 +324,7 @@ watchEffect(() => {
                                 <template #body="{ data }">
                                     <Tag
                                         severity="secondary"
-                                        :value="data.rank.rank_name"
+                                        :value="data.rank.rank_name === 'member' ? $t(`public.${data.rank.rank_name}`) : data.rank.rank_name"
                                     />
                                 </template>
                             </Column>

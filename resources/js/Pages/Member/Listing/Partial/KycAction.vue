@@ -98,37 +98,15 @@ const closeDialog = () => {
             </div>
         </template>
 
-        <div class="flex flex-col gap-4 self-stretch items-start w-full">
-            <div class="flex flex-col gap-1 items-start self-stretch w-full">
-                <div class="flex items-center w-full gap-4">
-                    <InputLabel for="name">
-                        {{ $t('public.name') }}:
-                    </InputLabel>
-                    <div class="flex-1 text-sm text-surface-500">
-                        {{ pending.name }}
-                    </div>
+        <div class="flex flex-col items-center gap-4">
+            <div class="flex flex-row items-center gap-3 self-stretch w-full">
+                <div class="flex flex-col items-start w-full">
+                    <span class="text-surface-950 dark:text-white font-medium">{{ pending.name }}</span>
+                    <span class="text-surface-500 text-sm">{{ pending.email }}</span>
                 </div>
-            </div>
-
-            <div class="flex flex-col gap-1 items-start self-stretch w-full">
-                <div class="flex items-center w-full gap-4">
-                    <InputLabel>
-                        {{ $t('public.country') }}:
-                    </InputLabel>
-                    <div class="flex-1 text-sm text-surface-500">
-                        {{ JSON.parse(pending.country.translations)[locale] || pending.country.name }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-1 items-start self-stretch w-full">
-                <div class="flex items-center w-full gap-4">
-                    <InputLabel>
-                        {{ $t('public.identity_number') }}:
-                    </InputLabel>
-                    <div class="flex-1 text-sm text-surface-500">
-                        {{ pending.identity_number }}
-                    </div>
+                <div class="w-full text-surface-950 dark:text-white flex flex-col justify-end text-right">
+                    <span>{{ pending.identity_number }}</span>
+                    <span class="text-sm text-surface-500">{{ JSON.parse(pending.country.translations)[locale] || pending.country.name }}</span>
                 </div>
             </div>
 

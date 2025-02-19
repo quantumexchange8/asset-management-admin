@@ -182,7 +182,6 @@ return [
     "cash_wallet" => "现金钱包",
     "bonus_wallet" => "奖金钱包",
     "processing" => "处理中",
-    "success" => "成功",
     "rejected" => "拒绝",
     "total_pending_deposit" => "待审核存款总额",
     "total_pending_withdrawal" => "待处理提现总额",
