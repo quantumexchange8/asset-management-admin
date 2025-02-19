@@ -12,12 +12,12 @@ import DatePicker from 'primevue/datepicker';
 import ProgressSpinner from 'primevue/progressspinner';
 import Popover from 'primevue/popover';
 import Card from 'primevue/card';
-import { IconXboxX, IconX, IconSearch, IconAdjustments, IconCheck } from '@tabler/icons-vue';
+import { IconXboxX, IconX, IconSearch, IconAdjustments } from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
-import KycAction from './Partial/KycAction.vue';
+import KycAction from "@/Pages/Member/Listing/Partial/KycAction.vue";
 import EmptyData from '@/Components/EmptyData.vue';
 import {usePage} from "@inertiajs/vue3";
 import {useLangObserver} from "@/Composables/localeObserver.js";
@@ -240,6 +240,7 @@ watchEffect(() => {
                                         class="w-full md:w-28 flex gap-2"
                                         outlined
                                         @click="toggle"
+                                        size="small"
                                     >
                                         <IconAdjustments :size="15"/>
                                         <span class="text-sm">{{ $t('public.filter') }}</span>
