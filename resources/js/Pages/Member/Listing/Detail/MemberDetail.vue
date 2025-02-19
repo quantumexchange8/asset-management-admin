@@ -16,10 +16,11 @@ const props = defineProps({
     user: Object,
     refereeCount: Number,
     kycImages: Array,
+    profile_photo: Object,
 });
 
 const home = ref({
-    label: 'Member Listing',
+    label: 'member_listing',
     route: route('member.getMemberList')
 
 });
@@ -30,7 +31,7 @@ const items = ref([
 
 const tabs = ref([
     {
-        title: 'Finance',
+        title: 'finance',
         content: 'Tab 1 Content',
         component: h(FinanceInfo, {
             user: props.user,
@@ -38,12 +39,12 @@ const tabs = ref([
         value: '0'
     },
     {
-        title: 'Investment',
+        title: 'investment',
         content: 'Tab 2 Content',
         value: '1'
     },
     {
-        title: 'History',
+        title: 'history',
         content: 'Tab 3 Content',
         value: '2'
     },
@@ -56,10 +57,10 @@ const tabs = ref([
             <Breadcrumb :home="home" :model="items">
                 <template #item="{ item }">
                     <Link v-if="item.route" :href="item.route">
-                    <span :class="[item.icon, 'text-color']" />
-                    <span class="text-primary font-semibold hover:text-primary-600">{{ item.label }}</span>
+                        <span :class="[item.icon, 'text-color']" />
+                        <span class="text-primary font-semibold hover:text-primary-600">{{ $t(`public.${item.label}`) }}</span>
                     </Link>
-                    <span v-else class="text-surface-700 dark:text-surface-0">{{ item.label }} - {{ 'Details' }}</span>
+                    <span v-else class="text-surface-700 dark:text-surface-0">{{ item.label }} - {{ $t('public.details') }}</span>
                 </template>
             </Breadcrumb>
 
@@ -69,6 +70,7 @@ const tabs = ref([
                 <MemberInfo 
                     :user="user" 
                     :refereeCount="refereeCount"
+                    :profile_photo="profile_photo"
                 />
 
                 <KycProfile
@@ -82,7 +84,7 @@ const tabs = ref([
             <div class="card">
                 <Tabs value="0">
                     <TabList>
-                        <Tab v-for="tab in tabs" :key="tab.title" :value="tab.value">{{ tab.title }}</Tab>
+                        <Tab v-for="tab in tabs" :key="tab.title" :value="tab.value">{{ $t(`public.${tab.title}`) }}</Tab>
                     </TabList>
                     <TabPanels>
                         <TabPanel v-for="tab in tabs" :key="tab.content" :value="tab.value">

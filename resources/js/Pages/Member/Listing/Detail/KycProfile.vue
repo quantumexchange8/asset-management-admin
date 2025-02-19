@@ -23,7 +23,7 @@ const imagesToDisplay = computed(() => {
             <div class="flex flex-wrap gap-4 h-full justify-center">
                 <div class="flex flex-col gap-1 items-start self-stretch w-full">
                     <div class="text-lg text-surface-950 dark:text-white mb-4">
-                            ID/Passport
+                            {{ $t('public.id_passport') }}
                     </div>
                     <!-- Galleria Component -->
                     <Galleria 

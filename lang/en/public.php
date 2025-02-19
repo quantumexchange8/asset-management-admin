@@ -177,13 +177,10 @@ return [
     "export_deposit_caption" => "Exporting Deposit",
     "withdrawal_loading_caption" => "Loading withdrawal data. Please wait.",
     "export_withdrawal_caption" => "Exporting Withdrawal",
-
     "real_fund" => "Real Fund",
     "demo_fund" => "Demo Fund",
-
     "cash_wallet" => "Cash Wallet",
     "bonus_wallet" => "Bonus Wallet",
-
     "unverified" => "Unverified",
     "verified" => "Verified",
     "pending" => "Pending",
@@ -196,16 +193,27 @@ return [
     "recent_approval" => "Recent Approval",
     "profit_sharing" => "Profit Sharing",
     "ib_group_incentive" => "IB Group Incentive",
-
     "remarks" => "Remarks",
     "approve_transaction" => "Approve Transaction",
     "reject_transaction" => "Reject Transaction",
     "action" => "Action",
-
     "payment_slip" => "Payment Slip",
     "wallet" => "Wallet",
     "fee" => "Fee",
     "receive" => "Receive",
     "identity_number" => "Identity Number",
-
+    "enter_identity_number" => "Enter Identity Number",
+    "id_passport" => "ID/Passport",
+    "add_member" => "Add Member",
+    "member_detail" => "Member Detail",
+    "details" => "Details",
+    "access_portal" => "Access Portal",
+    "change_upline" => "Change Upline",
+    "upgrade" => "Upgrade",
+    "delete" => "Delete",
+    "finance" => "Finance",
+    "investment" => "Investment",
+    "contact_information" => "Contact Information",
+    "balance" => "Balance",
+    "wallet_adjustment" => "Wallet Adjustment"
 ];
