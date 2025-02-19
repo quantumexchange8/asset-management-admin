@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable()->unique();
             $table->string('chinese_name')->nullable();
             $table->date('dob')->nullable();
+            $table->string('identity_number')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->string('nationality')->nullable();
             $table->ipAddress('register_ip')->nullable()->default('::1');

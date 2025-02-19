@@ -11,7 +11,7 @@ import ToastService from 'primevue/toastservice';
 import { i18nVue } from 'laravel-vue-i18n';
 import ConfirmationService from 'primevue/confirmationservice';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Volta Asia Admin';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
