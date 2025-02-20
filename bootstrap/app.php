@@ -17,7 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\LocalizationMiddleware::class,
         ]);
 
-        //
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'role_and_permission' => \App\Http\Middleware\RoleAndPermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -8,17 +8,21 @@ import {
     IconWorld,
 } from '@tabler/icons-vue';
 import Menu from 'primevue/menu';
-import { router } from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import Button from '@/Components/Button.vue';
 import { Link } from '@inertiajs/vue3';
 import {ref} from "vue";
 import {loadLanguageAsync} from "laravel-vue-i18n";
+import {generalFormat} from "@/Composables/format.js";
+import Avatar from "primevue/avatar";
 
 defineProps({
     title: String
 })
 
 const menu = ref();
+const {formatNameLabel} = generalFormat();
+const user = usePage().props.auth.user;
 const locales = ref([
     {
         label: 'English',
@@ -63,10 +67,25 @@ const handleLogOut = () => {
         </div>
         <div class="flex items-center">
             <Link
-                class="w-11 h-11 p-1 flex items-center justify-center rounded-full hover:cursor-pointer dark:hover:bg-gray-800 md:block"
-                :href="route('profile.edit')">
-            <img class="w-full h-full object-cover rounded-full" :src="('/mountain.jpg')"
-                alt="Profile" />
+                :href="route('profile.edit')"
+                :class="[
+                    'flex items-center justify-center gap-3 self-stretch group select-none cursor-pointer transition-colors p-2 rounded-full hover:cursor-pointer dark:hover:bg-surface-800 md:block',
+                    {
+                        'text-surface-950 dark:text-white hover:text-primary hover:bg-primary-50 dark:hover:bg-surface-800 dark:hover:text-primary-500': !route().current('profile.edit'),
+                        'text-primary dark:text-primary-500 bg-primary-100 dark:bg-surface-800': route().current('profile.edit'),
+                    },
+                ]"
+            >
+                <Avatar
+                    v-if="usePage().props.auth.profile_photo"
+                    :image="usePage().props.auth.profile_photo"
+                    shape="circle"
+                />
+                <Avatar
+                    v-else
+                    :label="formatNameLabel(user.name)"
+                    shape="circle"
+                />
             </Link>
 
             <Button type="button" variant="gray-text" icon-only pill @click="() => { toggleDarkMode() }">

@@ -1,7 +1,12 @@
 <script setup>
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
-import {IconCirclePlus, IconFlag, IconHomeDollar, IconLock} from "@tabler/icons-vue";
+import {
+    IconUser,
+    IconUserCog,
+    IconMail,
+    IconLock
+} from "@tabler/icons-vue";
 import {ref} from "vue";
 import {useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -11,6 +16,8 @@ import InputError from "@/Components/InputError.vue";
 import Password from "primevue/password";
 import Select from "primevue/select";
 import Checkbox from "primevue/checkbox";
+import {trans} from "laravel-vue-i18n";
+import {useToast} from "primevue/usetoast";
 
 defineProps({
     permissions: Object
@@ -33,19 +40,28 @@ const roles = ref([
 ]);
 
 const selectedPermissions = ref();
+const toast = useToast();
 
 const submitForm = () => {
+    form.role = selectedRole.value
     form.permissions = selectedPermissions.value;
 
     form.post(route('settings.addAdmin'), {
         onSuccess: () => {
-
+            closeDialog();
+            form.reset();
+            toast.add({
+                severity: 'success',
+                summary: trans('public.success'),
+                detail: trans('public.toast_add_admin_success'),
+                life: 3000,
+            });
         }
     })
 }
 
 const closeDialog = () => {
-
+    visible.value = false;
 }
 </script>
 
@@ -54,7 +70,7 @@ const closeDialog = () => {
         class="w-full md:w-auto flex gap-1"
         @click="visible = true"
     >
-        <IconCirclePlus size="20" stroke-width="1.5" />
+        <IconUser size="20" stroke-width="1.5" />
         {{ $t('public.add_admin') }}
     </Button>
 
@@ -76,7 +92,7 @@ const closeDialog = () => {
                             />
                             <InputIconWrapper class="w-full">
                                 <template #icon>
-                                    <IconHomeDollar :size="20" stroke-width="1.5"/>
+                                    <IconUser :size="20" stroke-width="1.5"/>
                                 </template>
 
                                 <InputText
@@ -99,7 +115,7 @@ const closeDialog = () => {
                             />
                             <InputIconWrapper>
                                 <template #icon>
-                                    <IconFlag :size="20" stroke-width="1.5"/>
+                                    <IconUserCog :size="20" stroke-width="1.5"/>
                                 </template>
                                 <Select
                                     v-model="selectedRole"
@@ -119,7 +135,7 @@ const closeDialog = () => {
                                     </template>
                                 </Select>
                             </InputIconWrapper>
-                            <InputError :message="form.errors.name"/>
+                            <InputError :message="form.errors.role"/>
                         </div>
 
                         <div class="flex flex-col gap-1 items-start self-stretch">
@@ -129,7 +145,7 @@ const closeDialog = () => {
                             />
                             <InputIconWrapper class="w-full">
                                 <template #icon>
-                                    <IconHomeDollar :size="20" stroke-width="1.5"/>
+                                    <IconMail :size="20" stroke-width="1.5"/>
                                 </template>
 
                                 <InputText
@@ -208,7 +224,7 @@ const closeDialog = () => {
                         type="submit"
                         :disabled="form.processing"
                         @click="submitForm"
-                        :label="$t('public.submit')"
+                        :label="$t('public.confirm')"
                     />
                 </div>
             </div>

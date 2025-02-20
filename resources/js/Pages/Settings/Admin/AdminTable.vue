@@ -20,7 +20,7 @@ import {usePage} from "@inertiajs/vue3";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 
 const props = defineProps({
-    pendingKycCounts: Number,
+    permissionsCount: Number,
 })
 
 const isLoading = ref(false);
@@ -246,11 +246,9 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div v-if="pendingKycCounts === 0">
-                            <EmptyData
-                                :title="$t('public.no_members_founded')"
-                            />
-                        </div>
+                        <EmptyData
+                            :title="$t('public.no_members_founded')"
+                        />
                     </template>
 
                     <template #loading>
@@ -280,7 +278,7 @@ watchEffect(() => {
                             :header="$t('public.role')"
                         >
                             <template #body="{data}">
-                                {{ data.role }}
+                                {{ $t(`public.${data.role}`) }}
                             </template>
                         </Column>
 
@@ -289,7 +287,10 @@ watchEffect(() => {
                             :header="$t('public.scope_of_permissions')"
                         >
                             <template #body="{data}">
-                                {{ $t('public.limited') }}
+                                <Tag
+                                    :severity="data.permissions_count === permissionsCount ? 'success' : 'danger'"
+                                    :value="data.permissions_count === permissionsCount ? $t('public.full_access') : $t('public.limited')"
+                                />
                             </template>
                         </Column>
 

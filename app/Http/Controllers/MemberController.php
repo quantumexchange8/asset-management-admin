@@ -6,7 +6,9 @@ use App\Models\Country;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Policies\UserPolicy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -22,6 +24,8 @@ class MemberController extends Controller
 {
     public function getMemberList()
     {
+        Gate::authorize('access', User::class);
+
         return Inertia::render('Member/Listing/MemberListing', [
             'memberCounts' => User::count(),
         ]);
@@ -29,6 +33,8 @@ class MemberController extends Controller
 
     public function getMemberData(Request $request)
     {
+        Gate::authorize('access', User::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -112,6 +118,8 @@ class MemberController extends Controller
 
     public function getPendingKyc()
     {
+        Gate::authorize('access-kyc', User::class);
+
         $pendingCounts = User::where('kyc_status', 'pending')
             ->count();
         return Inertia::render('Member/Listing/KycPending', [
@@ -121,6 +129,8 @@ class MemberController extends Controller
 
     public function getPendingKycData(Request $request)
     {
+        Gate::authorize('access-kyc', User::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
@@ -190,6 +200,8 @@ class MemberController extends Controller
 
     public function kycPendingApproval(Request $request)
     {
+        Gate::authorize('manage-kyc', User::class);
+
         $validator = Validator::make($request->all(), [
             'remarks' => ['required_if:action,reject'],
         ])->setAttributeNames([
@@ -212,8 +224,10 @@ class MemberController extends Controller
 
     public function addNewMember(Request $request)
     {
+        Gate::authorize('create', User::class);
+
         $validatedData = $request->validate([
-            'name' => ['required', 'regex:/^[a-zA-Z0-9\p{Han}. ]+$/u', 'max:255'],
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\p{M}. @]+$/u', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:' . User::class],
             'username' => ['required'],
             'country' => ['required'],
@@ -310,6 +324,8 @@ class MemberController extends Controller
 
     public function updateMemberProfile(Request $request, $id)
     {
+        Gate::authorize('update', User::class);
+
         $validatedData = $request->validate([
             'name' => ['required', 'regex:/^[a-zA-Z0-9\p{Han}. ]+$/u', 'max:255'],
             'username' => ['required'],

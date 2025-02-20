@@ -6,18 +6,21 @@ use App\Exports\DepositExport;
 use App\Exports\PendingDepositExport;
 use App\Exports\WithdrawalExport;
 use App\Imports\DepositImport;
+use App\Models\BrokerConnection;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionController extends Controller
 {
-
     public function getDepositHistory()
     {
+        Gate::authorize('access-deposit-history', Transaction::class);
+
         $pendingCounts = Transaction::where('transaction_type', 'deposit')
             ->whereNot('status', 'processing')
             ->count();
@@ -29,6 +32,8 @@ class TransactionController extends Controller
 
     public function getDepositHistoryData(Request $request)
     {
+        Gate::authorize('access-deposit-history', Transaction::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -97,6 +102,8 @@ class TransactionController extends Controller
 
     public function getWithdrawalHistory()
     {
+        Gate::authorize('access-withdrawal-history', Transaction::class);
+
         $pendingCounts = Transaction::where('transaction_type', 'withdrawal')
             ->whereNot('status', 'processing')
             ->count();
@@ -108,6 +115,8 @@ class TransactionController extends Controller
 
     public function getWithdrawalHistoryData(Request $request)
     {
+        Gate::authorize('access-withdrawal-history', Transaction::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -190,6 +199,7 @@ class TransactionController extends Controller
 
     public function getPendingDeposit()
     {
+        Gate::authorize('access-pending-deposit', Transaction::class);
 
         return Inertia::render('Transaction/Pending/Deposit/PendingDeposit');
     }
@@ -218,6 +228,8 @@ class TransactionController extends Controller
 
     public function getPendingDepositData(Request $request)
     {
+        Gate::authorize('access-pending-deposit', Transaction::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -299,6 +311,8 @@ class TransactionController extends Controller
 
     public function getPendingWithdrawal()
     {
+        Gate::authorize('access-pending-withdrawal', Transaction::class);
+
         return Inertia::render('Transaction/Pending/Withdrawal/PendingWithdrawal');
     }
 
@@ -326,6 +340,8 @@ class TransactionController extends Controller
 
     public function getPendingWithdrawalData(Request $request)
     {
+        Gate::authorize('access-pending-withdrawal', Transaction::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -399,6 +415,8 @@ class TransactionController extends Controller
 
     public function pendingDepositApproval(Request $request)
     {
+        Gate::authorize('edit-pending-deposit', Transaction::class);
+
         $validatedData = $request->validate([
             'remarks' => ['required_if:action,reject_transaction'],
         ], [
@@ -425,6 +443,8 @@ class TransactionController extends Controller
 
     public function pendingWithdrawalApproval(Request $request)
     {
+        Gate::authorize('edit-pending-withdrawal', Transaction::class);
+
         $validatedData = $request->validate([
             'remarks' => ['required_if:action,reject_transaction'],
         ], [

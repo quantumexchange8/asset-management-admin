@@ -22,10 +22,8 @@ class User extends Authenticatable implements HasMedia
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    protected $guarded = [
+        'id',
     ];
 
     /**

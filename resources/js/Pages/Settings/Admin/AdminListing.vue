@@ -4,7 +4,8 @@ import AdminTable from "@/Pages/Settings/Admin/AdminTable.vue";
 import AddAdmin from "@/Pages/Settings/Admin/AddAdmin.vue";
 
 defineProps({
-    permissions: Object
+    permissions: Object,
+    permissionsCount: Number
 })
 </script>
 
@@ -17,7 +18,9 @@ defineProps({
                 />
             </div>
 
-            <AdminTable />
+            <AdminTable
+                :permissionsCount="permissionsCount"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

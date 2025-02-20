@@ -227,4 +227,8 @@ return [
     "access_group_incentive" => "Access IB Group Incentive",
     "access_rebate_bonus" => "Access Rebate Bonus",
     "access_admin_listing" => "Access Admin Listing",
+    "toast_add_admin_success" => "Successfully Added Admin",
+    "full_access" => "Full Access",
+    "limited" => "Limited",
+    "scope_of_permissions" => "Scope Of Permissions",
 ];

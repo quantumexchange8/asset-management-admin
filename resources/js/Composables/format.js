@@ -32,9 +32,19 @@ export function generalFormat() {
         return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     };
 
+    const formatNameLabel = (name) => {
+        if (!name) return "";
+        return name
+            .split(" ")
+            .map(part => part.charAt(0).toUpperCase())
+            .join("")
+            .slice(0, 2);
+    };
+
     return {
         formatDateTime,
         formatAmount,
-        formatRgbaColor
+        formatRgbaColor,
+        formatNameLabel
     };
 }

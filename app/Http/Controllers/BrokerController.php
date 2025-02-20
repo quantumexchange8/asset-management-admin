@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Broker;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
@@ -13,6 +15,8 @@ class BrokerController extends Controller
 {
     public function getBrokerList()
     {
+        Gate::authorize('access', Broker::class);
+
         return Inertia::render('Broker/Listing/BrokerListing', [
             'brokerCounts' => Broker::count(),
             'locales' => config('app.setting_locales'),
@@ -21,6 +25,8 @@ class BrokerController extends Controller
 
     public function getBrokerData(Request $request)
     {
+        Gate::authorize('access', Broker::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -88,6 +94,8 @@ class BrokerController extends Controller
 
     public function addNewBroker(Request $request)
     {
+        Gate::authorize('create', Broker::class);
+
         $locales = $request->input('locales', []);
 
         $rules = [
@@ -129,24 +137,10 @@ class BrokerController extends Controller
         return back()->with('toast');
     }
 
-    public function brokerDetail($id)
-    {
-
-        $broker = Broker::where('id', $id)
-            ->with([
-                'user:id,name',
-            ])->first();
-
-        $broker_image = $broker->getMedia('broker_image')->map(fn($image) => $image->getUrl());
-
-        return Inertia::render('Broker/Listing/Detail/BrokerDetail', [
-            'broker' => $broker,
-            'broker_image' => $broker_image,
-        ]);
-    }
-
     public function updateBrokerInfo(Request $request)
     {
+        Gate::authorize('update', Broker::class);
+
         $locales = $request->input('locales', []);
 
         $rules = [
@@ -191,6 +185,8 @@ class BrokerController extends Controller
 
     public function updateBrokerStatus(Request $request)
     {
+        Gate::authorize('update', Broker::class);
+
         $broker = Broker::find($request->id);
 
         $broker->status = $broker->status == 'active' ? 'inactive' : 'active';

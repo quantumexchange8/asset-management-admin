@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('bank_name')->nullable();
             $table->string('bank_branch')->nullable();
             $table->string('crypto_tether')->nullable();
-            $table->json('crypto_network')->nullable();
+            $table->string('crypto_network')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->string('currency')->nullable();
             $table->string('status', 100)->default('active');
