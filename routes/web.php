@@ -26,7 +26,7 @@ Route::get('locale/{locale}', function ($locale) {
     return redirect()->back();
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
     //select option
     Route::get('/get_users', [SelectOptionController::class, 'getUsers'])->name('getUsers');
     Route::get('/get_uplines', [SelectOptionController::class, 'getUplines'])->name('getUplines');
@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
      *          Dashboard
      * ==============================
      */
-    Route::prefix('dashboard')->group(function () {
+    Route::prefix('dashboard')->middleware('role_and_permission:admin,access_dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/get_total_deposit_by_days', [DashboardController::class, 'getTotalDepositByDays'])->name('dashboard.getTotalDepositByDays');
         Route::get('/getPendingCounts', [DashboardController::class, 'getPendingCounts'])->name('dashboard.getPendingCounts');
@@ -159,16 +159,16 @@ Route::middleware('auth')->group(function () {
      */
     Route::prefix('report')->group(function () {
         //profit sharing
-        Route::get('/profit_sharing', [ReportController::class, 'profit_sharing'])->name('report.profit_sharing');
-        Route::get('/getProfitSharingData', [ReportController::class, 'getProfitSharingData'])->name('report.getProfitSharingData');
+        Route::get('/profit_sharing', [ReportController::class, 'profit_sharing'])->name('report.profit_sharing')->middleware('permission:access_profit_sharing');
+        Route::get('/getProfitSharingData', [ReportController::class, 'getProfitSharingData'])->name('report.getProfitSharingData')->middleware('permission:access_profit_sharing');
 
         // Standard Bonus
-        Route::get('/ib_group_incentive', [ReportController::class, 'ib_group_incentive'])->name('report.ib_group_incentive');
-        Route::get('/getStandardBonusData', [ReportController::class, 'getStandardBonusData'])->name('report.getStandardBonusData');
+        Route::get('/ib_group_incentive', [ReportController::class, 'ib_group_incentive'])->name('report.ib_group_incentive')->middleware('permission:access_group_incentive');
+        Route::get('/getStandardBonusData', [ReportController::class, 'getStandardBonusData'])->name('report.getStandardBonusData')->middleware('permission:access_group_incentive');
 
         // Rebate Bonus
-        Route::get('/rebate_bonus', [ReportController::class, 'rebate_bonus'])->name('report.rebate_bonus');
-        Route::get('/getRebateBonusData', [ReportController::class, 'getRebateBonusData'])->name('report.getRebateBonusData');
+        Route::get('/rebate_bonus', [ReportController::class, 'rebate_bonus'])->name('report.rebate_bonus')->middleware('permission:access_rebate_bonus');
+        Route::get('/getRebateBonusData', [ReportController::class, 'getRebateBonusData'])->name('report.getRebateBonusData')->middleware('permission:access_rebate_bonus');
     });
 
     /**
@@ -176,7 +176,7 @@ Route::middleware('auth')->group(function () {
      *           Settings
      * ==============================
      */
-    Route::prefix('settings')->group(function () {
+    Route::prefix('settings')->middleware('role:super_admin')->group(function () {
         // Admin
         Route::get('/admin_listing', [SettingController::class, 'admin_listing'])->name('settings.admin_listing');
         Route::get('/getAdminListingData', [SettingController::class, 'getAdminListingData'])->name('settings.getAdminListingData');

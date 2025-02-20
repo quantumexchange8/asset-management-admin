@@ -19,10 +19,12 @@ import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue"
 import ScrollPanel from 'primevue/scrollpanel';
 import {usePage} from "@inertiajs/vue3";
 import {ref, watchEffect} from "vue";
+import { usePermission } from "@/Composables/index.js";
 
 const page = usePage();
 const pendingKycCount = ref(page.props.getPendingKycCount);
 const pendingDepositCounts = ref(page.props.getPendingDepositCount);
+const { hasRole, hasPermission } = usePermission();
 
 // Update pending counts
 const getPendingCounts = async () => {
@@ -49,6 +51,7 @@ watchEffect(() => {
             title="dashboard"
             :href="route('dashboard')"
             :active="route().current('dashboard')"
+            v-if="hasPermission('access_dashboard')"
         >
             <template #icon>
                 <IconLayoutDashboard size="20" stroke-width="1.5" />
@@ -56,11 +59,15 @@ watchEffect(() => {
         </SidebarLink>
 
         <!-- Member -->
-        <SidebarCategoryLabel title="member" />
+        <SidebarCategoryLabel
+            title="member"
+            v-if="hasPermission('access_member_listing') || hasPermission('access_pending_kyc') || hasPermission('access_member_referrals')"
+        />
         <SidebarCollapsible
             title="member"
             :active="route().current('member.*')"
             :pending-counts="pendingKycCount"
+            v-if="hasPermission('access_member_listing') || hasPermission('access_pending_kyc') || hasPermission('access_member_referrals')"
         >
             <template #icon>
                 <IconUsers size="20" stroke-width="1.5" />
@@ -69,27 +76,34 @@ watchEffect(() => {
                 title="member_listing"
                 :href="route('member.getMemberList')"
                 :active="route().current('member.getMemberList')"
+                v-if="hasPermission('access_member_listing')"
             />
             <SidebarCollapsibleItem
                 title="pending_kyc"
                 :href="route('member.getPendingKyc')"
                 :active="route().current('member.getPendingKyc')"
+                v-if="hasPermission('access_pending_kyc')"
                 :pendingCounts="pendingKycCount"
             />
             <SidebarCollapsibleItem
                 title="member_referrals"
                 :href="route('referral.getReferralList')"
                 :active="route().current('referral.getReferralList')"
+                v-if="hasPermission('access_member_referrals')"
             />
         </SidebarCollapsible>
 
         <!-- Marketplace -->
-        <SidebarCategoryLabel title="marketplace" />
+        <SidebarCategoryLabel
+            v-if="hasPermission('access_broker') || hasPermission('access_connections')"
+            title="marketplace"
+        />
         <!-- Broker -->
         <SidebarLink
             title="broker"
             :href="route('broker.getBrokerList')"
             :active="route().current('broker.getBrokerList')"
+            v-if="hasPermission('access_broker')"
         >
             <template #icon>
                 <IconHomeDollar size="20" stroke-width="1.5" />
@@ -100,6 +114,7 @@ watchEffect(() => {
         <SidebarCollapsible
             title="connections"
             :active="route().current('connection.*')"
+            v-if="hasPermission('access_connections')"
         >
             <template #icon>
                 <IconHomeShare size="20" stroke-width="1.5" />
@@ -108,17 +123,22 @@ watchEffect(() => {
                 title="broker_connection"
                 :href="route('connection.broker_connection')"
                 :active="route().current('connection.broker_connection')"
+                v-if="hasPermission('access_connections')"
             />
         </SidebarCollapsible>
 
         <!-- Transaction -->
-        <SidebarCategoryLabel title="transaction" />
+        <SidebarCategoryLabel
+            title="transaction"
+            v-if="hasPermission('access_pending_deposit') || hasPermission('access_pending_withdrawal') || hasPermission('access_deposit_history') || hasPermission('access_withdrawal_history')"
+        />
 
         <!-- Pending -->
         <SidebarCollapsible
             title="pending"
             :active="route().current('transaction.pending.*')"
             :pending-counts="pendingDepositCounts"
+            v-if="hasPermission('access_pending_deposit') || hasPermission('access_pending_withdrawal')"
         >
             <template #icon>
                 <IconClockDollar size="20" stroke-width="1.5" />
@@ -128,12 +148,14 @@ watchEffect(() => {
                 :href="route('transaction.pending.getPendingDeposit')"
                 :active="route().current('transaction.pending.getPendingDeposit')"
                 :pendingCounts="pendingDepositCounts"
+                v-if="hasPermission('access_pending_deposit')"
             />
 
             <SidebarCollapsibleItem
                 title="withdrawal"
                 :href="route('transaction.pending.getPendingWithdrawal')"
                 :active="route().current('transaction.pending.getPendingWithdrawal')"
+                v-if="hasPermission('access_pending_withdrawal')"
             />
         </SidebarCollapsible>
 
@@ -141,6 +163,7 @@ watchEffect(() => {
         <SidebarCollapsible
             title="history"
             :active="route().current('transaction.history.*')"
+            v-if="hasPermission('access_deposit_history') || hasPermission('access_withdrawal_history')"
         >
             <template #icon>
                 <IconReportMoney size="20" stroke-width="1.5" />
@@ -150,22 +173,28 @@ watchEffect(() => {
                 title="deposit"
                 :href="route('transaction.history.getDepositHistory')"
                 :active="route().current('transaction.history.getDepositHistory')"
+                v-if="hasPermission('access_deposit_history')"
             />
 
             <SidebarCollapsibleItem
                 title="withdrawal"
                 :href="route('transaction.history.getWithdrawalHistory')"
                 :active="route().current('transaction.history.getWithdrawalHistory')"
+                v-if="hasPermission('access_withdrawal_history')"
             />
         </SidebarCollapsible>
 
         <!-- Commissions -->
-        <SidebarCategoryLabel title="reports" />
+        <SidebarCategoryLabel
+            title="reports"
+            v-if="hasPermission('access_profit_sharing') || hasPermission('access_group_incentive') || hasPermission('access_rebate_bonus')"
+        />
 
         <SidebarLink
             title="profit_sharing"
             :href="route('report.profit_sharing')"
             :active="route().current('report.profit_sharing')"
+            v-if="hasPermission('access_profit_sharing')"
         >
             <template #icon>
                 <IconBusinessplan size="20" stroke-width="1.5" />
@@ -176,6 +205,7 @@ watchEffect(() => {
             title="ib_group_incentive"
             :href="route('report.ib_group_incentive')"
             :active="route().current('report.ib_group_incentive')"
+            v-if="hasPermission('access_group_incentive')"
         >
             <template #icon>
                 <IconCoin size="20" stroke-width="1.5" />
@@ -186,6 +216,7 @@ watchEffect(() => {
             title="rebate_bonus"
             :href="route('report.rebate_bonus')"
             :active="route().current('report.rebate_bonus')"
+            v-if="hasPermission('access_rebate_bonus')"
         >
             <template #icon>
                 <IconUserDollar size="20" stroke-width="1.5" />
@@ -193,12 +224,16 @@ watchEffect(() => {
         </SidebarLink>
 
         <!-- Settings -->
-        <SidebarCategoryLabel title="settings" />
+        <SidebarCategoryLabel
+            title="settings"
+            v-if="hasRole('super_admin')"
+        />
 
         <SidebarLink
             title="admin_listing"
             :href="route('settings.admin_listing')"
             :active="route().current('settings.admin_listing')"
+            v-if="hasRole('super_admin')"
         >
             <template #icon>
                 <IconUserCog size="20" stroke-width="1.5" />

@@ -45,6 +45,6 @@ export function generalFormat() {
         formatDateTime,
         formatAmount,
         formatRgbaColor,
-        formatNameLabel,
+        formatNameLabel
     };
 }

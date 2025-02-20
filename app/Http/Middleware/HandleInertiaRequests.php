@@ -35,8 +35,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'profile_photo' => $request->user() ? $request->user()->getFirstMediaUrl('profile_photo') : null,
             ],
             'toast' => session('toast'),
+            'permissions' => $request->user() ? $request->user()->getAllPermissions()->pluck('name')->toArray() : 'no permission',
             'getPendingKycCount' => $sidebarService->getPendingKycCount(),
             'getPendingDepositCount' => $sidebarService->getPendingDepositCount(),
         ];

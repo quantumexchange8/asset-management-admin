@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,6 +18,8 @@ class ConnectionController extends Controller
 {
     public function broker_connection()
     {
+        Gate::authorize('access', BrokerConnection::class);
+
         return Inertia::render('Connection/BrokerConnection/BrokerConnection',[
             'connectionCounts' => BrokerConnection::count(),
         ]);
@@ -24,6 +27,8 @@ class ConnectionController extends Controller
 
     public function getConnections(Request $request)
     {
+        Gate::authorize('access', BrokerConnection::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
@@ -92,6 +97,8 @@ class ConnectionController extends Controller
 
     public function importBrokerConnection(Request $request)
     {
+        Gate::authorize('import', BrokerConnection::class);
+
         Validator::make($request->all(), [
             'broker_id' => ['required'],
             'import_file' => ['required', 'mimes:xlsx,xls,csv', 'max:25000'],

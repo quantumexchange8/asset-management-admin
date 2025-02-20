@@ -282,4 +282,8 @@ return [
     "deactivate_deposit_profile_caption" => "Are you sure you want to deactivate this deposit profile? This will hide the deposit profile to user.",
     "toast_deposit_profile_active" => "Deposit Profile activated successfully",
     "toast_deposit_profile_inactive" => "Deposit Profile deactivated successfully",
+    "toast_add_admin_success" => "Successfully Added Admin",
+    "full_access" => "Full Access",
+    "limited" => "Limited",
+    "scope_of_permissions" => "Scope Of Permissions",
 ];
