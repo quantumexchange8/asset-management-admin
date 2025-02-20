@@ -129,6 +129,7 @@ return [
     "toast_approve_kyc_success" => "成功批准 KYC",
     "toast_reject_kyc_success" => "成功拒绝 KYC",
     "remarks" => "备注",
+    "enter_remarks" => "输入备注",
     "no_referral" => "无推荐",
     "rank" => "等级",
     "personal_capital_fund" => "个人资本基金",
