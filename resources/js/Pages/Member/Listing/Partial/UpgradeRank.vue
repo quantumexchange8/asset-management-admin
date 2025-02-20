@@ -23,7 +23,7 @@ const loadingRanks = ref(false);
 const {formatNameLabel} = generalFormat();
 
 //close dialog after save and refresh rank after save
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'rank-updated']);
 
 const getRanks = async () => {
     loadingRanks.value = true;
@@ -54,6 +54,7 @@ const submitForm = () => {
     form.put(route('member.upgradeRank'), {
         onSuccess:() => {
             emit('update:visible', false);
+            emit('rank-updated', form.rank); // Emit updated rank event
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -120,7 +121,7 @@ const submitForm = () => {
                         >
                             <template #value="slotProps">
                                 <div v-if="slotProps.value" class="flex items-center">
-                                    <div>{{ slotProps.value.rank_name }}</div>
+                                    <div>{{ slotProps.value.rank_name === 'member' ? $t(`public.${slotProps.value.rank_name}`) : slotProps.value.rank_name }}</div>
                                 </div>
                                 <span v-else>
                                         {{ slotProps.placeholder }}
@@ -128,7 +129,7 @@ const submitForm = () => {
                             </template>
                             <template #option="slotProps">
                                 <div class="flex items-center gap-1 max-w-[220px] truncate">
-                                    <span>{{ slotProps.option.rank_name }}</span>
+                                    <span>{{ slotProps.option.rank_name === 'member' ? $t(`public.${slotProps.option.rank_name}`) : slotProps.option.rank_name }}</span>
                                 </div>
                             </template>
                         </Select>

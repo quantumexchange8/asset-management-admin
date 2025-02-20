@@ -150,7 +150,7 @@ const getSeverity = (status) => {
                                 {{ $t('public.rank') }}
                             </div>
                             <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                {{ props.user.rank.rank_name }}
+                                {{ props.user.rank.rank_name === 'member' ? $t(`public.${props.user.rank.rank_name}`) : props.user.rank.rank_name }}
                             </div>
                         </div>
 

@@ -61,9 +61,13 @@ class SettingController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $adminCounts = (clone $query)
+                ->count();
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'adminCounts' => $adminCounts,
             ]);
         }
 
@@ -201,7 +205,7 @@ class SettingController extends Controller
         $depositProfile->bank_name = $validatedData['bank_name'];
         $depositProfile->bank_branch = $validatedData['bank_branch'];
         $depositProfile->crypto_tether = $validatedData['crypto_tether'];
-        $depositProfile->crypto_network = json_encode($validatedData['crypto_network']) ?? null;
+        $depositProfile->crypto_network = $validatedData['crypto_network'] ?? null;
         $depositProfile->country_id = $request->type === 'bank' ? $currency['id'] : null;
         $depositProfile->currency = $request->type === 'bank' ? $currency['currency'] : $currency;
         $depositProfile->edited_by = Auth::id();

@@ -287,5 +287,6 @@ return [
     "deactivate_deposit_profile_caption" => "您确定要停用此存款资料吗？这将对用户隐藏存款资料。",
     "toast_deposit_profile_active" => "存款资料已成功激活",
     "toast_deposit_profile_inactive" => "存款资料已成功停用",
+    "reject" => "拒绝",
 
 ];

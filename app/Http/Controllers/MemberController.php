@@ -210,11 +210,15 @@ class MemberController extends Controller
     {
         Gate::authorize('manage-kyc', User::class);
 
-        $validator = Validator::make($request->all(), [
+        $validatedData = $request->validate([
             'remarks' => ['required_if:action,reject'],
-        ])->setAttributeNames([
-            'remarks' => trans('public.remarks')
-        ])->validate();
+        ], [
+                'remarks.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.remarks'),
+                'other' => trans('public.action'),
+                'value' => trans('public.reject')
+            ])
+        ]);
 
         $user = User::find($request->user_id);
 
@@ -223,7 +227,7 @@ class MemberController extends Controller
             $user->kyc_approval_at = now();
         } else {
             $user->kyc_status = 'rejected';
-            $user->kyc_approval_description = $validator['remarks'];
+            $user->kyc_approval_description = $validatedData['remarks'];
         }
         $user->update();
 
@@ -346,6 +350,11 @@ class MemberController extends Controller
             'dial_code' => ['required'],
             'phone' => ['required', 'max:255'],
             'phone_number' => ['required', 'max:255', Rule::unique('users', 'phone_number')->ignore($id),],
+        ], [], [
+            'name' => trans('public.name'),
+            'username' => trans('public.username'),
+            'dial_code' => trans('public.dial_code'),
+            'phone' => trans('public.phone'),
         ]);
 
         $user = User::find($id);
@@ -380,6 +389,10 @@ class MemberController extends Controller
             'fund_type' => 'required',
             'amount' => 'required|numeric',
             'remarks' => 'nullable',
+        ], [], [
+            'amount' => trans('public.amount'),
+            'fund_type' => trans('public.fund_type'),
+            'action' => trans('public.action'),
         ]);
 
         $wallet = Wallet::find($request->wallet_id);

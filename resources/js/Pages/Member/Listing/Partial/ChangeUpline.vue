@@ -17,7 +17,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible', 'upline-updated']);
 
 const users = ref([]);
 const selectedUpline = ref();
@@ -86,6 +86,7 @@ const submitForm = () => {
     form.put(route('member.changeUpline'), {
         onSuccess:() => {
             emit('update:visible', false);
+            emit('upline-updated', form.upline); // Emit change upline event
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -161,7 +162,7 @@ const submitForm = () => {
                             <template #option="slotProps">
                                 <div class="flex items-center gap-1 max-w-[220px] truncate">
                                     <span>{{ slotProps.option.name }}</span>
-                                    <span class="text-xs text-gray-500">@{{ slotProps.option.username }}</span>
+                                    <span class="text-xs text-gray-500">@{{ slotProps.option.email }}</span>
                                 </div>
                             </template>
                         </Select>

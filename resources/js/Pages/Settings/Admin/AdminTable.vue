@@ -24,6 +24,7 @@ const dt = ref(null);
 const first = ref(0);
 const users = ref([]);
 const totalRecords = ref(0);
+const adminCounts = ref();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -52,6 +53,7 @@ const loadLazyData = (event) => {
 
             users.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
+            adminCounts.value = results?.adminCounts;
             isLoading.value = false;
         }, 100);
     }  catch (e) {
@@ -154,9 +156,11 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <EmptyData
+                        <div v-if="adminCounts === 0">
+                            <EmptyData
                             :title="$t('public.no_members_founded')"
-                        />
+                            />
+                        </div>
                     </template>
 
                     <template #loading>
@@ -164,6 +168,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.member_loading_caption') }}</span>
                         </div>
                     </template>
 

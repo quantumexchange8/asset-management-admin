@@ -286,4 +286,5 @@ return [
     "full_access" => "Full Access",
     "limited" => "Limited",
     "scope_of_permissions" => "Scope Of Permissions",
+    "reject" => "Reject",
 ];

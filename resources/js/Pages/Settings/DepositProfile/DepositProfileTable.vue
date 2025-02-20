@@ -307,6 +307,14 @@ watchEffect(() => {
                     </template>
                 </Select>
             </div>
+            <Button
+                type="button"
+                outlined
+                class="w-full"
+                @click="clearAll"
+            >
+            {{ $t('public.clear_all') }}
+            </Button>
         </div>
     </Popover>
 </template>

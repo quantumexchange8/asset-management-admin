@@ -109,6 +109,20 @@ watch([totalRecords, verifiedUser, unverifiedUser], () => {
     });
 });
 
+const updateMemberRank = (memberId, newRank) => {
+    const member = users.value.find(m => m.id === memberId);
+    if (member) {
+        member.rank = newRank;
+    }
+};
+
+const updateMemberUpline = (memberId, newUpline) => {
+    const member = users.value.find(m => m.id === memberId);
+    if (member) {
+        member.upline = newUpline;
+    }
+};
+
 //Date Filter
 const selectedDate = ref([]);
 
@@ -480,7 +494,11 @@ watchEffect(() => {
                             style="width: 5%"
                         >
                             <template #body="{data}">
-                                <MemberTableAction :member="data"/>
+                                <MemberTableAction 
+                                    :member="data"
+                                    @rank-updated="updateMemberRank"
+                                    @upline-updated="updateMemberUpline"
+                                />
                             </template>
                         </Column>
                     </template>

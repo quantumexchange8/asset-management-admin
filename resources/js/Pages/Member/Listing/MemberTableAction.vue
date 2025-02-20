@@ -124,6 +124,7 @@ const toggle = (event) => {
             <UpgradeRank
                 :member="member"
                 @update:visible="visible = false"
+                @rank-updated="(newRank) => $emit('rank-updated', member.id, newRank)" 
             />
         </template>
 
@@ -131,6 +132,7 @@ const toggle = (event) => {
             <ChangeUpline
                 :member="member"
                 @update:visible="visible = false"
+                @upline-updated="(newUpline) => $emit('upline-updated', member.id, newUpline)" 
             />
         </template>
     </Dialog>

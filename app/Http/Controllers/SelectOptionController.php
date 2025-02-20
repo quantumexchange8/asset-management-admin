@@ -13,7 +13,7 @@ class SelectOptionController extends Controller
 {
     public function getUsers()
     {
-        $users = User::select('id', 'name', 'username', 'upline_id')->get();
+        $users = User::select('id', 'name', 'email', 'username', 'upline_id')->get();
 
         return response()->json([
             'users' => $users,
