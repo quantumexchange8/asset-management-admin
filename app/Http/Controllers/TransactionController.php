@@ -8,6 +8,7 @@ use App\Exports\WithdrawalExport;
 use App\Imports\DepositImport;
 use App\Models\BrokerConnection;
 use App\Models\Transaction;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
@@ -240,6 +241,7 @@ class TransactionController extends Controller
                     'user.upline:id,name,email',
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
+                    'media',
                 ])
                 ->where('transaction_type', 'deposit')
                 ->where('status', 'processing');
@@ -284,12 +286,12 @@ class TransactionController extends Controller
 
             $users = $query->paginate($data['rows']);
 
-            // Add KYC images to each user
-            foreach ($users as $user) {
-                $user->pending_deposit_pay_slip = $user->getMedia('pending_deposit_pay_slip')->map(function ($media) {
-                    return $media->getUrl();  // Return the media URL
-                });
-            }
+            $users->each(function ($transaction) {
+                $transaction->payment_slips = $transaction->getMedia('payment_slips')
+                    ->map(function ($media) {
+                        return $media->getUrl();
+                    });
+            });
 
             $totalPendingAmount = (clone $query)
                 ->sum('amount');
@@ -428,15 +430,23 @@ class TransactionController extends Controller
         ]);
 
         $transaction = Transaction::find($request->transaction_id);
+        $wallet = Wallet::find($transaction->to_wallet_id);
 
         if ($request->action == 'approve_transaction') {
             $transaction->status = 'success';
-            $transaction->update();
+
+            $wallet->balance += $transaction->amount;
+            $wallet->save();
         } else {
             $transaction->status = 'rejected';
             $transaction->remarks = $validatedData['remarks'];
-            $transaction->update();
         }
+        $transaction->new_wallet_amount = $wallet->balance;
+        $transaction->approval_at = now();
+        $transaction->handle_by = \Auth::id();
+        $transaction->update();
+
+        return back()->with('toast', 'success');
     }
 
     public function pendingWithdrawalApproval(Request $request)

@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import PendingDepositAction from './PendingDepositAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
+import {generalFormat} from "@/Composables/format.js";
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -26,6 +27,7 @@ const pendingDeposit = ref([]);
 const totalRecords= ref(0);
 const totalPendingAmount = ref();
 const pendingDepositCounts = ref();
+const {formatAmount} = generalFormat();
 
 //filteration type and methods
 const filters = ref({
@@ -41,7 +43,7 @@ const lazyParams = ref({}); //track table parameters that need to be send to bac
 const loadLazyData = (event) => { // event will retrieve from the datatable attribute
     isLoading.value = true;
 
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; //...lazyParams.value(retain existing properties after update);
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; lazyParams.value.filters = filters.value;
 
     try {
         setTimeout(async () => {
@@ -200,14 +202,13 @@ const exportDeposit = () => {
     }
 };
 
-// Define a method to refresh the table
 const refreshTable = () => {
     loadLazyData();
 };
 </script>
 
 <template>
-    <Card>
+    <Card class="w-full">
         <template #content>
             <div class="w-full" >
                 <DataTable
@@ -257,25 +258,26 @@ const refreshTable = () => {
 
                                 <!-- filter button -->
                                 <Button
-                                    class="w-full md:w-28 flex gap-2"
+                                    class="w-full md:w-28 flex items-center gap-2"
                                     outlined
                                     @click="toggle"
+                                    size="small"
                                 >
-                                    <IconAdjustments :size="15"/>
+                                    <IconAdjustments :size="16" stroke-width="1.5" />
                                     {{ $t('public.filter') }}
                                 </Button>
                             </div>
 
                             <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                 <!-- Export button -->
-                                <Button
-                                    class="w-full md:w-auto flex justify-center items-center"
-                                    @click="exportDeposit"
-                                    :disabled="exportTable==='yes'"
-                                >
-                                    <span class="pr-1">{{ $t('public.export') }}</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
+<!--                                <Button-->
+<!--                                    class="w-full md:w-auto flex justify-center items-center"-->
+<!--                                    @click="exportDeposit"-->
+<!--                                    :disabled="exportTable==='yes'"-->
+<!--                                >-->
+<!--                                    <span class="pr-1">{{ $t('public.export') }}</span>-->
+<!--                                    <IconDownload size="16" stroke-width="1.5"/>-->
+<!--                                </Button>-->
                             </div>
                         </div>
                     </template>
@@ -301,25 +303,54 @@ const refreshTable = () => {
                     <template v-if="pendingDeposit?.length > 0">
                         <Column
                             field="created_at"
-                            style="min-width: 12rem"
-                            dataType="date"
+                            sortable
+                            :header="$t('public.date')"
+                            class="min-w-40"
+                        >
+                            <template #body="{ data }">
+                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="user_id"
                             sortable
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.requested_at') }}</span>
+                                <span class="block">{{ $t('public.name') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                <div class="flex flex-col">
+                                    <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
+                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                </div>
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="user.upline"
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.upline') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                <div
+                                    v-if="data.user.upline_id"
+                                    class="flex flex-col"
+                                >
+                                    <span class="text-surface-950 dark:text-white">{{ data.user.upline.name }}</span>
+                                    <span class="text-surface-500">{{ data.user.upline.email }}</span>
+                                </div>
+                                <div v-else>
+                                    -
                                 </div>
                             </template>
                         </Column>
 
                         <Column
                             field="transaction_number"
-                            style="min-width: 17rem"
                             sortable
+                            class="min-w-60"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.transaction_number') }}</span>
@@ -330,57 +361,9 @@ const refreshTable = () => {
                         </Column>
 
                         <Column
-                            field="user_id"
-                            style="min-width: 12rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.name') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.user.name }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ data.user.email }}
-                                </div>
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="user.upline"
-                            style="min-width: 12rem"
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.upline') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.user.upline?.name }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ data.user.upline?.email }}
-                                </div>
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="fund_type"
-                            style="min-width: 12rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.fund_type') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ $t(`public.${data.fund_type}`) }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="to_wallet_id"
-                            style="min-width: 12rem"
-                            sortable
+                            :header="$t('public.wallet')"
                         >
-                            <template #header>
-                                <span class="block">{{ $t('public.to') }}</span>
-                            </template>
                             <template #body="{ data }">
                                 {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
                             </template>
@@ -388,15 +371,11 @@ const refreshTable = () => {
 
                         <Column
                             field="amount"
-                            style="min-width: 12rem"
-                            dataType="numeric"
+                            :header="$t('public.amount')"
                             sortable
                         >
-                            <template #header>
-                                <span class="block">{{ $t('public.amount') }}</span>
-                            </template>
                             <template #body="{ data }">
-                                {{ data.amount }}
+                                ${{ formatAmount(data.amount) }}
                             </template>
                         </Column>
 
@@ -459,7 +438,7 @@ const refreshTable = () => {
                     </template>
                 </Select>
             </div>
-          
+
             <Button
                 type="button"
                 outlined

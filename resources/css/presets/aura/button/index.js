@@ -8,7 +8,6 @@ export default {
             { 'flex-col': (props.iconPos === 'top' || props.iconPos === 'bottom') && props.label },
 
             // Sizes & Spacing
-            'leading-[normal]',
             {
                 'px-3 py-2': props.size === null,
                 'text-sm py-1.5 px-3': props.size === 'small',

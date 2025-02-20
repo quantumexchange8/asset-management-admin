@@ -15,13 +15,13 @@ const handleOverview = (data) => {
 
 <template>
     <AuthenticatedLayout title="pending_deposit">
-        <div class="space-y-4">
-            <PendingDepositOverview 
+        <div class="flex flex-col gap-5 items-center self-stretch">
+            <PendingDepositOverview
                 :totalPendingAmount="totalPendingAmount"
                 :pendingDepositCounts="pendingDepositCounts"
             />
 
-            <PendingDepositTable 
+            <PendingDepositTable
                 @updatePendingDeposit="handleOverview"
             />
 

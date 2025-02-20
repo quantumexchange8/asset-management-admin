@@ -161,7 +161,7 @@ return [
     "to" => 'To',
     "approved_at" => "Approved At",
     "approved_by" => "Approved By",
-    "requested_at" => "Requested At",
+    "request_date" => "Request Date",
     "from" => "From",
     "filter_by_referrer" => "Filter By Referrer",
     "select_referrer" => "Select Referrer",
@@ -286,4 +286,8 @@ return [
     "full_access" => "Full Access",
     "limited" => "Limited",
     "scope_of_permissions" => "Scope Of Permissions",
+    "token_address" => "Token Address",
+    "txn_hash" => "Txn Hash",
+    "toast_approve_transaction_success" => "Transaction approved successfully",
+    "toast_reject_transaction_success" => "Transaction rejected successfully",
 ];
