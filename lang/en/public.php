@@ -129,6 +129,7 @@ return [
     "toast_approve_kyc_success" => "Successfully Approved KYC",
     "toast_reject_kyc_success" => "Successfully Rejected KYC",
     "remarks" => "Remarks",
+    "enter_remarks" => "Enter Remarks",
     "no_referral" => "No Referral",
     "rank" => "Rank",
     "personal_capital_fund" => "Personal Capital Fund",

@@ -19,6 +19,7 @@ import MemberTableAction from './MemberTableAction.vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
 import EmptyData from "@/Components/EmptyData.vue";
+import { useLangObserver } from '@/Composables/localeObserver';
 
 const props = defineProps({
     memberCounts: Number,
@@ -31,6 +32,7 @@ const users = ref([]);
 const totalRecords = ref(0);
 const verifiedUser = ref();
 const unverifiedUser = ref();
+const {locale} = useLangObserver();
 
 //filteration type and methods
 const filters = ref({
@@ -417,7 +419,10 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.rank') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.rank.rank_name }}
+                                <Tag
+                                    severity="secondary"
+                                    :value="data.rank.rank_name === 'member' ? $t(`public.${data.rank.rank_name}`) : data.rank.rank_name"
+                                />
                             </template>
                         </Column>
 
@@ -443,7 +448,16 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.country') }}</span>
                             </template>
                             <template #body="{data}">
-                                <span>{{ data.country?.name || '-' }}</span>
+                                <div class="flex items-center gap-1">
+                                    <img
+                                        v-if="data.country.iso2"
+                                        :src="`https://flagcdn.com/w40/${data.country.iso2.toLowerCase()}.png`"
+                                        :alt="data.country.iso2"
+                                        width="18"
+                                        height="12"
+                                    />
+                                    <div class="max-w-[200px] truncate">{{ JSON.parse(data.country.translations)[locale] || data.country.name }}</div>
+                                </div>
                             </template>
                         </Column>
 
@@ -541,19 +555,28 @@ watchEffect(() => {
                     optionLabel="name"
                     :placeholder="$t('public.select_country')"
                     filter
-                    :filter-fields="['name']"
+                    :filter-fields="['name', 'iso2']"
                     :loading="loadingCountries"
                     class="w-full"
                     showClear
                 >
                     <template #value="slotProps">
                         <div v-if="slotProps.value" class="flex items-center">
-                            {{ slotProps.value.name }}
+                            <div class="leading-tight">{{ JSON.parse(slotProps.value.translations)[locale] || slotProps.value.name }}</div>
                         </div>
                         <span v-else>{{ slotProps.placeholder }}</span>
                     </template>
                     <template #option="slotProps">
-                        <div>{{ slotProps.option.name }}</div>
+                        <div class="flex items-center gap-1">
+                            <img
+                                v-if="slotProps.option.iso2"
+                                :src="`https://flagcdn.com/w40/${slotProps.option.iso2.toLowerCase()}.png`"
+                                :alt="slotProps.option.iso2"
+                                width="18"
+                                height="12"
+                            />
+                            <div class="max-w-[200px] truncate">{{ JSON.parse(slotProps.option.translations)[locale] || slotProps.option.name }}</div>
+                        </div>
                     </template>
                 </Select>
             </div>

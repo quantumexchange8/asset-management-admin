@@ -224,14 +224,14 @@ const imagesToDisplay = computed(() => {
                 class="text-center mr-3"
                 @click="visible = false"
             >
-                Cancel
+                {{ $t('public.cancel') }}
             </Button>
             <Button
                 class="text-center"
                 :disabled="form.processing"
                 @click.prevent="submitForm"
             >
-                Submit
+                {{ $t('public.submit') }}
             </Button>
         </div>
     </div>

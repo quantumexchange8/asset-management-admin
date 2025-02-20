@@ -28,21 +28,21 @@ const dialogType = ref();
 
 const items = ref([
     {
-        label: 'Member Detail',
+        label: 'member_detail',
         icon: h(IconId),
         command: () => {
             window.location.href = `/member/detail/${props.member.id_number}`;
         },
     },
     {
-        label: 'Access Portal',
+        label: 'access_portal',
         icon: h(IconDeviceLaptop),
         command: () => {
             window.open(route('member.access_portal', props.member.id), '_blank');
         }
     },
     {
-        label: 'Change Upline',
+        label: 'change_upline',
         icon: h(IconSitemap),
         command: () => {
             visible.value = true;
@@ -50,11 +50,11 @@ const items = ref([
         },
     },
     {
-        label: 'Upgrade',
+        label: 'upgrade',
         icon: h(IconUserUp),
         items: [
             {
-                label: 'Rank',
+                label: 'rank',
                 icon: h(IconUserCog),
                 command: () => {
                     visible.value = true;
@@ -67,7 +67,7 @@ const items = ref([
         separator: true
     },
     {
-        label: 'Delete',
+        label: 'delete',
         icon: h(IconTrash),
     },
 
@@ -98,8 +98,8 @@ const toggle = (event) => {
                 class="flex items-center gap-3 self-stretch"
                 v-bind="props.action"
             >
-                <component :is="item.icon" size="20" stroke-width="1.25" :color="item.label === 'Delete' ? '#F04438' : '#667085'"  />
-                <span class="font-medium" :class="{'text-error-500': item.label === 'Delete'}">{{ item.label }}</span>
+                <component :is="item.icon" size="20" stroke-width="1.25" :color="item.label === 'delete' ? '#F04438' : '#667085'"  />
+                <span class="font-medium" :class="{'text-error-500': item.label === 'delete'}">{{ $t(`public.${item.label}`) }}</span>
                 <span v-if="hasSubmenu" class="ml-auto">
                     <IconChevronRight size="20" stroke-width="1.25" />
                 </span>
@@ -115,7 +115,7 @@ const toggle = (event) => {
         <template #header>
             <div class="flex items-center gap-4">
                 <div class="text-xl font-bold">
-                    {{dialogType.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase())}}
+                    {{$t(`public.${dialogType}`)}}
                 </div>
             </div>
         </template>

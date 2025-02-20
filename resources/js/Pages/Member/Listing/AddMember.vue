@@ -11,6 +11,7 @@ import { useForm } from '@inertiajs/vue3';
 import { useToast } from "primevue/usetoast";
 import { IconFlag, IconLabel, IconLock, IconMail, IconPhone, IconUser, IconUserPlus, IconUsersPlus } from '@tabler/icons-vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
+import { useLangObserver } from '@/Composables/localeObserver';
 
 const visible = ref(false);
 const selectedUpline = ref();
@@ -18,6 +19,7 @@ const selectedCountry = ref();
 const selectedPhoneCode = ref();
 const users = ref([]);
 const countries = ref([]);
+const {locale} = useLangObserver();
 
 //loading
 const loadingCountries = ref(false);
@@ -62,7 +64,7 @@ const form = useForm({
     dial_code: '', //dialcode is used to bind data from selectedPhoneCode (not in form)
     phone: '',
     phone_number: '', // to join dialcode with phone (not in form)
-    kyc_verification: '',
+    identity_number: '',
     password: '',
     password_confirmation: '',
 })
@@ -113,11 +115,11 @@ const closeDialog = () => {
         @click="openDialog"
     >
         <IconUserPlus size="16" />
-        <span class="pl-2">Add Member</span>
+        <span class="pl-2">{{ $t('public.add_member') }}</span>
     </Button>
 
     <!-- Modal -->
-    <Dialog v-model:visible="visible" modal :header="'New Member'" class="dialog-xs md:dialog-md">
+    <Dialog v-model:visible="visible" modal :header="$t('public.add_member')" class="dialog-xs md:dialog-md">
         <form @submit.prevent="submitForm" class="flex flex-col gap-6 items-center self-stretch">
             <div class="flex flex-col gap-3 items-center self-stretch">
                 <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ 'Basics' }}</span>
@@ -179,11 +181,33 @@ const closeDialog = () => {
                             <template #icon>
                                 <IconFlag :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select v-model="selectedCountry" :options="countries" :loading="loadingCountries" optionLabel="name" :placeholder="$t('public.select_country')" class="pl-7 block w-full" :invalid="!!form.errors.country" filter>
+                            <Select 
+                                v-model="selectedCountry" 
+                                :options="countries" 
+                                :loading="loadingCountries" 
+                                optionLabel="name" 
+                                :placeholder="$t('public.select_country')" 
+                                class="pl-7 block w-full" 
+                                :invalid="!!form.errors.country" 
+                                :filter-fields="['name', 'iso2']"
+                                filter
+                            >
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center">
+                                        <div class="leading-tight">{{ JSON.parse(slotProps.value.translations)[locale] || slotProps.value.name }}</div>
+                                    </div>
+                                    <span v-else class="text-surface-400 dark:text-surface-500">{{ slotProps.placeholder }}</span>
+                                </template>
                                 <template #option="slotProps">
                                     <div class="flex items-center gap-1">
-                                        <div>{{ slotProps.option.emoji }}</div>
-                                        <div class="max-w-[200px] truncate">{{ slotProps.option.name }}</div>
+                                        <img
+                                            v-if="slotProps.option.iso2"
+                                            :src="`https://flagcdn.com/w40/${slotProps.option.iso2.toLowerCase()}.png`"
+                                            :alt="slotProps.option.iso2"
+                                            width="18"
+                                            height="12"
+                                        />
+                                        <div class="max-w-[200px] truncate">{{ JSON.parse(slotProps.option.translations)[locale] || slotProps.option.name }}</div>
                                     </div>
                                 </template>
                             </Select>
@@ -194,14 +218,36 @@ const closeDialog = () => {
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel :value="$t('public.phone_number')" for="phone"/>
                         <div class="flex gap-2 items-center self-stretch relative">
-                            <Select v-model="selectedPhoneCode" :options="countries" :loading="loadingCountries" optionLabel="name" placeholder="60" class="w-[100px]" :invalid="!!form.errors.dial_code" filter>
-                                <template #option="slotProps">
-                                    <div class="flex items-center gap-1">
-                                        <div>{{ slotProps.option.emoji }}</div>
-                                        <div>{{ slotProps.option.iso2 }}</div>
-                                        <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.phone_code }})</div>
-                                    </div>
-                                </template>
+                            <Select 
+                                v-model="selectedPhoneCode" 
+                                :options="countries" 
+                                :loading="loadingCountries" 
+                                optionLabel="name" 
+                                placeholder="60" 
+                                class="w-[100px]" 
+                                :invalid="!!form.errors.dial_code" 
+                                filter
+                                :filterFields="['name', 'iso2', 'phone_code']"
+                            >
+                            <template #value="slotProps">
+                                <div v-if="slotProps.value" class="flex items-center">
+                                    <div>{{ slotProps.value.phone_code }}</div>
+                                </div>
+                                <span v-else class="text-surface-400 dark:text-surface-500">{{ slotProps.placeholder }}</span>
+                            </template>
+                            <template #option="slotProps">
+                                <div class="flex items-center gap-1">
+                                    <img
+                                        v-if="slotProps.option.iso2"
+                                        :src="`https://flagcdn.com/w40/${slotProps.option.iso2.toLowerCase()}.png`"
+                                        :alt="slotProps.option.iso2"
+                                        width="18"
+                                        height="12"
+                                    />
+                                    <div>{{ slotProps.option.phone_code }}</div>
+                                    <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.iso2 }})</div>
+                                </div>
+                            </template>
                             </Select>
                             <InputIconWrapper>
                                 <template #icon>
@@ -212,6 +258,17 @@ const closeDialog = () => {
                         </div>
                         <InputError :message="form.errors.phone"/>
                         <InputError :message="form.errors.dial_code"/>
+                    </div>
+
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <InputLabel :value="$t('public.identity_number')" for="identity_number" />
+                        <InputIconWrapper>
+                            <template #icon>
+                                <IconUser :size="20" stroke-width="1.5"/>
+                            </template>
+                            <InputText id="name" type="text" class="pl-10 block w-full" v-model="form.identity_number" :placeholder="$t('public.enter_identity_number')" :invalid="!!form.errors.identity_number" autofocus/>
+                        </InputIconWrapper>
+                        <InputError :message="form.errors.identity_number"/>
                     </div>
                 </div>
             </div>

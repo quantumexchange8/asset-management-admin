@@ -4,6 +4,7 @@ import Card from 'primevue/card';
 import Skeleton from 'primevue/skeleton';
 import WalletAdjustment from './WalletAdjustment.vue';
 import { usePage } from '@inertiajs/vue3';
+import { generalFormat } from '@/Composables/format';
 
 const props = defineProps({
     user: Object,
@@ -12,6 +13,7 @@ const props = defineProps({
 
 const wallets = ref(); //wallets.value where value pass back in here
 const isLoading = ref(false);
+const {formatAmount} = generalFormat();
 
 const getWalletData = async () => {
     isLoading.value = true;
@@ -70,7 +72,7 @@ const refreshWallet = () => {
                         
                         <div class="flex flex-col gap-3 items-start self-stretch">
                             <div class="flex justify-between items-center self-stretch">
-                                <span class="text-xs md:text-sm dark:text-surface-400"> {{ wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}</span>
+                                <span class="text-xs md:text-sm dark:text-surface-400"> {{ $t(`public.${wallet.type}`) }}</span>
                                 <WalletAdjustment
                                     :user="user"
                                     :wallet="wallet"
@@ -79,9 +81,9 @@ const refreshWallet = () => {
                             </div>
 
                             <div class="w-full bg-surface-100 dark:bg-surface-800 p-3 flex flex-col gap-3">
-                                <span class="text-surface-700 dark:text-surface-100 text-xs font-medium">Balance</span>
+                                <span class="text-surface-700 dark:text-surface-100 text-xs font-medium">{{ $t('public.balance') }}</span>
                                 <div class="md:text-lg text-primary-500 font-semibold">
-                                    <span>{{ wallet.currency_symbol }}{{ wallet.balance }}</span>
+                                    <span>{{ wallet.currency_symbol }}{{ formatAmount(wallet.balance) }}</span>
                                     <!-- <span v-else>{{ wallet.balance }} {{wallet.currency_symbol }}</span> -->
                                 </div>
                             </div>

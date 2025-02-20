@@ -41,7 +41,7 @@ class MemberController extends Controller
             //user query
             $query = User::query()
                 ->with([
-                    'country:id,name,emoji',
+                    'country:id,name,emoji,iso2,translations',
                     'rank:id,rank_name',
                     'upline:id,name,email,upline_id',
                 ])->where('role', 'user');
@@ -101,8 +101,15 @@ class MemberController extends Controller
                 ->count();
 
             $unverifiedUser = (clone $query)
-                ->whereIn('kyc_status', ['unverified', 'pending'])
+                ->whereIn('kyc_status', ['unverified', 'pending', 'rejected'])
                 ->count();
+
+            $users->each(function ($user) {
+                $user->profile_photo = $user->getMedia('profile_photo')
+                    ->map(function ($media) {
+                        return $media->getUrl();
+                    });
+            });
 
             return response()->json([
                 'success' => true,
@@ -235,6 +242,7 @@ class MemberController extends Controller
             'phone' => ['required', 'max:255', 'unique:' . User::class],
             'password' => ['required', Password::defaults(), 'confirmed'],
             'upline' => ['nullable'],
+            'identity_number' => ['required', 'unique:' . User::class],
         ], [], [
             'name' => trans('public.name'),
             'email' => trans('public.email'),
@@ -244,6 +252,7 @@ class MemberController extends Controller
             'phone' => trans('public.phone'),
             'password' => trans('public.password'),
             'upline' => trans('public.upline'),
+            'identity_number' => trans('public.identity_number'),
         ]);
 
         $dial_code = $request->dial_code;
@@ -259,6 +268,7 @@ class MemberController extends Controller
         $user->country_id = $country->id;
         $user->nationality = $country->nationality;
         $user->password = Hash::make($validatedData['password']);
+        $user->identity_number = $request->identity_number;
 
         if ($request->upline) {
             $upline_id = $request->upline['id'];
@@ -303,13 +313,14 @@ class MemberController extends Controller
     {
         $user = User::where('id_number', $id_number)
             ->with([
-                'country:id,name,emoji',
+                'country:id,name,emoji,iso2,translations',
                 'upline:id,name,email,upline_id',
                 'rank:id,rank_name',
-
             ])
             ->withCount('wallets')
             ->first();
+
+        $profile_photo = $user->getFirstMediaUrl('profile_photo');
 
         $kycImages = $user->getMedia('kyc_image')->map(fn($image) => $image->getUrl());
 
@@ -319,6 +330,7 @@ class MemberController extends Controller
             'user' => $user,
             'refereeCount' => $refereeCount,
             'kycImages' => $kycImages,
+            'profile_photo' => $profile_photo,
         ]);
     }
 

@@ -11,6 +11,7 @@ import { IconCreditCard } from '@tabler/icons-vue';
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from "primevue/usetoast";
+import { generalFormat } from '@/Composables/format';
 
 const props = defineProps({
     user: {
@@ -23,6 +24,7 @@ const props = defineProps({
 
 const visible = ref(false);
 const amount = ref(0);
+const {formatAmount} = generalFormat();
 
 const form = useForm({
     wallet_id: null,
@@ -70,43 +72,43 @@ const submitForm = () => {
         <IconCreditCard size="20" stroke-width="1.5" />
     </Button>
 
-    <Dialog v-model:visible="visible" modal header="Wallet Adjustment" class="dialog-xs md:dialog-md">
+    <Dialog v-model:visible="visible" modal :header="$t('public.wallet_adjustment')" class="dialog-xs md:dialog-md">
         <form @submit.prevent="submitForm">
             <div class="flex flex-col gap-5">
                 <div
                     class="flex flex-col justify-center items-center px-8 py-4 gap-2 self-stretch bg-surface-100 dark:bg-surface-800">
                     <div class="dark:text-surface-100 text-center text-xs font-medium">
-                        {{ wallet.type.replace('_', ' ').replace(/\b\w/g, (char) => char.toUpperCase()) }}
+                        {{ $t(`public.${wallet.type}`) }}
                     </div>
                     <div class="text-xl text-primary-500 font-semibold">
-                        <span>{{ wallet.currency_symbol }}{{ wallet.balance }}</span>
+                        <span>{{ wallet.currency_symbol }}{{ formatAmount(wallet.balance) }}</span>
                     </div>
                 </div>
 
                 <!-- action -->
                 <div class="flex flex-col items-start gap-1 self-stretch">
-                    <InputLabel for="action" value="Action" />
+                    <InputLabel for="action" :value="$t('public.action')" />
                     <div class="flex items-center gap-5">
                         <div class="flex items-center gap-2 text-sm">
                             <div class="flex p-2 justify-center items-center">
                                 <RadioButton v-model="form.action" inputId="deposit" name="deposit" value="deposit"
                                     class="w-4 h-4" />
                             </div>
-                            <label for="deposit">Deposit</label>
+                            <label for="deposit">{{ $t('public.deposit') }}</label>
                         </div>
                         <div class="flex items-center gap-2 text-sm">
                             <div class="flex p-2 justify-center items-center">
                                 <RadioButton v-model="form.action" inputId="withdrawal" name="withdrawal" value="withdrawal"
                                     class="w-4 h-4" />
                             </div>
-                            <label for="withdrawal">Withdrawal</label>
+                            <label for="withdrawal">{{ $t('public.withdrawal') }}</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- fund type -->
                 <div class="flex flex-col items-start gap-1 self-stretch">
-                    <InputLabel for="action" value="Type" />
+                    <InputLabel for="action" :value="$t('public.type')" />
                     <div class="flex items-center gap-5">
                         <div class="flex items-center gap-2 text-sm">
                             <div class="flex p-2 justify-center items-center">
@@ -117,7 +119,7 @@ const submitForm = () => {
                                     class="w-4 h-4"
                                 />
                             </div>
-                            <label for="demo_fund">Demo Fund</label>
+                            <label for="demo_fund">{{ $t('public.demo_fund') }}</label>
                         </div>
                         <div class="flex items-center gap-2 text-sm">
                             <div class="flex p-2 justify-center items-center">
@@ -129,7 +131,7 @@ const submitForm = () => {
                                     :disabled="['demo_fund', 'special_fund', 'special_demo_fund'].includes(user.role)"
                                 />
                             </div>
-                            <label for="real_fund">Real Fund</label>
+                            <label for="real_fund">{{ $t('public.real_fund') }}</label>
                         </div>
                     </div>
                 </div>
@@ -138,7 +140,7 @@ const submitForm = () => {
                 <div class="flex flex-col items-start gap-1 self-stretch">
                     <InputLabel
                         for="amount"
-                        value="amount"
+                        :value="$t('public.amount')"
                         :invalid="form.errors.amount"
                     />
                     <InputNumber
@@ -163,7 +165,7 @@ const submitForm = () => {
                 <div class="flex flex-col items-start gap-1 self-stretch">
                     <InputLabel
                         for="remarks"
-                        value="Remarks"
+                        :value="$t('public.remarks')"
                         :invalid="form.errors.remarks"
                     />
                     <Textarea
@@ -171,7 +173,7 @@ const submitForm = () => {
                         type="text"
                         class="flex flex-1 self-stretch"
                         v-model="form.remarks"
-                        placeholder="Enter Remarks"
+                        :placeholder="$t('public.enter_remarks')"
                         :invalid="form.errors.remarks"
                         rows="5"
                         cols="30"
@@ -181,8 +183,8 @@ const submitForm = () => {
             </div>
 
             <div class="flex justify-end items-center pt-10 md:pt-7 gap-3 md:gap-4 self-stretch">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
-                <Button type="submit" label="Save" :disabled="form.processing" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
+                <Button type="button" :label="$t('public.cancel')" severity="secondary" @click="visible = false" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
+                <Button type="submit" :label="$t('public.save')" :disabled="form.processing" class="flex flex-1 md:flex-none md:w-[120px]"></Button>
             </div>
         </form>
     </Dialog>
