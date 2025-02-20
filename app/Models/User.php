@@ -9,13 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasFactory, HasRoles, SoftDeletes, Notifiable, InteractsWithMedia;
+    use HasFactory, HasRoles, SoftDeletes, Notifiable, InteractsWithMedia, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -91,5 +94,55 @@ class User extends Authenticatable implements HasMedia
     public function wallets(): HasMany
     {
         return $this->hasMany(Wallet::class, 'user_id', 'id');
+    }
+
+    // Activity Log
+    public function getActivitylogOptions(): LogOptions
+    {
+        $user = $this->fresh();
+
+        return LogOptions::defaults()
+            ->useLogName('user')
+            ->logOnly([
+                'id',
+                'name',
+                'username',
+                'email_verified_at',
+                'email',
+                'password',
+                'security_pin',
+                'dial_code',
+                'phone',
+                'phone_number',
+                'chinese_name',
+                'dob',
+                'identity_number',
+                'country_id',
+                'nationality',
+                'register_ip',
+                'last_login_ip',
+                'upline_id',
+                'hierarchyList',
+                'referral_code',
+                'id_number',
+                'kyc_status',
+                'kyc_requested_at',
+                'kyc_approval_at',
+                'kyc_approval_description',
+                'gender',
+                'role',
+                'setting_rank_id',
+                'rank_up_status',
+                'status',
+                'remarks',
+                'remember_token',
+                'password_changed_at',
+            ])
+            ->setDescriptionForEvent(function (string $eventName) use ($user) {
+                $actorName = Auth::user() ? Auth::user()->name : 'System';
+                return "{$actorName} has {$eventName} user with ID: {$user->id}";
+            })
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
