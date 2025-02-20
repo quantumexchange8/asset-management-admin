@@ -23,6 +23,7 @@ import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
 import {useLangObserver} from "@/Composables/localeObserver.js";
+import EmptyData from "@/Components/EmptyData.vue";
 
 const exportStatus = ref(false);
 const isLoading = ref(false);
@@ -33,6 +34,7 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
+const standardBonusCounts = ref();
 const {locale} = useLangObserver();
 
 const filters = ref({
@@ -66,6 +68,7 @@ const loadLazyData = (event) => {
             totalRecords.value = results?.data?.total;
             totalBonusAmount.value = results?.totalBonusAmount;
             maxBonusAmount.value = results?.maxBonusAmount;
+            standardBonusCounts.value = results?.standardBonusCounts;
             isLoading.value = false;
 
         }, 100);
@@ -273,8 +276,10 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div class="flex flex-col">
-                            <span>{{ $t('public.no_data') }}</span>
+                        <div v-if="standardBonusCounts === 0">
+                            <EmptyData
+                                :title="$t('public.no_data')"
+                            />
                         </div>
                     </template>
 
@@ -283,6 +288,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.standard_bonus_loading_caption') }}</span>
                         </div>
                     </template>
 

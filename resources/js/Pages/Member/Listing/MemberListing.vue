@@ -5,10 +5,6 @@ import MemberTable from './MemberTable.vue';
 import MemberOverview from './MemberOverview.vue';
 import { ref } from 'vue';
 
-const props = defineProps({
-    memberCounts: Number,
-});
-
 const totalRecords = ref(null);
 const verifiedUser = ref(null);
 const unverifiedUser = ref(null);
@@ -36,7 +32,6 @@ const handleOverview = (data) => {
 
             <!-- User Table -->
             <MemberTable
-                :memberCounts="memberCounts"
                 @updateTotalUser="handleOverview"
             />
         </div>

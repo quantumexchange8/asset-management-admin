@@ -182,6 +182,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/getAdminListingData', [SettingController::class, 'getAdminListingData'])->name('settings.getAdminListingData');
 
         Route::post('addAdmin', [SettingController::class, 'addAdmin'])->name('settings.addAdmin');
+
+        //default profile
+        Route::get('/deposit_profile', [SettingController::class, 'depositProfile'])->name('settings.depositProfile');
+        Route::get('/get_deposit_profile_data', [SettingController::class, 'getDepositProfileData'])->name('settings.getDepositProfileData');
+        Route::post('/addDepositProfile', [SettingController::class, 'addDepositProfile'])->name('settings.addDepositProfile');
+        Route::put('/updateDepositProfileStatus', [SettingController::class, 'updateDepositProfileStatus'])->name('settings.updateDepositProfileStatus');
     });
 });
 

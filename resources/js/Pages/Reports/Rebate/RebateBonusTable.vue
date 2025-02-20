@@ -32,6 +32,7 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
+const rebateBonusCounts = ref();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -64,6 +65,7 @@ const loadLazyData = (event) => {
             totalRecords.value = results?.data?.total;
             totalBonusAmount.value = results?.totalBonusAmount;
             maxBonusAmount.value = results?.maxBonusAmount;
+            rebateBonusCounts.value = results?.rebateBonusCounts;
             isLoading.value = false;
 
         }, 100);
@@ -271,8 +273,10 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div class="flex flex-col">
-                            <span>{{ $t('public.no_data') }}</span>
+                        <div v-if="rebateBonusCounts === 0">
+                            <EmptyData
+                                :title="$t('public.no_data')"
+                            />
                         </div>
                     </template>
 
@@ -281,6 +285,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.rebate_bonus_loading_caption') }}</span>
                         </div>
                     </template>
 

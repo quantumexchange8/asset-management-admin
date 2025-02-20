@@ -21,10 +21,6 @@ import { usePage } from '@inertiajs/vue3';
 import EmptyData from "@/Components/EmptyData.vue";
 import { useLangObserver } from '@/Composables/localeObserver';
 
-const props = defineProps({
-    memberCounts: Number,
-});
-
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
@@ -32,6 +28,7 @@ const users = ref([]);
 const totalRecords = ref(0);
 const verifiedUser = ref();
 const unverifiedUser = ref();
+const memberCounts = ref();
 const {locale} = useLangObserver();
 
 //filteration type and methods
@@ -73,6 +70,7 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             const results = await response.json();
             users.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
+            memberCounts.value = results?.memberCounts;
             verifiedUser.value = results?.verifiedUser;
             unverifiedUser.value = results?.unverifiedUser;
             isLoading.value = false;

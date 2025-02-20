@@ -88,7 +88,8 @@ class MemberController extends Controller
 
             $users = $query->paginate($data['rows']);
 
-            $totalMember = $query->where('role', 'user')->count();
+            $memberCounts = (clone $query)
+                ->count();
 
             $verifiedUser = (clone $query)
                 ->where('kyc_status', 'verified')
@@ -108,7 +109,7 @@ class MemberController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $users,
-                'totalMember' => $totalMember,
+                'memberCounts' => $memberCounts,
                 'verifiedUser' => $verifiedUser,
                 'unverifiedUser' => $unverifiedUser,
             ]);
@@ -119,11 +120,7 @@ class MemberController extends Controller
 
     public function getPendingKyc()
     {
-        $pendingCounts = User::where('kyc_status', 'pending')
-            ->count();
-        return Inertia::render('Member/Listing/KycPending', [
-            'pendingKycCounts' => $pendingCounts,
-        ]);
+        return Inertia::render('Member/Listing/KycPending');
     }
 
     public function getPendingKycData(Request $request)
@@ -179,6 +176,9 @@ class MemberController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $pendingKycCounts = (clone $query)
+                ->count();
+
             $users->each(function ($user) {
                 $user->kyc_images = $user->getMedia('kyc_image')
                     ->map(function ($media) {
@@ -189,6 +189,7 @@ class MemberController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'pendingKycCounts' => $pendingKycCounts,
             ]);
         }
 

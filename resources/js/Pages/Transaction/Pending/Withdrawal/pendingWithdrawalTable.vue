@@ -19,10 +19,6 @@ import { FilterMatchMode } from '@primevue/core/api';
 import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 
-const props = defineProps({
-    pendingWithdrawalCounts: Number,
-});
-
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);

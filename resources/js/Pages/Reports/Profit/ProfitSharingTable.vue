@@ -23,6 +23,8 @@ import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
 import {useLangObserver} from "@/Composables/localeObserver.js";
+import { result } from "lodash";
+import EmptyData from "@/Components/EmptyData.vue";
 
 const exportStatus = ref(false);
 const isLoading = ref(false);
@@ -33,6 +35,7 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
+const profitSharingCounts = ref();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -66,6 +69,7 @@ const loadLazyData = (event) => {
             totalRecords.value = results?.data?.total;
             totalBonusAmount.value = results?.totalBonusAmount;
             maxBonusAmount.value = results?.maxBonusAmount;
+            profitSharingCounts.value = results?.profitSharingCounts;
             isLoading.value = false;
 
         }, 100);
@@ -224,8 +228,10 @@ watchEffect(() => {
                     </template>
 
                     <template #empty>
-                        <div class="flex flex-col">
-                            <span>{{ $t('public.no_data') }}</span>
+                        <div v-if="profitSharingCounts === 0">
+                            <EmptyData
+                                :title="$t('public.no_data')"
+                            />
                         </div>
                     </template>
 
@@ -234,6 +240,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.profit_sharing_loading_caption') }}</span>
                         </div>
                     </template>
 

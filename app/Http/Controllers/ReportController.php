@@ -71,6 +71,9 @@ class ReportController extends Controller
                 ->first()
                 ?->bonus_amount;
 
+            $profitSharingCounts = (clone $query)
+                ->count();
+
             $connections = $query->paginate($data['rows']);
 
             return response()->json([
@@ -78,6 +81,7 @@ class ReportController extends Controller
                 'data' => $connections,
                 'totalBonusAmount' => $totalBonusAmount,
                 'maxBonusAmount' => $maxBonusAmount ?? 0,
+                'profitSharingCounts' => $profitSharingCounts,
             ]);
         }
 
@@ -147,6 +151,9 @@ class ReportController extends Controller
                 ->first()
                 ?->bonus_amount;
 
+            $standardBonusCounts = (clone $query)
+                ->count();
+
             $connections = $query->paginate($data['rows']);
 
             return response()->json([
@@ -154,6 +161,7 @@ class ReportController extends Controller
                 'data' => $connections,
                 'totalBonusAmount' => $totalBonusAmount,
                 'maxBonusAmount' => $maxBonusAmount ?? 0,
+                'standardBonusCounts' => $standardBonusCounts,
             ]);
         }
 
@@ -223,6 +231,9 @@ class ReportController extends Controller
                 ->first()
                 ?->rebate;
 
+            $rebateBonusCounts = (clone $query)
+                ->count();
+
             $connections = $query->paginate($data['rows']);
 
             return response()->json([
@@ -230,6 +241,7 @@ class ReportController extends Controller
                 'data' => $connections,
                 'totalBonusAmount' => $totalBonusAmount,
                 'maxBonusAmount' => $maxBonusAmount ?? 0,
+                'rebateBonusCounts' => $rebateBonusCounts,
             ]);
         }
 

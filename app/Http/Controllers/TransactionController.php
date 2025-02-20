@@ -190,7 +190,6 @@ class TransactionController extends Controller
 
     public function getPendingDeposit()
     {
-
         return Inertia::render('Transaction/Pending/Deposit/PendingDeposit');
     }
 
@@ -407,8 +406,6 @@ class TransactionController extends Controller
                 'other' => trans('public.action'),
                 'value' => trans('public.reject_transaction')
             ])
-        ], [
-            'remarks' => trans('public.remarks')
         ]);
 
         $transaction = Transaction::find($request->transaction_id);

@@ -4,10 +4,6 @@ import PendingWithdrawalOverview from './PendingWithdrawalOverview.vue';
 import PendingWithdrawalTable from './pendingWithdrawalTable.vue';
 import { ref } from 'vue';
 
-const props = defineProps({
-    pendingWithdrawalCounts: Number,
-});
-
 const totalPendingAmount = ref(null);
 const pendingWithdrawalCounts = ref(null);
 
@@ -26,7 +22,6 @@ const handleOverview = (data) => {
             />
 
             <PendingWithdrawalTable 
-                :pendingWithdrawalCounts="pendingWithdrawalCounts"
                 @updatePendingWithdrawal="handleOverview"
             />
 

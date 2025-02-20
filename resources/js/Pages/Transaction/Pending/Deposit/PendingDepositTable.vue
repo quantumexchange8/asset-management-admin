@@ -19,10 +19,6 @@ import { FilterMatchMode } from '@primevue/core/api';
 import PendingDepositAction from './PendingDepositAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 
-const props = defineProps({
-    pendingDepositCounts: Number,
-});
-
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
@@ -171,15 +167,6 @@ const clearAll = () => {
 //clear global filter
 const clearFilterGlobal = () => {
     filters.value['global'].value = null;
-};
-
-//status severity
-const getSeverity = (status) => {
-    switch (status) {
-
-        case 'processing':
-            return 'info';
-    }
 };
 
 //export button

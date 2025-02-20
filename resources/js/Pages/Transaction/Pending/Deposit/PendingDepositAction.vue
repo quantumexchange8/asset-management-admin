@@ -203,13 +203,13 @@ const imagesToDisplay = computed(() => {
 
         <div v-if="dialogType === 'reject_transaction'" class="flex flex-col gap-1 self-stretch">
             <Divider />
-            <InputLabel for="remarks" value="Remarks" />
+            <InputLabel for="remarks" :value="$t('public.remarks')" />
             <Textarea 
                 id="remarks"
                 type="text"
                 v-model="form.remarks"
                 :invalid="!!form.errors.remarks"
-                placeholder="Reject Remarks"
+                :placeholder="$t('public.reject_remarks')"
                 class="block w-full"
                 autofocus
                 rows="5"

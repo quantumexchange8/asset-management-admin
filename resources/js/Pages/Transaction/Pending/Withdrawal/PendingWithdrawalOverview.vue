@@ -8,6 +8,7 @@ import { generalFormat } from '@/Composables/format';
 import dayjs from 'dayjs';
 import { onMounted, ref } from 'vue';
 import { IconBellDollar, IconClockDollar } from '@tabler/icons-vue';
+import EmptyData from '@/Components/EmptyData.vue';
 
 const props = defineProps({
     totalPendingAmount: Number,
@@ -109,6 +110,12 @@ const getSeverity = (status) => {
                 <div class="flex flex-col items-start gap-3 md:gap-5">
                     <span class="text-surface-700 dark:text-surface-300 font-semibold text-sm">{{ $t('public.recent_approval') }}</span>
                     <ScrollPanel style="width: 100%; height: 150px">
+                        <div v-if="recentApprovals.length <= 0">
+                            <EmptyData 
+                                :title="$t('public.no_data')"
+                                :message="$t('public.no_recent_transaction')"
+                            />
+                        </div>
                         <Timeline :value="recentApprovals">
                             <template #opposite="slotProps">
                                 <div class="flex flex-col"> 

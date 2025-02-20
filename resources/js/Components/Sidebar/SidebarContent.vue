@@ -12,7 +12,8 @@ import {
     IconHomeDollar,
     IconBusinessplan,
     IconCoin,
-    IconUserCog
+    IconUserCog,
+    IconAdjustmentsAlt
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -201,6 +202,16 @@ watchEffect(() => {
         >
             <template #icon>
                 <IconUserCog size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
+            title="deposit_profile"
+            :href="route('settings.depositProfile')"
+            :active="route().current('settings.depositProfile')"
+        >
+            <template #icon>
+                <IconAdjustmentsAlt size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 

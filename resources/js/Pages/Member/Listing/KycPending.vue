@@ -22,15 +22,12 @@ import EmptyData from '@/Components/EmptyData.vue';
 import {usePage} from "@inertiajs/vue3";
 import {useLangObserver} from "@/Composables/localeObserver.js";
 
-const props = defineProps({
-    pendingKycCounts: Number,
-})
-
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
 const users = ref([]);
 const totalRecords = ref(0);
+const pendingKycCounts = ref();
 const {locale} = useLangObserver();
 
 const filters = ref({
@@ -64,6 +61,7 @@ const loadLazyData = (event) => {
 
             users.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
+            pendingKycCounts.value = results?.pendingKycCounts;
             isLoading.value = false;
         }, 100);
     }  catch (e) {
@@ -252,7 +250,7 @@ watchEffect(() => {
                         <template #empty>
                             <div v-if="pendingKycCounts === 0">
                                 <EmptyData
-                                :title="$t('public.no_members_founded')"
+                                    :title="$t('public.no_members_founded')"
                                 />
                             </div>
                         </template>
@@ -262,6 +260,7 @@ watchEffect(() => {
                                 <ProgressSpinner
                                     strokeWidth="4"
                                 />
+                                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.pending_kyc_loading_caption') }}</span>
                             </div>
                         </template>
 

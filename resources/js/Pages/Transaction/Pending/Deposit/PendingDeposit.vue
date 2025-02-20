@@ -4,10 +4,6 @@ import PendingDepositTable from './PendingDepositTable.vue';
 import PendingDepositOverview from './PendingDepositOverview.vue';
 import { ref } from 'vue';
 
-const props = defineProps({
-    pendingDepositCounts: Number,
-});
-
 const totalPendingAmount = ref(null);
 const pendingDepositCounts = ref(null);
 
@@ -26,7 +22,6 @@ const handleOverview = (data) => {
             />
 
             <PendingDepositTable 
-                :pendingDepositCounts="pendingDepositCounts"
                 @updatePendingDeposit="handleOverview"
             />
 
