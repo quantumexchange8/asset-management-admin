@@ -232,4 +232,5 @@ return [
     "full_access" => "Full Access",
     "limited" => "Limited",
     "scope_of_permissions" => "Scope Of Permissions",
+    "enter_identity_number" => "Enter Identity Number",
 ];

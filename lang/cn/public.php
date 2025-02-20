@@ -232,4 +232,5 @@ return [
     "full_access" => "完全访问",
     "limited" => "受限",
     "scope_of_permissions" => "权限范围",
+    "enter_identity_number" => "输入身份证号码",
 ];

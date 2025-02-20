@@ -1,17 +1,13 @@
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Button from 'primevue/button';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
 import Tag from 'primevue/tag';
-import Select from 'primevue/select';
-import DatePicker from 'primevue/datepicker';
 import ProgressSpinner from 'primevue/progressspinner';
-import Popover from 'primevue/popover';
 import Card from 'primevue/card';
-import { IconXboxX, IconX, IconSearch, IconAdjustments } from '@tabler/icons-vue';
+import { IconXboxX, IconSearch } from '@tabler/icons-vue';
 import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import { FilterMatchMode } from '@primevue/core/api';
@@ -28,14 +24,9 @@ const dt = ref(null);
 const first = ref(0);
 const users = ref([]);
 const totalRecords = ref(0);
-const {locale} = useLangObserver();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    country: { value: null, matchMode: FilterMatchMode.EQUALS },
-    rank: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 const lazyParams = ref({});
@@ -82,65 +73,6 @@ const onFilter = (event) => {
     loadLazyData(event);
 };
 
-//Date Filter
-const selectedDate = ref([]);
-
-const clearDate = () => {
-    selectedDate.value = [];
-};
-
-watch(selectedDate, (newDateRange) => {
-    if (Array.isArray(newDateRange)) {
-        const [startDate, endDate] = newDateRange;
-        filters.value['start_date'].value = startDate;
-        filters.value['end_date'].value = endDate;
-
-        if (startDate !== null && endDate !== null) {
-            loadLazyData();
-        }
-    } else {
-        console.warn('Invalid date range format:', newDateRange);
-    }
-})
-
-const countries = ref();
-const loadingCountries = ref(false);
-
-const getCountries = async () => {
-    loadingCountries.value = true;
-    try {
-        const response = await axios.get('/get_countries');
-        countries.value = response.data.countries;
-    } catch (error) {
-        console.error('Error fetching countries:', error);
-    } finally {
-        loadingCountries.value = false;
-    }
-};
-
-const ranks = ref();
-const loadingRanks = ref(false);
-
-const getRanks = async () => {
-    loadingRanks.value = true;
-    try{
-        const response = await axios.get('/get_ranks');
-        ranks.value = response.data.ranks;
-    } catch (error){
-        console.error('Error fetching ranks:', error);
-    } finally {
-        loadingRanks.value = false;
-    }
-};
-
-//filter toggle
-const op = ref();
-const toggle = (event) => {
-    op.value.toggle(event);
-    getCountries();
-    getRanks();
-};
-
 onMounted(() => {
     lazyParams.value = {
         first: dt.value.first,
@@ -158,19 +90,6 @@ watch(
         loadLazyData();
     }, 300)
 )
-
-watch([filters.value['country'], filters.value['rank']], () => {
-    loadLazyData();
-});
-
-const clearAll = () => {
-    filters.value['global'].value = null;
-    filters.value['start_date'].value = null;
-    filters.value['end_date'].value = null;
-    filters.value['country'].value = null;
-    filters.value['rank'].value = null;
-    selectedDate.value = [];
-};
 
 const clearFilterGlobal = () => {
     filters.value['global'].value = null;
@@ -230,17 +149,6 @@ watchEffect(() => {
                                         <IconXboxX aria-hidden="true" :size="15" />
                                     </div>
                                 </IconField>
-
-                                <!-- filter button -->
-                                <Button
-                                    class="w-full md:w-28 flex gap-2"
-                                    outlined
-                                    @click="toggle"
-                                    size="small"
-                                >
-                                    <IconAdjustments :size="15"/>
-                                    <span class="text-sm">{{ $t('public.filter') }}</span>
-                                </Button>
                             </div>
                         </div>
                     </template>
@@ -307,103 +215,4 @@ watchEffect(() => {
             </div>
         </template>
     </Card>
-
-    <Popover ref="op">
-        <div class="flex flex-col gap-6 w-60">
-            <!-- Filter Date -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    {{ $t('public.filter_by_date' )}}
-                </div>
-                <div class="relative w-full">
-                    <DatePicker
-                        v-model="selectedDate"
-                        dateFormat="dd/mm/yy"
-                        selectionMode="range"
-                        placeholder="dd/mm/yyyy - dd/mm/yyyy"
-                        class="w-full"
-                    />
-                    <div
-                        v-if="selectedDate && selectedDate.length > 0"
-                        class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
-                        @click="clearDate"
-                    >
-                        <IconX :size="15" strokeWidth="1.5"/>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filter Country -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    {{ $t('public.filter_by_country' )}}
-                </div>
-                <Select
-                    v-model="filters['country'].value"
-                    :options="countries"
-                    optionLabel="name"
-                    :placeholder="$t('public.select_country')"
-                    filter
-                    :filter-fields="['name', 'iso2']"
-                    :loading="loadingCountries"
-                    class="w-full"
-                >
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value" class="flex items-center">
-                            <div class="leading-tight">{{ JSON.parse(slotProps.value.translations)[locale] || slotProps.value.name }}</div>
-                        </div>
-                        <span v-else class="text-surface-400 dark:text-surface-500">{{ slotProps.placeholder }}</span>
-                    </template>
-                    <template #option="slotProps">
-                        <div class="flex items-center gap-1">
-                            <img
-                                v-if="slotProps.option.iso2"
-                                :src="`https://flagcdn.com/w40/${slotProps.option.iso2.toLowerCase()}.png`"
-                                :alt="slotProps.option.iso2"
-                                width="18"
-                                height="12"
-                            />
-                            <div class="max-w-[200px] truncate">{{ JSON.parse(slotProps.option.translations)[locale] || slotProps.option.name }}</div>
-                        </div>
-                    </template>
-                </Select>
-            </div>
-
-            <!-- Filter Rank -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    {{ $t('public.filter_by_rank' )}}
-                </div>
-                <Select
-                    v-model="filters['rank'].value"
-                    :options="ranks"
-                    optionLabel="rank_name"
-                    :placeholder="$t('public.select_rank')"
-                    filter
-                    :filter-fields="['rank_name']"
-                    :loading="loadingRanks"
-                    class="w-full"
-                >
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value" class="flex items-center">
-                            {{ slotProps.value.rank_name === 'member' ? $t(`public.${slotProps.value.rank_name}`) : slotProps.value.rank_name }}
-                        </div>
-                        <span v-else>{{ slotProps.placeholder }}</span>
-                    </template>
-                    <template #option="slotProps">
-                        <div>{{ slotProps.option.rank_name === 'member' ? $t(`public.${slotProps.option.rank_name}`) : slotProps.option.rank_name }}</div>
-                    </template>
-                </Select>
-            </div>
-
-            <Button
-                type="button"
-                outlined
-                class="w-full"
-                @click="clearAll"
-            >
-                {{ $t('public.clear_all') }}
-            </Button>
-        </div>
-    </Popover>
 </template>

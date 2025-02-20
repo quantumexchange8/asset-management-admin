@@ -49,11 +49,6 @@ class SettingController extends Controller
                 });
             }
 
-            // Filter role
-            if ($data['filters']['rank']['value']) {
-                $query->where('setting_rank_id', $data['filters']['rank']['value']);
-            }
-
             if ($data['sortField'] && $data['sortOrder']) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
                 $query->orderBy($data['sortField'], $order);

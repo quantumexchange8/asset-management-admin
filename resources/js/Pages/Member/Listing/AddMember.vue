@@ -181,14 +181,14 @@ const closeDialog = () => {
                             <template #icon>
                                 <IconFlag :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select 
-                                v-model="selectedCountry" 
-                                :options="countries" 
-                                :loading="loadingCountries" 
-                                optionLabel="name" 
-                                :placeholder="$t('public.select_country')" 
-                                class="pl-7 block w-full" 
-                                :invalid="!!form.errors.country" 
+                            <Select
+                                v-model="selectedCountry"
+                                :options="countries"
+                                :loading="loadingCountries"
+                                optionLabel="name"
+                                :placeholder="$t('public.select_country')"
+                                class="pl-7 block w-full"
+                                :invalid="!!form.errors.country"
                                 :filter-fields="['name', 'iso2']"
                                 filter
                             >
@@ -218,14 +218,14 @@ const closeDialog = () => {
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel :value="$t('public.phone_number')" for="phone"/>
                         <div class="flex gap-2 items-center self-stretch relative">
-                            <Select 
-                                v-model="selectedPhoneCode" 
-                                :options="countries" 
-                                :loading="loadingCountries" 
-                                optionLabel="name" 
-                                placeholder="60" 
-                                class="w-[100px]" 
-                                :invalid="!!form.errors.dial_code" 
+                            <Select
+                                v-model="selectedPhoneCode"
+                                :options="countries"
+                                :loading="loadingCountries"
+                                optionLabel="name"
+                                placeholder="60"
+                                class="w-[100px]"
+                                :invalid="!!form.errors.dial_code"
                                 filter
                                 :filterFields="['name', 'iso2', 'phone_code']"
                             >
@@ -266,7 +266,7 @@ const closeDialog = () => {
                             <template #icon>
                                 <IconUser :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText id="name" type="text" class="pl-10 block w-full" v-model="form.identity_number" :placeholder="$t('public.enter_identity_number')" :invalid="!!form.errors.identity_number" autofocus/>
+                            <InputText id="identity_number" type="text" class="pl-10 block w-full" v-model="form.identity_number" :placeholder="$t('public.enter_identity_number')" :invalid="!!form.errors.identity_number" autofocus/>
                         </InputIconWrapper>
                         <InputError :message="form.errors.identity_number"/>
                     </div>
