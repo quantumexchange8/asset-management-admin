@@ -16,18 +16,19 @@ import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
-import PendingDepositAction from './PendingDepositAction.vue';
+import { usePage } from '@inertiajs/vue3';
+import Import from './Import.vue';
 import EmptyData from '@/Components/EmptyData.vue';
-import {generalFormat} from "@/Composables/format.js";
+import DepositHistoryAction from './DepositHistoryAction.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
-const pendingDeposit = ref([]);
-const totalRecords= ref(0);
-const totalPendingAmount = ref();
-const pendingDepositCounts = ref();
-const {formatAmount} = generalFormat();
+const depositHistory = ref([]);
+const totalRecords = ref(0);
+const depositHistoryCounts = ref();
+const successAmount = ref();
+const rejectAmount = ref();
 
 //filteration type and methods
 const filters = ref({
@@ -35,6 +36,7 @@ const filters = ref({
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     fund_type: { value: null, matchMode: FilterMatchMode.EQUALS },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 //get user data
@@ -43,7 +45,7 @@ const lazyParams = ref({}); //track table parameters that need to be send to bac
 const loadLazyData = (event) => { // event will retrieve from the datatable attribute
     isLoading.value = true;
 
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; lazyParams.value.filters = filters.value;
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value }; //...lazyParams.value(retain existing properties after update);
 
     try {
         setTimeout(async () => {
@@ -58,19 +60,20 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             };
 
             //send sorting/filter detail to BE
-            const url = route('transaction.pending.getPendingDepositData', params);
+            const url = route('transaction.history.getDepositHistoryData', params);
             const response = await fetch(url);
 
             //BE send back result back to FE
             const results = await response.json();
-            pendingDeposit.value = results?.data?.data;
+            depositHistory.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
-            totalPendingAmount.value = results?.totalPendingAmount;
-            pendingDepositCounts.value = results?.pendingDepositCounts;
+            depositHistoryCounts.value = results?.depositHistoryCounts;
+            successAmount.value = results?.successAmount;
+            rejectAmount.value = results?.rejectAmount;
             isLoading.value = false;
         }, 100);
     } catch (e) {
-        pendingDeposit.value = [];
+        depositHistory.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
@@ -92,15 +95,16 @@ const onFilter = (event) => {
     loadLazyData(event);
 };
 
-const emit = defineEmits(['updatePendingDeposit']);
+const emit = defineEmits(['updateDepositHistory']);
 
 // Emit the totals whenever they change
-watch([totalPendingAmount, pendingDepositCounts], () => {
-    emit('updatePendingDeposit', {
-        totalPendingAmount: totalPendingAmount.value,
-        pendingDepositCounts: pendingDepositCounts.value,
+watch([successAmount, rejectAmount], () => {
+    emit('updateDepositHistory', {
+        successAmount: successAmount.value,
+        rejectAmount: rejectAmount.value,
     });
 });
+
 
 //Date Filter
 const selectedDate = ref([]);
@@ -125,6 +129,9 @@ watch(selectedDate, (newDateRange) => {
 
 //filter fund type
 const fundType = ref(['demo_fund','real_fund']);
+
+//filter status
+const status = ref(['success','rejected']);
 
 //filter toggle
 const op = ref();
@@ -153,7 +160,7 @@ watch(
 )
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
-watch([filters.value['fund_type']], () => {
+watch([filters.value['fund_type'], filters.value['status']], () => {
     loadLazyData()
 });
 
@@ -162,6 +169,7 @@ const clearAll = () => {
     filters.value['global'].value = null;
     filters.value['start_date'].value = null;
     filters.value['end_date'].value = null;
+    filters.value['status'].value = null;
     filters.value['fund_type'].value = null;
     selectedDate.value = [];
 };
@@ -169,6 +177,18 @@ const clearAll = () => {
 //clear global filter
 const clearFilterGlobal = () => {
     filters.value['global'].value = null;
+};
+
+//status severity
+const getSeverity = (status) => {
+    switch (status) {
+
+        case 'success':
+            return 'success';
+
+        case 'rejected':
+            return 'danger';
+    }
 };
 
 //export button
@@ -190,7 +210,7 @@ const exportDeposit = () => {
         exportStatus: true,
     };
 
-    const url = route('transaction.pending.getPendingDepositData', params);
+    const url = route('transaction.history.getDepositHistoryData', params);
 
     try {
         window.location.href = url;
@@ -202,17 +222,19 @@ const exportDeposit = () => {
     }
 };
 
-const refreshTable = () => {
-    loadLazyData();
-};
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        loadLazyData();
+    }
+});
 </script>
 
 <template>
     <Card class="w-full">
         <template #content>
-            <div class="w-full" >
+            <div class="w-full">
                 <DataTable
-                    :value="pendingDeposit"
+                    :value="depositHistory"
                     lazy
                     paginator
                     removableSort
@@ -229,7 +251,7 @@ const refreshTable = () => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['user.name' ,'transaction_number']"
+                    :globalFilterFields="['name' ,'transaction_number']"
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
@@ -270,22 +292,22 @@ const refreshTable = () => {
 
                             <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                 <!-- Export button -->
-<!--                                <Button-->
-<!--                                    class="w-full md:w-auto flex justify-center items-center"-->
-<!--                                    @click="exportDeposit"-->
-<!--                                    :disabled="exportTable==='yes'"-->
-<!--                                >-->
-<!--                                    <span class="pr-1">{{ $t('public.export') }}</span>-->
-<!--                                    <IconDownload size="16" stroke-width="1.5"/>-->
-<!--                                </Button>-->
+                                <Button
+                                    class="w-full md:w-auto flex justify-center items-center"
+                                    @click="exportDeposit"
+                                    :disabled="exportTable==='yes'"
+                                >
+                                    <span class="pr-1">{{ $t('public.export') }}</span>
+                                    <IconDownload size="16" stroke-width="1.5"/>
+                                </Button>
                             </div>
                         </div>
                     </template>
 
                     <template #empty>
-                        <div v-if="pendingDepositCounts === 0">
+                        <div v-if="depositHistoryCounts === 0">
                             <EmptyData
-                            :title="$t('public.no_deposit_founded')"
+                                :title="$t('public.no_deposit_founded')"
                             />
                         </div>
                     </template>
@@ -300,20 +322,27 @@ const refreshTable = () => {
                         </div>
                     </template>
 
-                    <template v-if="pendingDeposit?.length > 0">
+                    <template v-if="depositHistory?.length > 0">
                         <Column
-                            field="created_at"
+                            field="approval_at"
+                             class="min-w-40"
+                            dataType="date"
                             sortable
-                            :header="$t('public.date')"
-                            class="min-w-40"
                         >
+                            <template #header>
+                                <span class="block">{{ $t('public.approved_at') }}</span>
+                            </template>
                             <template #body="{ data }">
-                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
                             </template>
                         </Column>
 
                         <Column
                             field="user_id"
+                            style="min-width: 12rem"
                             sortable
                         >
                             <template #header>
@@ -349,8 +378,8 @@ const refreshTable = () => {
 
                         <Column
                             field="transaction_number"
-                            sortable
                             class="min-w-60"
+                            sortable
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.transaction_number') }}</span>
@@ -363,6 +392,7 @@ const refreshTable = () => {
                         <Column
                             field="to_wallet_id"
                             :header="$t('public.wallet')"
+                            class="min-w-40"
                         >
                             <template #body="{ data }">
                                 {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
@@ -371,22 +401,52 @@ const refreshTable = () => {
 
                         <Column
                             field="amount"
-                            :header="$t('public.amount')"
+                            class="min-w-40"
+                            dataType="numeric"
                             sortable
                         >
+                            <template #header>
+                                <span class="block">{{ $t('public.amount') }}</span>
+                            </template>
                             <template #body="{ data }">
-                                ${{ formatAmount(data.amount) }}
+                                {{ data.amount }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="fund_type"
+                            class="min-w-40"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.fund_type') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                {{ $t(`public.${data.fund_type}`) }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="status"
+                            class="min-w-40"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.status') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
                             </template>
                         </Column>
 
                         <Column
                             field="action"
-                            :header="$t('public.action')"
+                            alignFrozen="right"
+                            frozen
                         >
-                            <template #body="{data}">
-                                <PendingDepositAction
-                                    :pending="data"
-                                    @pendingDepositActionCompleted="refreshTable"
+                            <template #body="{ data }">
+                                <DepositHistoryAction 
+                                    :depositHistory="data"
                                 />
                             </template>
                         </Column>
@@ -435,6 +495,24 @@ const refreshTable = () => {
                 >
                     <template #option="slotProps">
                         {{ $t(`public.${slotProps.option}`) }}
+                    </template>
+                </Select>
+            </div>
+
+                <!-- Filter status -->
+                <div class="flex flex-col gap-2 items-center self-stretch">
+                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                    {{ $t('public.filter_by_status') }}
+                </div>
+                <Select
+                    v-model="filters['status'].value"
+                    :options="status"
+                    :placeholder="$t('public.select_status')"
+                    class="w-full"
+                    showClear
+                >
+                    <template #option="slotProps">
+                        <Tag :value="$t(`public.${slotProps.option}`)" :severity="getSeverity(slotProps.option)" />
                     </template>
                 </Select>
             </div>

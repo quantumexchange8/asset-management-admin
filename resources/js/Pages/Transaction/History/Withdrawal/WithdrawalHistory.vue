@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
 import EmptyData from '@/Components/EmptyData.vue';
+import { generalFormat } from '@/Composables/format';
 
 const props = defineProps({
     pendingWithdrawalCounts: Number,
@@ -29,6 +30,7 @@ const dt = ref(null);
 const first = ref(0);
 const withdrawalHistory = ref([]);
 const totalRecords= ref(0);
+const {formatAmount} = generalFormat();
 
 //filteration type and methods
 const filters = ref({
@@ -314,7 +316,7 @@ watchEffect(() => {
                         <template v-if="withdrawalHistory?.length > 0">
                             <Column
                                 field="transaction_number"
-                                style="min-width: 12rem"
+                                style="min-width: 17rem"
                                 sortable
                             >
                                 <template #header>
@@ -326,7 +328,7 @@ watchEffect(() => {
                             </Column>
 
                             <Column
-                                field="name"
+                                field="user_id"
                                 style="min-width: 12rem"
                                 sortable
                             >
@@ -335,20 +337,30 @@ watchEffect(() => {
                                 </template>
                                 <template #body="{ data }">
                                     {{ data.user.name }}
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ data.user.email }}
+                                    </div>
                                 </template>
                             </Column>
 
                             <Column
-                                field="amount"
+                                field="user.upline"
                                 style="min-width: 12rem"
-                                dataType="numeric"
-                                sortable
                             >
                                 <template #header>
-                                    <span class="block">{{ $t('public.amount') }}</span>
+                                    <span class="block">{{ $t('public.upline') }}</span>
                                 </template>
                                 <template #body="{ data }">
-                                    {{ data.amount }}
+                                    <div
+                                        v-if="data.user.upline_id"
+                                        class="flex flex-col"
+                                    >
+                                        <span class="text-surface-950 dark:text-white">{{ data.user.upline.name }}</span>
+                                        <span class="text-surface-500">{{ data.user.upline.email }}</span>
+                                    </div>
+                                    <div v-else>
+                                        -
+                                    </div>
                                 </template>
                             </Column>
 
@@ -379,15 +391,73 @@ watchEffect(() => {
                             </Column>
 
                             <Column
-                                field="status"
+                                field="to_payment_account_name"
                                 style="min-width: 12rem"
                                 sortable
                             >
                                 <template #header>
-                                    <span class="block">{{ $t('public.status') }}</span>
+                                    <span class="block">{{ $t('public.to') }}</span>
                                 </template>
                                 <template #body="{ data }">
-                                    <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
+                                    {{ data.to_payment_account_name }}
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="to_payment_platform"
+                                style="min-width: 12rem"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">{{ $t('public.method') }}</span>
+                                </template>
+                                <template #body="{ data }">
+                                    <Tag 
+                                        :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
+                                        :value="$t(`public.${data.to_payment_platform}`)"
+                                    />
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="amount"
+                                style="min-width: 12rem"
+                                dataType="numeric"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">{{ $t('public.amount') }}</span>
+                                </template>
+                                <template #body="{ data }">
+                                    $ {{ formatAmount(data.amount ?? 0) }}
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="transaction_charges"
+                                style="min-width: 12rem"
+                                dataType="numeric"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">{{ $t('public.fee') }}</span>
+                                </template>
+                                <template #body="{ data }">
+                                    <span class="text-red-500">  $ {{ data.transaction_charges || '-'}}</span>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="transaction_amount"
+                                style="min-width: 12rem"
+                                dataType="numeric"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">{{ $t('public.receive') }}</span>
+                                </template>
+                                <template #body="{ data }">
+                                    $ {{ data.transaction_amount || '-'}}
                                 </template>
                             </Column>
 
@@ -405,6 +475,19 @@ watchEffect(() => {
                                     <div class="text-xs text-gray-500 mt-1">
                                         {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
                                     </div>
+                                </template>
+                            </Column>
+                           
+                            <Column
+                                field="status"
+                                style="min-width: 12rem"
+                                sortable
+                            >
+                                <template #header>
+                                    <span class="block">{{ $t('public.status') }}</span>
+                                </template>
+                                <template #body="{ data }">
+                                    <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
                                 </template>
                             </Column>
                         </template>

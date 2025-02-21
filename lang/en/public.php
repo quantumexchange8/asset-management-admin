@@ -291,4 +291,9 @@ return [
     "txn_hash" => "Txn Hash",
     "toast_approve_transaction_success" => "Transaction approved successfully",
     "toast_reject_transaction_success" => "Transaction rejected successfully",
+    "success_amount" => "Success Amount",
+    "reject_amount" => "Rejected Amount",
+    "top_three_user_deposit" => "Top 3 User Deposit",
+
+    "copied" => "Copied"
 ];

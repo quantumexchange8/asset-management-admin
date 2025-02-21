@@ -133,6 +133,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
             Route::get('/get_deposit_history', [TransactionController::class, 'getDepositHistory'])->name('transaction.history.getDepositHistory');
             Route::get('/get_deposit_history_data', [TransactionController::class, 'getDepositHistoryData'])->name('transaction.history.getDepositHistoryData');
             Route::post('/import-deposit-history', [TransactionController::class, 'importDepositHistory'])->name('transaction.history.importDepositHistory');
+            Route::get('/get_highest_deposit', [TransactionController::class, 'getHighestDeposit'])->name('transaction.history.getHighestDeposit');
 
             Route::get('/get_withdrawal_history', [TransactionController::class, 'getWithdrawalHistory'])->name('transaction.history.getWithdrawalHistory');
             Route::get('/get_withdrawal_history_data', [TransactionController::class, 'getWithdrawalHistoryData'])->name('transaction.history.getWithdrawalHistoryData');

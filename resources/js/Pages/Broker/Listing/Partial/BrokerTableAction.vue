@@ -5,8 +5,6 @@ import TieredMenu from "primevue/tieredmenu";
 import Dialog from "primevue/dialog";
 import {
     IconDotsVertical,
-    IconId,
-    IconChevronRight,
     IconEdit
 } from "@tabler/icons-vue";
 import EditBrokerInfo from "../Detail/EditBrokerInfo.vue";
@@ -26,7 +24,6 @@ const items = ref([
         label: 'edit',
         icon: h(IconEdit),
         command: () => {
-            visible.value = true;
             dialogType.value = 'edit'
         },
     },

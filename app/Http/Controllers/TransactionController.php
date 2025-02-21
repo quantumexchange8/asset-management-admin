@@ -10,6 +10,7 @@ use App\Models\BrokerConnection;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
@@ -22,13 +23,7 @@ class TransactionController extends Controller
     {
         Gate::authorize('access-deposit-history', Transaction::class);
 
-        $pendingCounts = Transaction::where('transaction_type', 'deposit')
-            ->whereNot('status', 'processing')
-            ->count();
-
-        return Inertia::render('Transaction/History/Deposit/DepositHistory', [
-            'pendingDepositCounts' => $pendingCounts,
-        ]);
+        return Inertia::render('Transaction/History/Deposit/DepositHistory');
     }
 
     public function getDepositHistoryData(Request $request)
@@ -42,11 +37,12 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
+                    'user.upline:id,name,email',
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'deposit')
-                ->where('status', 'success');
+                ->whereNot('status', 'processing');
 
             //global filter
             if (!empty($data['filters']['global']['value'])) {
@@ -92,26 +88,70 @@ class TransactionController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $users->each(function ($transaction) {
+                $transaction->payment_slips = $transaction->getMedia('payment_slips')
+                    ->map(function ($media) {
+                        return $media->getUrl();
+                    });
+            });
+
+            $successAmount = (clone $query)
+                ->where('status', 'success')
+                ->sum('transaction_amount');
+
+            $rejectAmount = (clone $query)
+                ->where('status', 'rejected')
+                ->sum('transaction_amount');
+
+            $depositHistoryCounts = (clone $query)
+                ->count();
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'depositHistoryCounts' => $depositHistoryCounts,
+                'successAmount' => $successAmount,
+                'rejectAmount' => $rejectAmount,
             ]);
         }
 
         return response()->json(['success' => false, 'data' => []]);
     }
 
+    public function getHighestDeposit()
+    {
+        $topUsers = Transaction::select(
+            'user_id',
+            DB::raw('SUM(amount) as total_deposit') // Sum the deposit amounts
+        )
+            ->where('transaction_type', 'deposit')
+            ->where('status', 'success')
+            ->groupBy('user_id')
+            ->orderByDesc('total_deposit') // Order by highest total deposit amount
+            ->limit(3)
+            ->with([
+                'user:id,name',
+                'user.media'
+            ])
+            ->get();
+
+        $transactionQuery = Transaction::where('transaction_type', 'deposit');
+
+        $totalSuccessAmount = (clone $transactionQuery)
+                ->where('status', 'success')
+                ->sum('transaction_amount');
+
+        return response()->json([
+            'topUsers' => $topUsers,
+            'totalSuccessAmount' => $totalSuccessAmount,
+        ]);
+    }
+
     public function getWithdrawalHistory()
     {
         Gate::authorize('access-withdrawal-history', Transaction::class);
 
-        $pendingCounts = Transaction::where('transaction_type', 'withdrawal')
-            ->whereNot('status', 'processing')
-            ->count();
-
-        return Inertia::render('Transaction/History/Withdrawal/WithdrawalHistory', [
-            'pendingWithdrawalCounts' => $pendingCounts,
-        ]);
+        return Inertia::render('Transaction/History/Withdrawal/WithdrawalHistory');
     }
 
     public function getWithdrawalHistoryData(Request $request)
@@ -125,11 +165,12 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
+                    'user.upline:id,name,email',
                     'from_wallet:id,type,address,currency_symbol',
                     'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'withdrawal')
-                ->where('status', 'success');
+                ->whereNot('status', 'processing');
 
 
             //global filter

@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
+import { generalFormat } from '@/Composables/format';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -26,6 +27,7 @@ const pendingWithdrawal = ref([]);
 const totalRecords= ref(0);
 const totalPendingAmount = ref();
 const pendingWithdrawalCounts = ref();
+const {formatAmount} = generalFormat();
 
 //filteration type and methods
 const filters = ref({
@@ -347,9 +349,15 @@ const refreshTable = () => {
                                 <span class="block">{{ $t('public.upline') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.user.upline?.name }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ data.user.upline?.email }}
+                                <div
+                                    v-if="data.user.upline_id"
+                                    class="flex flex-col"
+                                >
+                                    <span class="text-surface-950 dark:text-white">{{ data.user.upline.name }}</span>
+                                    <span class="text-surface-500">{{ data.user.upline.email }}</span>
+                                </div>
+                                <div v-else>
+                                    -
                                 </div>
                             </template>
                         </Column>
@@ -376,12 +384,13 @@ const refreshTable = () => {
                                 <span class="block">{{ $t('public.from') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ $t(`public.${data.from_wallet?.type}`) || '-'}}
+                                {{ data.from_wallet?.type ? $t(`public.${data.from_wallet.type}`) : '-' }}
                             </template>
+
                         </Column>
 
                         <Column
-                            field=""
+                            field="to_payment_account_name"
                             style="min-width: 12rem"
                             sortable
                         >
@@ -389,12 +398,12 @@ const refreshTable = () => {
                                 <span class="block">{{ $t('public.to') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.user.name }}
+                                {{ data.to_payment_account_name || '-'}}
                             </template>
                         </Column>
 
                         <Column
-                            field="payment_method"
+                            field="to_payment_platform"
                             style="min-width: 12rem"
                             sortable
                         >
@@ -402,7 +411,10 @@ const refreshTable = () => {
                                 <span class="block">{{ $t('public.method') }}</span>
                             </template>
                             <template #body="{ data }">
-                                crypto
+                                <Tag 
+                                    :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
+                                    :value="$t(`public.${data.to_payment_platform}`)"
+                                />
                             </template>
                         </Column>
 
@@ -416,7 +428,7 @@ const refreshTable = () => {
                                 <span class="block">{{ $t('public.amount') }}</span>
                             </template>
                             <template #body="{ data }">
-                               $ {{ data.amount }}
+                               $ {{ formatAmount(data.amount ?? 0) }}
                             </template>
                         </Column>
 
@@ -467,7 +479,7 @@ const refreshTable = () => {
 
                         <Column
                                 field="action"
-                                header="action"
+                                :header="$t('public.action')"
                             >
                                 <template #body="{data}">
                                     <PendingWithdrawalAction

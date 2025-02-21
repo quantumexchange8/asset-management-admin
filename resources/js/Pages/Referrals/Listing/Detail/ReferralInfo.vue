@@ -26,7 +26,6 @@ const getSeverity = (status) => {
 
 <template>
     <div class="flex flex-col lg:flex-row items-center w-full gap-5 self-stretch">
-    
         <Card class="w-full self-stretch relative">
             <template #content>
                 <div class="flex flex-col gap-5 self-stretch">

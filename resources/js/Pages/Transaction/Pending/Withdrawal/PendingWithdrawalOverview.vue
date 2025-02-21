@@ -92,7 +92,7 @@ const getSeverity = (status) => {
                             </div>
 
                             <div v-else class="text-xl">
-                                ${{ formatAmount(props.totalPendingAmount ?? 0) }}
+                                $ {{ formatAmount(props.totalPendingAmount ?? 0) }}
                             </div>
                         </div>
 

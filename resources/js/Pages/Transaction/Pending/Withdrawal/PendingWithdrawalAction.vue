@@ -10,6 +10,7 @@ import InputError from '@/Components/InputError.vue';
 import { ref, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
+import { generalFormat } from '@/Composables/format';
 
 const props = defineProps({
     pending: Object,
@@ -18,6 +19,7 @@ const props = defineProps({
 const toast = useToast();
 const visible = ref(false);
 const dialogType = ref('');
+const {formatAmount} = generalFormat();
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -62,6 +64,9 @@ const submitForm = () => {
     });
 }
 
+const closeDialog = () => {
+    visible.value = false
+}
 </script>
 
 <template>
@@ -96,106 +101,130 @@ const submitForm = () => {
     <Dialog
         v-model:visible="visible"
         modal
-    class="dialog-xs md:dialog-md"
+        class="dialog-xs md:dialog-md"
     >
-    <template #header>
-        <div class="flex items-center gap-4">
-            <div class="text-xl font-bold">
-                {{ $t(`public.${dialogType}`) }}
-            </div>
-        </div>
-    </template>
-
-    <div class="grid gap-2 py-2">
-        <!-- User Info Section (Name, Email, Amount) -->
-        <div class="flex justify-between">
-            <div class="text-sm">
-                <div>{{ props.pending.user.name }}</div>
-                <div class="text-xs text-gray-500 mt-1">
-                    {{ props.pending.user.email }}
+        <template #header>
+            <div class="flex items-center gap-4">
+                <div class="text-xl font-bold">
+                    {{ $t(`public.${dialogType}`) }}
                 </div>
             </div>
-            <div class="text-lg">
-                <div>
-                    {{ props.pending.from_wallet.currency_symbol }}
-                    {{ props.pending.amount }}
+        </template>
+
+        <div class="flex flex-col items-center gap-4 divide-y dark:divide-surface-700 self-stretch">
+            <div class="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch w-full">
+                <div class="flex flex-col items-start w-full">
+                    <span class="text-surface-950 dark:text-white font-medium">{{ pending.user.name }}</span>
+                    <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
+                </div>
+                <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
+                    $ {{ formatAmount(pending.amount) }}
                 </div>
             </div>
-        </div>
 
-        <Divider />
-
-        <!-- Requested Date, Transaction Number, To, Upline Section -->
-        <div class="flex flex-col gap-1 self-stretch">
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">
-                    {{ $t('public.request_date') }}:
+            <div class="flex flex-col gap-3 items-start w-full pt-4">
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.request_date') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ dayjs(pending.approval_at).format('DD/MM/YYYY HH:mm:ss') }}
+                    </div>
                 </div>
-                <div>
-                    {{ dayjs(props.pending.approval_at).format('YYYY-MM-DD') }}
-                    {{ dayjs(props.pending.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.transaction_number') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ pending.transaction_number }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.wallet') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ pending.from_wallet?.type ? $t(`public.${pending.from_wallet.type}`) : '-' }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.fee') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        $ {{ formatAmount(pending.transaction_charges ?? 0) }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.receive') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        $ {{ formatAmount(pending.transaction_amount ?? 0) }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.to') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ props.pending.user.name || '-' }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.upline') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ props.pending.user.upline?.name || '-' }}
+                        <span class="text-surface-500">
+                            {{ props.pending.user.upline?.email }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.transaction_number') }}:</div>
-                <div>{{ props.pending.transaction_number }}</div>
+
+            <div v-if="dialogType === 'reject_transaction'"  class="flex flex-col items-start gap-1 self-stretch pt-4">
+                <InputLabel for="remarks" :value="$t('public.remarks')" />
+                <Textarea
+                    id="remarks"
+                    type="text"
+                    v-model="form.remarks"
+                    :invalid="!!form.errors.remarks"
+                    :placeholder="$t('public.reject_remarks')"
+                    class="block w-full"
+                    autofocus
+                    rows="5"
+                    cols="30"
+                />
+                <InputError :message="form.errors.remarks" />
             </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.wallet') }}:</div>
-                <div>{{ $t(`public.${props.pending.from_wallet.type}`) }}</div>
-            </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.fee') }}:</div>
-                <div>{{ props.pending.transaction_charges || '-' }}</div>
-            </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.receive') }}:</div>
-                <div>$ {{ props.pending.transaction_amount || '-' }}</div>
-            </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.to') }}:</div>
-                <div>{{ props.pending.user.name || '-' }}</div>
-            </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.upline') }}:</div>
-                <div>{{ props.pending.user.upline?.name || '-' }} ({{ props.pending.user.upline?.email }})</div>
+
+            <div class="pt-5 flex gap-3 justify-end items-center self-stretch w-full">
+                <Button
+                    type="button"
+                    :label="$t('public.cancel')"
+                    severity="secondary"
+                    variant="outlined"
+                    class="px-3 w-full md:w-auto"
+                    :disabled="form.processing"
+                    @click="closeDialog"
+                />
+
+                <Button
+                    type="submit"
+                    class="px-3 w-full md:w-auto"
+                    :label="$t('public.confirm')"
+                    :disabled="form.processing"
+                    @click.prevent="submitForm"
+                />
             </div>
         </div>
-
-        <div v-if="dialogType === 'reject_transaction'"  class="flex flex-col gap-1 self-stretch">
-            <Divider />
-            <InputLabel for="remarks" :value="$t('public.remarks')" />
-            <Textarea
-                id="remarks"
-                type="text"
-                v-model="form.remarks"
-                :invalid="!!form.errors.remarks"
-                :placeholder="$t('public.reject_remarks')"
-                class="block w-full"
-                autofocus
-                rows="5"
-                cols="30"
-            />
-            <InputError :message="form.errors.remarks" />
-        </div>
-
-        <div class="flex justify-center mt-3">
-            <Button
-                severity="secondary"
-                class="text-center mr-3"
-                @click="visible = false"
-            >
-                {{ $t('public.cancel') }}
-            </Button>
-            <Button
-                class="text-center"
-                :disabled="form.processing"
-                @click.prevent="submitForm"
-            >
-                {{ $t('public.submit') }}
-            </Button>
-        </div>
-    </div>
-</Dialog>
-
+    </Dialog>
 </template>

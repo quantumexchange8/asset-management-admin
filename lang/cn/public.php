@@ -292,4 +292,9 @@ return [
     "txn_hash" => "交易哈希",
     "toast_approve_transaction_success" => "交易批准成功",
     "toast_reject_transaction_success" => "交易拒绝成功",
+    "success_amount" => "成功金额",
+    "reject_amount" => "被拒金额",
+    "top_three_user_deposit" => "前三名用户存款",
+    "copied" => "已复制",
+
 ];
