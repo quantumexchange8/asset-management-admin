@@ -6,9 +6,10 @@ import ScrollPanel from 'primevue/scrollpanel';
 import Tag from 'primevue/tag';
 import { generalFormat } from '@/Composables/format';
 import dayjs from 'dayjs';
-import { onMounted, ref } from 'vue';
+import {onMounted, ref, watchEffect} from 'vue';
 import { IconBellDollar, IconClockDollar } from '@tabler/icons-vue';
 import EmptyData from '@/Components/EmptyData.vue';
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     totalPendingAmount: Number,
@@ -47,6 +48,11 @@ const getSeverity = (status) => {
     }
 };
 
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        getRecentApproval();
+    }
+});
 </script>
 
 <template>
@@ -63,11 +69,11 @@ const getSeverity = (status) => {
                                 <div v-if="isLoading">
                                     <Skeleton width="5rem" height="2rem"></Skeleton>
                                 </div>
-    
+
                                 <div v-else>
                                     {{ props.pendingDepositCounts }} {{ $t('public.deposit') }}
                                 </div>
-    
+
                             </div>
                         </div>
                         <div class="flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 w-[72px] h-[72px]">
@@ -78,7 +84,7 @@ const getSeverity = (status) => {
                     </div>
                 </template>
             </Card>
-            
+
             <Card>
                 <template #content>
                     <div class="flex justify-between items-center">
@@ -111,22 +117,22 @@ const getSeverity = (status) => {
                     <span class="text-surface-700 dark:text-surface-300 font-semibold text-sm">{{ $t('public.recent_approval') }}</span>
                     <ScrollPanel style="width: 100%; height: 150px">
                         <div v-if="recentApprovals.length <= 0">
-                            <EmptyData 
+                            <EmptyData
                                 :title="$t('public.no_data')"
                                 :message="$t('public.no_recent_transaction')"
                             />
                         </div>
                         <Timeline :value="recentApprovals" v-else>
                             <template #opposite="slotProps">
-                                <div class="flex flex-col"> 
+                                <div class="flex flex-col">
                                     <small class="text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).add(8, 'hour').format('YYYY/MM/DD') }}</small>
                                     <small class="text-xs text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).add(8, 'hour').format('hh:mm:ss A') }}</small>
                                 </div>
                             </template>
                             <template #content="slotProps">
                                 <div class="flex gap-2 items-center">
-                                    <div class="flex flex-col"> 
-                                        <span class="text-surface-950 dark:text-white">{{ slotProps.item.transaction_number }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-surface-950 dark:text-white">{{ slotProps.item.transaction_number }}</span>
                                         <span class="text-xs text-surface-500">{{ $t('public.approved_by') }}: {{ slotProps.item.approval_by.name }}</span>
                                     </div>
                                     <Tag

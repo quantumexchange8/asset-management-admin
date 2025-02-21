@@ -162,7 +162,7 @@ return [
     "from" => "从",
     "approved_at" => "批准时间",
     "approved_by" => "批准人",
-    "requested_at" => "请求时间",
+    "request_date" => "请求时间",
     "filter_by_referrer" => "按推荐人筛选",
     "select_referrer" => "选择推荐人",
     "filter_by_country" => "按国家筛选",
@@ -288,5 +288,8 @@ return [
     "toast_deposit_profile_active" => "存款资料已成功激活",
     "toast_deposit_profile_inactive" => "存款资料已成功停用",
     "reject" => "拒绝",
-
+    "token_address" => "代币地址",
+    "txn_hash" => "交易哈希",
+    "toast_approve_transaction_success" => "交易批准成功",
+    "toast_reject_transaction_success" => "交易拒绝成功",
 ];

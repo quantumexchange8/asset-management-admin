@@ -12,7 +12,7 @@ import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 
 const props = defineProps({
-    pending: Object, 
+    pending: Object,
 });
 
 const toast = useToast();
@@ -78,7 +78,7 @@ const submitForm = () => {
         >
             <IconCheck :size="20" stroke-width="1.5"/>
         </Button>
-    
+
         <Button
             type="button"
             severity="danger"
@@ -91,7 +91,7 @@ const submitForm = () => {
         >
             <IconX :size="20" stroke-width="1.5"/>
         </Button>
-    </div> 
+    </div>
 
     <Dialog
         v-model:visible="visible"
@@ -105,7 +105,7 @@ const submitForm = () => {
             </div>
         </div>
     </template>
-    
+
     <div class="grid gap-2 py-2">
         <!-- User Info Section (Name, Email, Amount) -->
         <div class="flex justify-between">
@@ -129,7 +129,7 @@ const submitForm = () => {
         <div class="flex flex-col gap-1 self-stretch">
             <div class="flex justify-between text-sm">
                 <div class=" text-gray-500">
-                    {{ $t('public.requested_at') }}:
+                    {{ $t('public.request_date') }}:
                 </div>
                 <div>
                     {{ dayjs(props.pending.approval_at).format('YYYY-MM-DD') }}
@@ -165,7 +165,7 @@ const submitForm = () => {
         <div v-if="dialogType === 'reject_transaction'"  class="flex flex-col gap-1 self-stretch">
             <Divider />
             <InputLabel for="remarks" :value="$t('public.remarks')" />
-            <Textarea 
+            <Textarea
                 id="remarks"
                 type="text"
                 v-model="form.remarks"

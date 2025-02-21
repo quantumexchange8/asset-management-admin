@@ -34,12 +34,12 @@ const getCountries = async () => {
 const nameLabel = ref('receiver_name')
 
 //type
-const selectedType = ref('bank');
+const selectedType = ref('crypto');
 const types = ref([ //type options
-    {
-        name_label: 'receiver_name',
-        value: 'bank',
-    },
+    // {
+    //     name_label: 'receiver_name',
+    //     value: 'bank',
+    // },
     {
         name_label: 'wallet_name',
         value: 'crypto'
@@ -51,7 +51,7 @@ const selectedNetwork = ref();
 const networks = ref([
     { name: 'TRC20'},
     { name: 'ERC20'},
-    { name: 'BEP20'},
+    { name: 'Omni'},
 ]);
 
 watch(selectedType, (newType) => {
@@ -140,9 +140,9 @@ const submitForm = () => {
                                 v-model="selectedType"
                                 :options="types"
                                 optionValue="value"
-                                :placeholder="$t('public.select_type')" 
-                                class="pl-7 block w-full" 
-                                :invalid="!!form.errors.type" 
+                                :placeholder="$t('public.select_type')"
+                                class="pl-7 block w-full"
+                                :invalid="!!form.errors.type"
                             >
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value" class="flex items-center">
@@ -159,14 +159,14 @@ const submitForm = () => {
                         </InputIconWrapper>
                         <InputError :message="form.errors.type"/>
                     </div>
-        
+
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel :value="$t(`public.${nameLabel}`)"/>
                         <InputIconWrapper>
                             <template #icon>
                                 <IconLabel :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="name"
                                 type="text"
                                 class="pl-10 block w-full"
@@ -192,7 +192,7 @@ const submitForm = () => {
                             <template #icon>
                                 <IconBuildingBank :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="bank_name"
                                 type="text"
                                 class="pl-10 block w-full"
@@ -210,7 +210,7 @@ const submitForm = () => {
                             <template #icon>
                                 <IconLocation :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="bank_branch"
                                 type="text"
                                 class="pl-10 block w-full"
@@ -228,7 +228,7 @@ const submitForm = () => {
                             <template #icon>
                                 <IconInvoice :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="account_number"
                                 type="text"
                                 class="pl-10 block w-full"
@@ -246,8 +246,8 @@ const submitForm = () => {
                             <template #icon>
                                 <IconCurrency :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select 
-                                v-model="selectedCountry" 
+                            <Select
+                                v-model="selectedCountry"
                                 :options="countries"
                                 :loading="loadingCountries"
                                 optionLabel="name"
@@ -291,7 +291,7 @@ const submitForm = () => {
                             <template #icon>
                                 <IconBrandTether :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="crypto_tether"
                                 type="text"
                                 class="pl-10 block w-full"
@@ -309,8 +309,8 @@ const submitForm = () => {
                             <template #icon>
                                 <IconNetwork :size="20" stroke-width="1.5"/>
                             </template>
-                            <Select 
-                                v-model="selectedNetwork" 
+                            <Select
+                                v-model="selectedNetwork"
                                 :options="networks"
                                 optionLabel="name"
                                 optionValue="name"
@@ -318,7 +318,7 @@ const submitForm = () => {
                                 class="pl-7 block w-full"
                                 :invalid="!!form.errors.crypto_network"
                             >
-                             
+
                             </Select>
                         </InputIconWrapper>
                         <InputError :message="form.errors.crypto_network"/>
@@ -330,7 +330,7 @@ const submitForm = () => {
                             <template #icon>
                                 <IconInvoice :size="20" stroke-width="1.5"/>
                             </template>
-                            <InputText 
+                            <InputText
                                 id="wallet_address"
                                 type="text"
                                 class="pl-10 block w-full"

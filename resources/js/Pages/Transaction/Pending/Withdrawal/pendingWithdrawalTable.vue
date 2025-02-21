@@ -267,11 +267,12 @@ const refreshTable = () => {
 
                                 <!-- filter button -->
                                 <Button
-                                    class="w-full md:w-28 flex gap-2"
+                                    class="w-full md:w-28 flex items-center gap-2"
                                     outlined
                                     @click="toggle"
+                                    size="small"
                                 >
-                                    <IconAdjustments :size="15"/>
+                                    <IconAdjustments :size="16" stroke-width="1.5" />
                                     {{ $t('public.filter') }}
                                 </Button>
                             </div>
@@ -404,7 +405,7 @@ const refreshTable = () => {
                                 crypto
                             </template>
                         </Column>
-                        
+
                         <Column
                             field="amount"
                             style="min-width: 12rem"
@@ -454,7 +455,7 @@ const refreshTable = () => {
                             sortable
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.requested_at') }}</span>
+                                <span class="block">{{ $t('public.request_date') }}</span>
                             </template>
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}

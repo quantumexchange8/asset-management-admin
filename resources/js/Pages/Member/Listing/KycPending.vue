@@ -235,13 +235,13 @@ watchEffect(() => {
 
                                     <!-- filter button -->
                                     <Button
-                                        class="w-full md:w-28 flex gap-2"
+                                        class="w-full md:w-28 flex items-center gap-2"
                                         outlined
                                         @click="toggle"
                                         size="small"
                                     >
-                                        <IconAdjustments :size="15"/>
-                                        <span class="text-sm">{{ $t('public.filter') }}</span>
+                                        <IconAdjustments :size="16" stroke-width="1.5" />
+                                        {{ $t('public.filter') }}
                                     </Button>
                                 </div>
                             </div>

@@ -17,6 +17,7 @@ import { useLangObserver } from '@/Composables/localeObserver';
 import debounce from "lodash/debounce.js";
 import { usePage } from '@inertiajs/vue3';
 import ToggleDepositProfileStatus from './ToggleDepositProfileStatus.vue';
+import Tag from "primevue/tag";
 
 const props = defineProps({
     depositProfileCounts: Number,
@@ -240,7 +241,10 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.type') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ $t(`public.${data.type}`) }}
+                                <Tag
+                                    :severity="data.type === 'crypto' ? 'info' : 'secondary'"
+                                    :value="$t(`public.${data.type}`)"
+                                />
                             </template>
                         </Column>
 
@@ -268,21 +272,21 @@ watchEffect(() => {
                             </template>
                         </Column>
 
-                        <Column
-                            field="status"
-                            style="min-width: 12rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.status') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                <ToggleDepositProfileStatus 
-                                    :depositProfile="data"
-                                />
-                            </template>
-                        </Column>
-                        
+<!--                        <Column-->
+<!--                            field="status"-->
+<!--                            style="min-width: 12rem"-->
+<!--                            sortable-->
+<!--                        >-->
+<!--                            <template #header>-->
+<!--                                <span class="block">{{ $t('public.status') }}</span>-->
+<!--                            </template>-->
+<!--                            <template #body="{ data }">-->
+<!--                                <ToggleDepositProfileStatus -->
+<!--                                    :depositProfile="data"-->
+<!--                                />-->
+<!--                            </template>-->
+<!--                        </Column>-->
+
                     </template>
                 </DataTable>
             </div>

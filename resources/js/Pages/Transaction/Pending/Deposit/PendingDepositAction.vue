@@ -4,7 +4,7 @@ import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
-import Divider from 'primevue/divider';
+import Tag from 'primevue/tag';
 import Image from "primevue/image";
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
@@ -12,14 +12,17 @@ import { ref, computed } from 'vue';
 import Galleria from 'primevue/galleria';
 import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
+import {generalFormat} from "@/Composables/format.js";
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
-    pending: Object, 
+    pending: Object,
 });
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref(''); 
+const dialogType = ref('');
+const {formatAmount} = generalFormat();
 
 const openDialog = async (action) => {
     visible.value = true;
@@ -34,27 +37,44 @@ const form = useForm({
 
 const emit = defineEmits(['pendingDepositActionCompleted']);
 
+const tooltipText = ref('copy')
+
+function copyToClipboard(text) {
+    const textToCopy = text;
+
+    const textArea = document.createElement('textarea');
+    document.body.appendChild(textArea);
+
+    textArea.value = textToCopy;
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+
+        tooltipText.value = 'copied';
+        setTimeout(() => {
+            tooltipText.value = 'copy';
+        }, 1500);
+    } catch (err) {
+        console.error('Copy to clipboard failed:', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+
 const submitForm = () => {
     form.action = dialogType.value;
     form.put(route('transaction.pending.pendingDepositApproval'), {
         onSuccess: () => {
-            visible.value = false;
+            closeDialog();
             form.reset();
-            if(dialogType.value === 'approve_transaction'){
-                toast.add({
-                    severity: 'success',
-                    summary: 'Approved',
-                    detail: 'Approved successfully!',
-                    life: 3000,
-                });
-            } else {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Rejected',
-                    detail: 'Rejected successfully!',
-                    life: 3000,
-                });
-            }
+            toast.add({
+                severity: 'success',
+                summary: trans('public.success'),
+                detail: trans(`public.toast_${dialogType.value}_success`),
+                life: 3000,
+            });
             // Emit the custom event to parent
             emit('pendingDepositActionCompleted');
         },
@@ -64,27 +84,9 @@ const submitForm = () => {
     });
 }
 
-const responsiveOptions = ref([
-    {
-        breakpoint: '991px',
-        numVisible: 4
-    },
-    {
-        breakpoint: '767px',
-        numVisible: 3
-    },
-    {
-        breakpoint: '575px',
-        numVisible: 1
-    }
-]);
-
-// Use a placeholder image if kycImages is empty
-const imagesToDisplay = computed(() => {
-    return props.pending.pending_deposit_pay_slip.length > 0
-        ? props.pending.pending_deposit_pay_slip
-        : ['/image-not-found.jpg']; // Replace with the path to your placeholder image
-});
+const closeDialog = () => {
+    visible.value = false
+}
 </script>
 
 <template>
@@ -101,7 +103,7 @@ const imagesToDisplay = computed(() => {
         >
             <IconCheck :size="20" stroke-width="1.5"/>
         </Button>
-    
+
         <Button
             type="button"
             severity="danger"
@@ -114,127 +116,158 @@ const imagesToDisplay = computed(() => {
         >
             <IconX :size="20" stroke-width="1.5"/>
         </Button>
-    </div> 
+    </div>
 
     <Dialog
         v-model:visible="visible"
         modal
+        :header="$t(`public.${dialogType}`)"
         class="dialog-xs md:dialog-md"
     >
-    <template #header>
-        <div class="flex items-center gap-4">
-            <div class="text-xl font-bold">
-                {{ $t(`public.${dialogType}`) }}
-            </div>
-        </div>
-    </template>
-    
-    <div class="grid gap-2 py-2">
-        <!-- User Info Section (Name, Email, Amount) -->
-        <div class="flex justify-between">
-            <div class="text-sm">
-                <div>{{ props.pending.user.name }}</div>
-                <div class="text-xs text-gray-500 mt-1">
-                    {{ props.pending.user.email }}
+        <div class="flex flex-col items-center gap-4 divide-y dark:divide-surface-700 self-stretch">
+            <div class="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch w-full">
+                <div class="flex flex-col items-start w-full">
+                    <span class="text-surface-950 dark:text-white font-medium">{{ pending.user.name }}</span>
+                    <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
+                </div>
+                <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
+                    $ {{ formatAmount(pending.amount) }}
                 </div>
             </div>
-            <div class="text-lg">
-                <div>
-                    {{ props.pending.to_wallet.currency_symbol }}
-                    {{ props.pending.amount }}
+
+            <div class="flex flex-col gap-3 items-start w-full pt-4">
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.request_date') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ dayjs(pending.created_at).format('DD/MM/YYYY HH:mm:ss') }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.transaction_number') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ pending.transaction_number }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.wallet') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ $t(`public.${pending.to_wallet.type}`) }}
+                    </div>
+                </div>
+
+                <div
+                    v-if="pending.to_payment_platform === 'crypto'"
+                    class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
+                >
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.token_address') }}
+                    </div>
+                    <div class="flex gap-1 items-center text-surface-950 dark:text-white text-sm font-medium">
+                        <span class="break-words">{{ pending.to_payment_account_no }}</span>
+                        <Tag
+                            severity="info"
+                            :value="pending.to_payment_platform_name"
+                        />
+                    </div>
+                </div>
+
+                <div
+                    v-if="pending.to_payment_platform === 'crypto'"
+                    class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
+                >
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.txn_hash') }}
+                    </div>
+                    <div class="flex flex-col items-start gap-1 self-stretch relative">
+                        <Tag
+                            v-if="tooltipText === 'copied'"
+                            class="absolute -top-1 right-[90px] md:-top-6 md:right-8 !bg-surface-950 !text-white"
+                            :value="$t(`public.${tooltipText}`)"
+                        ></Tag>
+                        <div
+                            class="break-words text-surface-950 dark:text-white text-sm font-medium hover:cursor-pointer select-none"
+                            @click="copyToClipboard(pending.txn_hash)"
+                        >
+                            {{ pending.txn_hash }}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <Divider />
-
-        <!-- Requested Date, Transaction Number, To, Upline Section -->
-        <div class="flex flex-col gap-1 self-stretch">
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">
-                   {{ $t('public.requested_at') }}:
+            <div v-if="pending.transaction_type === 'deposit' && pending.media.length > 0" class="flex flex-col md:flex-row md:items-start gap-1 self-stretch pt-5">
+                <div class="w-[140px] text-gray-500 text-xs font-medium">
+                    {{ $t('public.payment_slip') }}
                 </div>
-                <div>
-                    {{ dayjs(props.pending.approval_at).format('YYYY-MM-DD') }}
-                    {{ dayjs(props.pending.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
+                <div class="flex gap-2 col-span-2 items-center self-stretch w-full">
+                    <Galleria
+                        :value="pending.payment_slips"
+                        :numVisible="5"
+                        :circular="true"
+                        :showThumbnails="false"
+                        :showIndicators="true"
+                        :showItemNavigators="true"
+                        :changeItemOnIndicatorHover="true"
+                        :showIndicatorsOnItem="true"
+                        indicatorsPosition="bottom"
+                        container-class="w-full"
+                    >
+                        <!-- Template for displaying individual images -->
+                        <template #item="slotProps">
+                            <Image
+                                :src="slotProps.item"
+                                alt="Image"
+                                imageClass="w-full h-[200px] object-contain"
+                                class="w-full"
+                                preview
+                            />
+                        </template>
+                    </Galleria>
                 </div>
             </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.transaction_number') }}:</div>
-                <div>{{ props.pending.transaction_number }}</div>
+
+            <div v-if="dialogType === 'reject_transaction'" class="flex flex-col items-start gap-1 self-stretch pt-4">
+                <InputLabel for="remarks">{{ $t('public.remarks') }}</InputLabel>
+                <Textarea
+                    id="remarks"
+                    type="text"
+                    class="flex flex-1 self-stretch"
+                    v-model="form.remarks"
+                    :placeholder="$t(`public.${dialogType}`)"
+                    :invalid="!!form.errors.remarks"
+                    rows="5"
+                    cols="30"
+                    autofocus
+                />
+                <InputError :message="form.errors.remarks" />
             </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.to') }}:</div>
-                <div>{{ $t(`public.${props.pending.to_wallet.type}`) }}</div>
-            </div>
-            <div class="flex justify-between text-sm">
-                <div class=" text-gray-500">{{ $t('public.upline') }}:</div>
-                <div>{{ props.pending.user.upline?.name || '-' }}</div>
+
+            <div class="pt-5 flex gap-3 justify-end items-center self-stretch w-full">
+                <Button
+                    type="button"
+                    :label="$t('public.cancel')"
+                    severity="secondary"
+                    variant="outlined"
+                    class="px-3 w-full md:w-auto"
+                    :disabled="form.processing"
+                    @click="closeDialog"
+                />
+
+                <Button
+                    type="submit"
+                    class="px-3 w-full md:w-auto"
+                    :label="$t('public.confirm')"
+                    :disabled="form.processing"
+                    @click.prevent="submitForm"
+                />
             </div>
         </div>
-
-        <Divider />
-
-        <!-- Payment Slip Section -->
-        <div class="flex flex-col gap-1 self-stretch">
-            <div class="text-lg text-gray-500 mb-4">
-                {{ $t('public.payment_slip') }}
-            </div>
-            <Galleria 
-                :value="imagesToDisplay" 
-                :responsiveOptions="responsiveOptions" 
-                :numVisible="5" 
-                :circular="true"
-                containerStyle="max-width: 640px" 
-                :showItemNavigators="true" 
-                :showThumbnails="false"
-            >
-                <!-- Template for displaying individual images -->
-                <template #item="slotProps">
-                    <Image 
-                        :src="slotProps.item" 
-                        alt="Image" 
-                        style="width: 100%; display: block;" 
-                        preview
-                    />
-                </template>
-            </Galleria>
-        </div>
-
-        <div v-if="dialogType === 'reject_transaction'" class="flex flex-col gap-1 self-stretch">
-            <Divider />
-            <InputLabel for="remarks" :value="$t('public.remarks')" />
-            <Textarea 
-                id="remarks"
-                type="text"
-                v-model="form.remarks"
-                :invalid="!!form.errors.remarks"
-                :placeholder="$t('public.reject_remarks')"
-                class="block w-full"
-                autofocus
-                rows="5"
-                cols="30"
-            />
-            <InputError :message="form.errors.remarks" />
-        </div>
-
-        <div class="flex justify-center mt-3">
-            <Button
-                severity="secondary"
-                class="text-center mr-3"
-                @click="visible = false"
-            >
-                {{ $t('public.cancel') }}
-            </Button>
-            <Button
-                class="text-center"
-                :disabled="form.processing"
-                @click.prevent="submitForm"
-            >
-                {{ $t('public.submit') }}
-            </Button>
-        </div>
-    </div>
-</Dialog>
-
+    </Dialog>
 </template>
