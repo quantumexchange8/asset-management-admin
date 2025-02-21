@@ -17,18 +17,18 @@ import debounce from "lodash/debounce.js";
 import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
-import Import from './Import.vue';
 import EmptyData from '@/Components/EmptyData.vue';
-import DepositHistoryAction from './DepositHistoryAction.vue';
+import { generalFormat } from '@/Composables/format';
 
 const isLoading = ref(false);
 const dt = ref(null);
 const first = ref(0);
-const depositHistory = ref([]);
+const withdrawalHistory = ref([]);
 const totalRecords = ref(0);
-const depositHistoryCounts = ref();
 const successAmount = ref();
 const rejectAmount = ref();
+const withdrawalHistoryCounts = ref();
+const {formatAmount} = generalFormat();
 
 //filteration type and methods
 const filters = ref({
@@ -38,6 +38,7 @@ const filters = ref({
     fund_type: { value: null, matchMode: FilterMatchMode.EQUALS },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
+
 
 //get user data
 const lazyParams = ref({}); //track table parameters that need to be send to backend
@@ -60,20 +61,20 @@ const loadLazyData = (event) => { // event will retrieve from the datatable attr
             };
 
             //send sorting/filter detail to BE
-            const url = route('transaction.history.getDepositHistoryData', params);
+            const url = route('transaction.history.getWithdrawalHistoryData', params);
             const response = await fetch(url);
 
             //BE send back result back to FE
             const results = await response.json();
-            depositHistory.value = results?.data?.data;
+            withdrawalHistory.value = results?.data?.data;
             totalRecords.value = results?.data?.total;
-            depositHistoryCounts.value = results?.depositHistoryCounts;
             successAmount.value = results?.successAmount;
             rejectAmount.value = results?.rejectAmount;
+            withdrawalHistoryCounts.value = results?.withdrawalHistoryCounts;
             isLoading.value = false;
         }, 100);
     } catch (e) {
-        depositHistory.value = [];
+        withdrawalHistory.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
@@ -95,11 +96,11 @@ const onFilter = (event) => {
     loadLazyData(event);
 };
 
-const emit = defineEmits(['updateDepositHistory']);
+const emit = defineEmits(['updateWithdrawalHistory']);
 
 // Emit the totals whenever they change
 watch([successAmount, rejectAmount], () => {
-    emit('updateDepositHistory', {
+    emit('updateWithdrawalHistory', {
         successAmount: successAmount.value,
         rejectAmount: rejectAmount.value,
     });
@@ -194,7 +195,7 @@ const getSeverity = (status) => {
 const exportTable = ref('no');
 
 const exportStatus = ref(false);
-const exportDeposit = () => {
+const exportWithdrawal = () => {
     exportStatus.value = true;
     isLoading.value = true;
 
@@ -209,7 +210,7 @@ const exportDeposit = () => {
         exportStatus: true,
     };
 
-    const url = route('transaction.history.getDepositHistoryData', params);
+    const url = route('transaction.history.getWithdrawalHistoryData', params);
 
     try {
         window.location.href = url;
@@ -233,7 +234,7 @@ watchEffect(() => {
         <template #content>
             <div class="w-full">
                 <DataTable
-                    :value="depositHistory"
+                    :value="withdrawalHistory"
                     lazy
                     paginator
                     removableSort
@@ -293,20 +294,21 @@ watchEffect(() => {
                                 <!-- Export button -->
                                 <Button
                                     class="w-full md:w-auto flex justify-center items-center"
-                                    @click="exportDeposit"
+                                    @click="exportWithdrawal"
                                     :disabled="exportTable==='yes'"
                                 >
-                                    <span class="pr-1">{{ $t('public.export') }}</span>
+                                <span class="pr-1">{{ $t('public.export') }}</span>
                                     <IconDownload size="16" stroke-width="1.5"/>
                                 </Button>
+
                             </div>
                         </div>
                     </template>
 
                     <template #empty>
-                        <div v-if="depositHistoryCounts === 0">
+                        <div v-if="withdrawalHistoryCounts === 0">
                             <EmptyData
-                                :title="$t('public.no_deposit_founded')"
+                                :title="$t('public.no_withdrawal_founded')"
                             />
                         </div>
                     </template>
@@ -316,26 +318,22 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.deposit_loading_caption') }}</span>
-                            <span v-else class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.export_deposit_caption') }}</span>
+                            <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.withdrawal_loading_caption') }}</span>
+                            <span v-else class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.export_withdrawal_caption') }}</span>
                         </div>
                     </template>
 
-                    <template v-if="depositHistory?.length > 0">
+                    <template v-if="withdrawalHistory?.length > 0">
                         <Column
-                            field="approval_at"
-                             class="min-w-40"
-                            dataType="date"
+                            field="transaction_number"
+                            style="min-width: 17rem"
                             sortable
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.approved_at') }}</span>
+                                <span class="block">{{ $t('public.transaction_number') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
-                                </div>
+                                {{ data.transaction_number }}
                             </template>
                         </Column>
 
@@ -348,15 +346,16 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.name') }}</span>
                             </template>
                             <template #body="{ data }">
-                                <div class="flex flex-col">
-                                    <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                {{ data.user.name }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ data.user.email }}
                                 </div>
                             </template>
                         </Column>
 
                         <Column
                             field="user.upline"
+                            style="min-width: 12rem"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.upline') }}</span>
@@ -376,45 +375,8 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="transaction_number"
-                            class="min-w-60"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.transaction_number') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.transaction_number }}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="to_wallet_id"
-                            :header="$t('public.wallet')"
-                            class="min-w-40"
-                        >
-                            <template #body="{ data }">
-                                {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="amount"
-                            class="min-w-40"
-                            dataType="numeric"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.amount') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.amount }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="fund_type"
-                            class="min-w-40"
+                            style="min-width: 12rem"
                             sortable
                         >
                             <template #header>
@@ -426,8 +388,109 @@ watchEffect(() => {
                         </Column>
 
                         <Column
+                            field="from_wallet_id"
+                            style="min-width: 12rem"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.from') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                {{ $t(`public.${data.from_wallet?.type}`)|| '-'}}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="to_payment_account_name"
+                            style="min-width: 12rem"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.to') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                {{ data.to_payment_account_name }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="to_payment_platform"
+                            style="min-width: 12rem"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.method') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                <Tag 
+                                    :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
+                                    :value="$t(`public.${data.to_payment_platform}`)"
+                                />
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="amount"
+                            style="min-width: 12rem"
+                            dataType="numeric"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.amount') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                $ {{ formatAmount(data.amount ?? 0) }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="transaction_charges"
+                            style="min-width: 12rem"
+                            dataType="numeric"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.fee') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                <span class="text-red-500">  $ {{ data.transaction_charges || '-'}}</span>
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="transaction_amount"
+                            style="min-width: 12rem"
+                            dataType="numeric"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.receive') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                $ {{ data.transaction_amount || '-'}}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="approval_at"
+                            style="min-width: 12rem"
+                            dataType="date"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.approved_at') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
+                            </template>
+                        </Column>
+                        
+                        <Column
                             field="status"
-                            class="min-w-40"
+                            style="min-width: 12rem"
                             sortable
                         >
                             <template #header>
@@ -435,18 +498,6 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="action"
-                            alignFrozen="right"
-                            frozen
-                        >
-                            <template #body="{ data }">
-                                <DepositHistoryAction 
-                                    :depositHistory="data"
-                                />
                             </template>
                         </Column>
                     </template>

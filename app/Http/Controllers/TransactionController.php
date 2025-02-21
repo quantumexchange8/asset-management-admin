@@ -138,8 +138,8 @@ class TransactionController extends Controller
         $transactionQuery = Transaction::where('transaction_type', 'deposit');
 
         $totalSuccessAmount = (clone $transactionQuery)
-                ->where('status', 'success')
-                ->sum('transaction_amount');
+            ->where('status', 'success')
+            ->sum('transaction_amount');
 
         return response()->json([
             'topUsers' => $topUsers,
@@ -217,9 +217,23 @@ class TransactionController extends Controller
 
             $users = $query->paginate($data['rows']);
 
+            $successAmount = (clone $query)
+                ->where('status', 'success')
+                ->sum('transaction_amount');
+
+            $rejectAmount = (clone $query)
+                ->where('status', 'rejected')
+                ->sum('transaction_amount');
+
+            $withdrawalHistoryCounts = (clone $query)
+                ->count();
+
             return response()->json([
                 'success' => true,
                 'data' => $users,
+                'successAmount' => $successAmount,
+                'rejectAmount' => $rejectAmount,
+                'withdrawalHistoryCounts' => $withdrawalHistoryCounts,
             ]);
         }
 

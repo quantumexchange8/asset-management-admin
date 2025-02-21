@@ -24,6 +24,7 @@ const items = ref([
         label: 'edit',
         icon: h(IconEdit),
         command: () => {
+            visible.value = true;
             dialogType.value = 'edit'
         },
     },
