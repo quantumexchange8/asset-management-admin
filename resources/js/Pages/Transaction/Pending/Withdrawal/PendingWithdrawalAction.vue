@@ -152,6 +152,15 @@ const closeDialog = () => {
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
+                        {{ $t('public.to') }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        {{ pending.to_payment_account_name }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                    <div class="w-[140px] text-surface-500 text-xs font-medium">
                         {{ $t('public.fee') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
@@ -165,15 +174,6 @@ const closeDialog = () => {
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
                         $ {{ formatAmount(pending.transaction_amount ?? 0) }}
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                    <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.to') }}
-                    </div>
-                    <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ props.pending.user.name || '-' }}
                     </div>
                 </div>
 

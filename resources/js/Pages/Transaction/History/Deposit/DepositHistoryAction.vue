@@ -35,41 +35,41 @@ const toggle = (event) => {
 </script>
 
 <template>
- <Button
-    variant="gray-text"
-    size="sm"
-    type="button"
-    iconOnly
-    pill
-    @click="toggle"
-    aria-haspopup="true"
-    aria-controls="overlay_tmenu"
->
-    <IconDotsVertical size="16" stroke-width="1.5" color="#667085" />
-</Button>
+    <Button
+        variant="gray-text"
+        size="sm"
+        type="button"
+        iconOnly
+        pill
+        @click="toggle"
+        aria-haspopup="true"
+        aria-controls="overlay_tmenu"
+    >
+        <IconDotsVertical size="16" stroke-width="1.5" color="#667085" />
+    </Button>
 
-<TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup>
-    <template #item="{ item, props, hasSubmenu }">
-        <div
-            class="flex items-center gap-3 self-stretch"
-            v-bind="props.action"
-        >
-            <component :is="item.icon" size="20" stroke-width="1.5" />
-            <span class="font-medium">{{ $t(`public.${item.label}`) }}</span>
-        </div>
-    </template>
-</TieredMenu>
+    <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup>
+        <template #item="{ item, props, hasSubmenu }">
+            <div
+                class="flex items-center gap-3 self-stretch"
+                v-bind="props.action"
+            >
+                <component :is="item.icon" size="20" stroke-width="1.5" />
+                <span class="font-medium">{{ $t(`public.${item.label}`) }}</span>
+            </div>
+        </template>
+    </TieredMenu>
 
-<Dialog
-    v-model:visible="visible"
-    modal
-    :header="$t(`public.${dialogType}`)"
-    class="dialog-xs md:dialog-md"
->
-    <template v-if="dialogType === 'details'">
-        <DepositHistoryDetail
-            :depositHistory="props.depositHistory"
-        />
-    </template>
-</Dialog>
+    <Dialog
+        v-model:visible="visible"
+        modal
+        :header="$t(`public.${dialogType}`)"
+        class="dialog-xs md:dialog-md"
+    >
+        <template v-if="dialogType === 'details'">
+            <DepositHistoryDetail
+                :depositHistory="props.depositHistory"
+            />
+        </template>
+    </Dialog>
 </template>

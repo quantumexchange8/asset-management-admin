@@ -19,6 +19,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { usePage } from '@inertiajs/vue3';
 import EmptyData from '@/Components/EmptyData.vue';
 import { generalFormat } from '@/Composables/format';
+import WithdrawalHistoryAction from './WithdrawalHistoryAction.vue';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -396,7 +397,7 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.from') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ $t(`public.${data.from_wallet?.type}`)|| '-'}}
+                                {{ data.from_wallet?.type ? $t(`public.${data.from_wallet.type}`) : '-' }}
                             </template>
                         </Column>
 
@@ -498,6 +499,19 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
+                            </template>
+                        </Column>
+
+                        
+                        <Column
+                            field="action"
+                            alignFrozen="right"
+                            frozen
+                        >
+                            <template #body="{ data }">
+                                <WithdrawalHistoryAction 
+                                    :withdrawalHistory="data"
+                                />
                             </template>
                         </Column>
                     </template>
