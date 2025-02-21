@@ -197,7 +197,7 @@ watchEffect(() => {
 
                         <Column 
                             field="total_team_fund"
-                             :style="locale === 'cn' ? 'min-width: 20px' : 'min-width: 200px'"
+                            :style="locale === 'cn' ? 'min-width: 20px' : 'min-width: 200px'"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.team_capital_fund') }} ($)</span>
@@ -222,6 +222,7 @@ watchEffect(() => {
 
                         <Column 
                             field="action"
+                            style="min-width: 100px"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.action') }}</span>
