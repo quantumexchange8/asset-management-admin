@@ -244,6 +244,7 @@ watchEffect(() => {
             title="deposit_profile"
             :href="route('settings.depositProfile')"
             :active="route().current('settings.depositProfile')"
+            v-if="hasRole('super_admin')"
         >
             <template #icon>
                 <IconAdjustmentsAlt size="20" stroke-width="1.5" />
