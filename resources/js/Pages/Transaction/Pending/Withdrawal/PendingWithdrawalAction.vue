@@ -11,6 +11,7 @@ import { ref, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import { generalFormat } from '@/Composables/format';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     pending: Object,
@@ -40,21 +41,12 @@ const submitForm = () => {
         onSuccess: () => {
             visible.value = false;
             form.reset();
-            if(dialogType.value === 'approve_transaction'){
-                toast.add({
-                    severity: 'success',
-                    summary: 'Approved',
-                    detail: 'Approved successfully!',
-                    life: 3000,
-                });
-            } else {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Rejected',
-                    detail: 'Rejected successfully!',
-                    life: 3000,
-                });
-            }
+            toast.add({
+                severity: 'success',
+                summary: trans('public.success'),
+                detail: trans(`public.toast_${dialogType.value}_success`),
+                life: 3000,
+            });
             // Emit the custom event to parent
             emit('pendingWithdrawalActionCompleted');
         },

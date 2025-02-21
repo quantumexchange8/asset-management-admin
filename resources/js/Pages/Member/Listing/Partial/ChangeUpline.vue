@@ -10,6 +10,7 @@ import { useToast } from 'primevue/usetoast';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { IconUserCode } from '@tabler/icons-vue';
 import { generalFormat } from '@/Composables/format';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     member: {
@@ -89,8 +90,8 @@ const submitForm = () => {
             emit('upline-updated', form.upline); // Emit change upline event
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Upline changed successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_upline_change_success'),
                 life: 3000,
             });
         },

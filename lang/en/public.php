@@ -184,6 +184,7 @@ return [
     "bonus_wallet" => "Bonus Wallet",
     "processing" => "Processing",
     "rejected" => "Rejected",
+    "approved" => "Approved",
     "total_pending_deposit" => "Total Pending Deposit",
     "total_pending_withdrawal" => "Total Pending Withdrawal",
     "total_pending_amount" => "Total Pending Amount",
@@ -294,6 +295,11 @@ return [
     "success_amount" => "Success Amount",
     "reject_amount" => "Rejected Amount",
     "top_three_user_deposit" => "Top 3 User Deposit",
-
-    "copied" => "Copied"
+    "copied" => "Copied",
+    "toast_add_member_success" => "Successfully Added Member",
+    "toast_update_profile_success" => "Successfully Updated Profile",
+    "toast_wallet_adjust_success" => "Successfully Adjusted Wallet",
+    "toast_upline_change_success" => "Successfully Changed Upline",
+    "toast_rank_upgrade_success" => "Successfully Upgraded Rank",
+    "toast_add_deposit_profile_success" => "Successfully Added Deposit Profile",
 ];

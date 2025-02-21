@@ -296,5 +296,11 @@ return [
     "reject_amount" => "被拒金额",
     "top_three_user_deposit" => "前三名用户存款",
     "copied" => "已复制",
+    "toast_add_member_success" => "成功添加会员",
+    "toast_update_profile_success" => "成功更新个人资料",
+    "toast_wallet_adjust_success" => "成功调整钱包",
+    "toast_upline_change_success" => "成功更改上线",
+    "toast_rank_upgrade_success" => "成功升级等级",
+    "toast_add_deposit_profile_success" => "成功添加存款资料",
 
 ];

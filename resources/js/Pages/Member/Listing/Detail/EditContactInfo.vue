@@ -11,6 +11,7 @@ import { useForm } from '@inertiajs/vue3';
 import { useToast } from "primevue/usetoast";
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { useLangObserver } from '@/Composables/localeObserver';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     memberInfo: Object,
@@ -71,8 +72,8 @@ const submitForm = () => {
             visible.value = false;
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Profile updated successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_update_profile_success'),
                 life: 3000,
             });
         },

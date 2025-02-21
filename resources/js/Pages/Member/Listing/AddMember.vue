@@ -12,6 +12,7 @@ import { useToast } from "primevue/usetoast";
 import { IconFlag, IconLabel, IconLock, IconMail, IconPhone, IconUser, IconUserPlus, IconUsersPlus } from '@tabler/icons-vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { useLangObserver } from '@/Composables/localeObserver';
+import {trans} from "laravel-vue-i18n";
 
 const visible = ref(false);
 const selectedUpline = ref();
@@ -90,8 +91,8 @@ const submitForm = () => {
 
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Member added successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_add_member_success'),
                 life: 3000,
             });
         },

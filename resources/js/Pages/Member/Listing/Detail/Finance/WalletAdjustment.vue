@@ -12,6 +12,7 @@ import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from "primevue/usetoast";
 import { generalFormat } from '@/Composables/format';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     user: {
@@ -54,8 +55,8 @@ const submitForm = () => {
             form.reset();
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Wallet adjust successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_wallet_adjust_success'),
                 life: 3000,
             });
             emit('walletAdjusted');

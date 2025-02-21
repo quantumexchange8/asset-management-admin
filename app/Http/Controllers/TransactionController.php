@@ -522,7 +522,7 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($request->transaction_id);
 
-        if ($request->action == 'approve') {
+        if ($request->action == 'approve_transaction') {
             $transaction->status = 'success';
             $transaction->update();
         } else {

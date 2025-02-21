@@ -9,6 +9,7 @@ import { ref } from 'vue';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
+import {trans} from "laravel-vue-i18n";
 
 const visible = ref(false);
 
@@ -32,8 +33,8 @@ const submit = () => {
             form.reset();
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Import Successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_import_success'),
                 life: 3000,
             });
         },

@@ -10,6 +10,7 @@ import { useToast } from 'primevue/usetoast';
 import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 import { IconUserUp } from '@tabler/icons-vue';
 import { generalFormat } from '@/Composables/format';
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     member: {
@@ -57,8 +58,8 @@ const submitForm = () => {
             emit('rank-updated', form.rank); // Emit updated rank event
             toast.add({
                 severity: 'success',
-                summary: 'Success',
-                detail: 'Rank upgraded successfully!',
+                summary: trans('public.success'),
+                detail: trans('public.toast_rank_upgrade_success'),
                 life: 3000,
             });
         },
