@@ -44,9 +44,9 @@ class ReferralController extends Controller
                     $userIds = $searchedUsers->pluck('id')->toArray();
                     $allUsers = User::all(); // Fetch all users for hierarchy processing
 
-                    // Include descendants of the matched users
+                    // Include downlines of the matched users
                     foreach ($searchedUsers as $user) {
-                        $userIds = array_merge($userIds, $this->getDescendants($allUsers, $user->id));
+                        $userIds = array_merge($userIds, $this->getDownlines($allUsers, $user->id));
                     }
 
                     // Fetch all relevant users based on hierarchy
@@ -64,7 +64,7 @@ class ReferralController extends Controller
                 $hierarchyUserIds = [];
 
                 foreach ($allUsers as $user) {
-                    if (!is_null($user->upline_id) || $this->hasDescendants($allUsers, $user->id)) {
+                    if (!is_null($user->upline_id) || $this->hasDownlines($allUsers, $user->id)) {
                         $hierarchyUserIds[] = $user->id;
                     }
                 }
@@ -135,7 +135,7 @@ class ReferralController extends Controller
         // Direct downline count (immediate children)
         $directDownlineCount = count($children);
 
-        // Total downline count (direct + all descendants)
+        // Total downline count (direct + all downlines)
         $totalDownlineCount = $directDownlineCount;
         foreach ($children as $child) {
             $totalDownlineCount += $child['total_downlines_count'];
@@ -149,16 +149,16 @@ class ReferralController extends Controller
             ->where('user_id', $currentUser['id'])
             ->sum('capital_fund');
 
-        // Get all descendant IDs including the current user's ID
-        $allDescendantIds = $this->getDescendants($users, $currentUser['id']);
+        // Get all downline IDs including the current user's ID
+        $allDownlineIds = $this->getDownlines($users, $currentUser['id']);
         $total_team_fund = (clone $activeConnections)
-            ->whereIn('user_id', $allDescendantIds)
+            ->whereIn('user_id', $allDownlineIds)
             ->sum('capital_fund');
-        $allDescendantIds[] = $currentUser['id']; // Include the current user
+        $allDownlineIds[] = $currentUser['id']; // Include the current user
 
-        // Get all active connections for the user and their descendants
+        // Get all active connections for the user and their downlines
         $allConnections = (clone $activeConnections)
-            ->whereIn('user_id', $allDescendantIds)
+            ->whereIn('user_id', $allDownlineIds)
             ->get();
 
         // Organize data by broker
@@ -200,19 +200,19 @@ class ReferralController extends Controller
 
 
 
-    private function getDescendants($allUsers, $userId)
+    private function getDownlines($allUsers, $userId)
     {
-        $descendants = [];
+        $downlines = [];
         foreach ($allUsers as $user) {
             if ($user->upline_id === $userId) {
-                $descendants[] = $user->id;
-                $descendants = array_merge($descendants, $this->getDescendants($allUsers, $user->id));
+                $downlines[] = $user->id;
+                $downlines = array_merge($downlines, $this->getDownlines($allUsers, $user->id));
             }
         }
-        return $descendants;
+        return $downlines;
     }
 
-    private function hasDescendants($allUsers, $userId)
+    private function hasDownlines($allUsers, $userId)
     {
         foreach ($allUsers as $user) {
             if ($user->upline_id === $userId) {
