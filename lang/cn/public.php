@@ -303,5 +303,8 @@ return [
     "toast_rank_upgrade_success" => "成功升级等级",
     "toast_add_deposit_profile_success" => "成功添加存款资料",
     "toast_update_deposit_profile_success" => "成功更新存款资料",
+    "delete_deposit_profile" => "删除存款资料",
+    "delete_deposit_profile_caption" => "您确定要删除此存款资料吗？这将永久删除该存款资料。",
+    "toast_delete_deposit_profile" => "成功删除存款资料",
 
 ];

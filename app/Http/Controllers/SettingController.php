@@ -258,7 +258,7 @@ class SettingController extends Controller
         ]);
 
         $currency = $request->currency;
-        
+
         $depositProfile->name = $validatedData['name'];
         $depositProfile->type = $request->type;
         $depositProfile->account_number = $validatedData['account_number'];
@@ -271,9 +271,6 @@ class SettingController extends Controller
         $depositProfile->edited_by = Auth::id();
 
         $depositProfile->update();
-
-        return redirect()->back()->with('toast');
-
     }
 
     public function updateDepositProfileStatus(Request $request)
@@ -281,6 +278,13 @@ class SettingController extends Controller
         $depositProfile = DepositProfile::find($request->id);
 
         $depositProfile->status = $depositProfile->status == 'active' ? 'inactive' : 'active';
+        $depositProfile->update();
+    }
+
+    public function deleteDepositProfile(Request $request){
+        $depositProfile = DepositProfile::find($request->id);
+
+        $depositProfile->deleted_at = now();
         $depositProfile->update();
     }
 }

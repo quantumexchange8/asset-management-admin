@@ -303,4 +303,7 @@ return [
     "toast_rank_upgrade_success" => "Successfully Upgraded Rank",
     "toast_add_deposit_profile_success" => "Successfully Added Deposit Profile",
     "toast_update_deposit_profile_success" => "Successfully Updated Deposit Profile",
+    "delete_deposit_profile" => "Delete Deposit Profile",
+    "delete_deposit_profile_caption" => "Are you sure you want to delete this deposit profile? This will permenantly delete the deposit profile.",
+    "toast_delete_deposit_profile" => "Successfully Deleted Deposit Profile",
 ];

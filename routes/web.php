@@ -190,6 +190,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
         Route::post('/addDepositProfile', [SettingController::class, 'addDepositProfile'])->name('settings.addDepositProfile');
         Route::put('/updateDepositProfileStatus', [SettingController::class, 'updateDepositProfileStatus'])->name('settings.updateDepositProfileStatus');
         Route::put('/updateDepositProfile', [SettingController::class, 'updateDepositProfile'])->name('settings.updateDepositProfile');
+        Route::put('/deleteDepositProfile', [SettingController::class, 'deleteDepositProfile'])->name('settings.deleteDepositProfile');
     });
 });
 

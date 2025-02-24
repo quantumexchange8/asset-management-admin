@@ -89,8 +89,8 @@ import {
     <ConfirmDialog group="headless-error">
         <template #container="{ message, acceptCallback, rejectCallback }">
             <div class="py-6 px-4 md:px-6 flex flex-col items-center gap-5 self-stretch bg-white dark:bg-surface-800/60 rounded-xl w-[320px] md:w-[500px]">
-                <div class="flex items-center justify-center rounded-full bg-error-100 dark:bg-error-900/40 w-[72px] h-[72px]">
-                    <div class="flex items-center justify-center rounded-full bg-error-200 dark:bg-error-700 w-14 h-14 text-error-600 dark:text-error-200">
+                <div class="flex items-center justify-center rounded-full bg-red-100 dark:bg-red-900/40 w-[72px] h-[72px]">
+                    <div class="flex items-center justify-center rounded-full bg-red-200 dark:bg-red-700 w-14 h-14 text-red-600 dark:text-red-200">
                         <IconExclamationCircle size="36" stroke-width="1.5" />
                     </div>
                 </div>
@@ -106,19 +106,16 @@ import {
                 <div class="flex items-center gap-4 md:gap-5 self-stretch">
                     <Button
                         type="button"
-                        variant="gray-tonal"
                         @click="rejectCallback"
                         class="w-full"
-                        size="base"
+                        severity="secondary"
                     >
                         {{ message.cancelButton }}
                     </Button>
                     <Button
                         type="button"
-                        variant="error-flat"
                         @click="acceptCallback"
-                        class="w-full text-nowrap"
-                        size="base"
+                        class="w-full text-nowrap bg-red-700 border-0 hover:bg-red-500"
                     >
                         {{ message.acceptButton }}
                     </Button>
