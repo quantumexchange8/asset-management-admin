@@ -18,6 +18,7 @@ import debounce from "lodash/debounce.js";
 import { usePage } from '@inertiajs/vue3';
 import ToggleDepositProfileStatus from './ToggleDepositProfileStatus.vue';
 import Tag from "primevue/tag";
+import DepositProfileAction from './DepositProfileAction.vue';
 
 const props = defineProps({
     depositProfileCounts: Number,
@@ -25,7 +26,7 @@ const props = defineProps({
 
 const isLoading = ref(false);
 const dt = ref(null);
-const first = ref([]);
+const first = ref(0);
 const depositProfile = ref([]);
 const totalRecords = ref(0);
 const depositProfileCounts = ref();
@@ -188,9 +189,10 @@ watchEffect(() => {
 
                                 <!-- filter button -->
                                 <Button
-                                    class="w-full md:w-28 flex gap-2"
+                                    class="w-full md:w-28 flex items-center gap-2"
                                     outlined
                                     @click="toggle"
+                                    size="small"
                                 >
                                     <IconAdjustments :size="15"/>
                                     {{ $t('public.filter') }}
@@ -269,6 +271,17 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 {{ data.account_number }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="action"
+                            style="width: 5%"
+                        >
+                            <template #body="{ data }">
+                                <DepositProfileAction 
+                                    :depositProfile="data"
+                                />
                             </template>
                         </Column>
 

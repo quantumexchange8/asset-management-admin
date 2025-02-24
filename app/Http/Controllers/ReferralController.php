@@ -198,8 +198,6 @@ class ReferralController extends Controller
         return $currentUser;
     }
 
-
-
     private function getDownlines($allUsers, $userId)
     {
         $downlines = [];

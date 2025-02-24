@@ -31,7 +31,7 @@ const getCountries = async () => {
 }
 
 //name input
-const nameLabel = ref('receiver_name')
+const nameLabel = ref('wallet_name')
 
 //type
 const selectedType = ref('crypto');

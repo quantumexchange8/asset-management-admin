@@ -6,21 +6,14 @@ import Dialog from "primevue/dialog";
 import {
     IconDotsVertical,
     IconId,
-    IconUserUp,
     IconTrash,
-    IconDeviceLaptop,
     IconChevronRight,
-    IconUserCog,
-    IconSitemap
 } from "@tabler/icons-vue";
-import UpgradeRank from "./Partial/UpgradeRank.vue";
-import ChangeUpline from "./Partial/ChangeUpline.vue";
+import EditDepositProfile from "./Detail/EditDepositProfile.vue";
 
 const props = defineProps({
-    member: Object,
+    depositProfile: Object,
 })
-
-const emit = defineEmits(['rank-updated', 'upline-updated']);
 
 const menu = ref();
 const visible = ref(false);
@@ -30,40 +23,12 @@ const dialogType = ref();
 
 const items = ref([
     {
-        label: 'member_detail',
+        label: 'edit',
         icon: h(IconId),
         command: () => {
-            window.location.href = `/member/detail/${props.member.id_number}`;
-        },
-    },
-    {
-        label: 'access_portal',
-        icon: h(IconDeviceLaptop),
-        command: () => {
-            window.open(route('member.access_portal', props.member.id), '_blank');
-        }
-    },
-    {
-        label: 'change_upline',
-        icon: h(IconSitemap),
-        command: () => {
             visible.value = true;
-            dialogType.value = 'change_upline'
+            dialogType.value = 'edit';
         },
-    },
-    {
-        label: 'upgrade',
-        icon: h(IconUserUp),
-        items: [
-            {
-                label: 'rank',
-                icon: h(IconUserCog),
-                command: () => {
-                    visible.value = true;
-                    dialogType.value = 'upgrade_rank';
-                }
-            },
-        ]
     },
     {
         separator: true
@@ -112,7 +77,7 @@ const toggle = (event) => {
     <Dialog
         v-model:visible="visible"
         modal
-        class="dialog-xs md:dialog-sm"
+        class="dialog-xs md:dialog-md"
     >
         <template #header>
             <div class="flex items-center gap-4">
@@ -122,24 +87,11 @@ const toggle = (event) => {
             </div>
         </template>
 
-        <template v-if="dialogType === 'upgrade_rank'">
-            <UpgradeRank
-                :member="member"
+        <template v-if="dialogType === 'edit'">
+            <EditDepositProfile
+                :depositProfile="depositProfile"
                 @update:visible="visible = false"
-                @rank-updated="(newRank) => $emit('rank-updated', member.id, newRank)" 
-            />
-        </template>
-
-        <template v-if="dialogType === 'change_upline'">
-            <ChangeUpline
-                :member="member"
-                @update:visible="visible = false"
-                @upline-updated="(newUpline) => $emit('upline-updated', member.id, newUpline)" 
             />
         </template>
     </Dialog>
-
 </template>
-
-
-

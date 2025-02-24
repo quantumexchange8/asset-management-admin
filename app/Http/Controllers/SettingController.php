@@ -215,6 +215,67 @@ class SettingController extends Controller
         return redirect()->back()->with('toast');
     }
 
+    public function updateDepositProfile(Request $request){
+        $depositProfile = DepositProfile::find($request->id);
+
+        $validatedData = $request->validate([
+            'name' => ['required'],
+            'account_number' => ['required'],
+            'bank_name' => ['required_if:type,bank'],
+            'bank_branch' => ['required_if:type,bank'],
+            'crypto_tether' => ['required_if:type,crypto'],
+            'crypto_network' => ['required_if:type,crypto'],
+            'currency' => ['required'],
+        ], [
+            'bank_name.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.bank_name'),
+                'other' => trans('public.type'),
+                'value' => trans('public.bank')
+            ]),
+
+            'bank_branch.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.bank_branch'),
+                'other' => trans('public.type'),
+                'value' => trans('public.bank')
+            ]),
+
+            'crypto_tether.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.crypto_tether'),
+                'other' => trans('public.type'),
+                'value' => trans('public.crypto')
+            ]),
+
+            'crypto_network.required_if' => trans('validation.required_if', [
+                'attribute' => trans('public.crypto_network'),
+                'other' => trans('public.type'),
+                'value' => trans('public.crypto')
+            ]),
+
+        ], [
+            'name' => trans('public.name'),
+            'account_number' => trans('public.account_number'),
+            'currency' => trans('public.currency'),
+        ]);
+
+        $currency = $request->currency;
+        
+        $depositProfile->name = $validatedData['name'];
+        $depositProfile->type = $request->type;
+        $depositProfile->account_number = $validatedData['account_number'];
+        $depositProfile->bank_name = $validatedData['bank_name'];
+        $depositProfile->bank_branch = $validatedData['bank_branch'];
+        $depositProfile->crypto_tether = $validatedData['crypto_tether'];
+        $depositProfile->crypto_network = $validatedData['crypto_network'] ?? null;
+        $depositProfile->country_id = $request->type === 'bank' ? $currency['id'] : null;
+        $depositProfile->currency = $request->type === 'bank' ? $currency['currency'] : $currency;
+        $depositProfile->edited_by = Auth::id();
+
+        $depositProfile->update();
+
+        return redirect()->back()->with('toast');
+
+    }
+
     public function updateDepositProfileStatus(Request $request)
     {
         $depositProfile = DepositProfile::find($request->id);

@@ -302,4 +302,5 @@ return [
     "toast_upline_change_success" => "Successfully Changed Upline",
     "toast_rank_upgrade_success" => "Successfully Upgraded Rank",
     "toast_add_deposit_profile_success" => "Successfully Added Deposit Profile",
+    "toast_update_deposit_profile_success" => "Successfully Updated Deposit Profile",
 ];

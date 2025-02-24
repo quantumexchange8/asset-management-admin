@@ -524,6 +524,7 @@ class TransactionController extends Controller
 
         if ($request->action == 'approve_transaction') {
             $transaction->status = 'success';
+            $transaction->transaction_amount = $transaction->amount - $transaction->transaction_charges;
             $transaction->update();
         } else {
             $transaction->status = 'rejected';

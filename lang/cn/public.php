@@ -302,5 +302,6 @@ return [
     "toast_upline_change_success" => "成功更改上线",
     "toast_rank_upgrade_success" => "成功升级等级",
     "toast_add_deposit_profile_success" => "成功添加存款资料",
+    "toast_update_deposit_profile_success" => "成功更新存款资料",
 
 ];
