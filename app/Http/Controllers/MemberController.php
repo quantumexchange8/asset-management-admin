@@ -26,9 +26,7 @@ class MemberController extends Controller
     {
         Gate::authorize('access', User::class);
 
-        return Inertia::render('Member/Listing/MemberListing', [
-            'memberCounts' => User::count(),
-        ]);
+        return Inertia::render('Member/Listing/MemberListing');
     }
 
     public function getMemberData(Request $request)

@@ -86,22 +86,6 @@ function copyToClipboard(text) {
                 class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
             >
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.token_address') }}
-                </div>
-                <div class="flex gap-1 items-center text-surface-950 dark:text-white text-sm font-medium">
-                    <span class="break-words">{{ depositHistory.to_payment_account_no }}</span>
-                    <Tag
-                        severity="info"
-                        :value="depositHistory.to_payment_platform_name"
-                    />
-                </div>
-            </div>
-
-            <div
-                v-if="depositHistory.to_payment_platform === 'crypto'"
-                class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
-            >
-                <div class="w-[140px] text-surface-500 text-xs font-medium">
                     {{ $t('public.txn_hash') }}
                 </div>
                 <div class="flex flex-col items-start gap-1 self-stretch relative">

@@ -14,8 +14,10 @@ import { FilterMatchMode } from '@primevue/core/api';
 import EmptyData from '@/Components/EmptyData.vue';
 import {usePage} from "@inertiajs/vue3";
 import {useLangObserver} from "@/Composables/localeObserver.js";
+import AdminTableAction from './AdminTableAction.vue';
 
 const props = defineProps({
+    permissions: Object,
     permissionsCount: Number,
 })
 
@@ -209,10 +211,13 @@ watchEffect(() => {
 
                         <Column
                             field="action"
-                            :header="$t('public.action')"
+                            style="width: 5%"
                         >
                             <template #body="{data}">
-
+                                <AdminTableAction 
+                                    :admin="data"
+                                    :permissions="props.permissions"
+                                />
                             </template>
                         </Column>
                     </template>

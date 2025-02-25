@@ -125,7 +125,7 @@ const closeDialog = () => {
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.broker_name') }}
+                        {{ $t('public.broker') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
                         {{ pendingConnection.broker.name }}

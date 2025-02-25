@@ -19,6 +19,7 @@ defineProps({
             </div>
 
             <AdminTable
+                :permissions="permissions"
                 :permissionsCount="permissionsCount"
             />
         </div>

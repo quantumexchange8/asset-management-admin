@@ -454,7 +454,7 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.fee') }}</span>
                             </template>
                             <template #body="{ data }">
-                                <span class="text-red-500">  $ {{ data.transaction_charges || '-'}}</span>
+                                <span class="text-red-500">  $ {{ data.transaction_charges || '0.00'}}</span>
                             </template>
                         </Column>
 
