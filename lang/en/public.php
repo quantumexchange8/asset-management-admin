@@ -306,4 +306,8 @@ return [
     "delete_deposit_profile" => "Delete Deposit Profile",
     "delete_deposit_profile_caption" => "Are you sure you want to delete this deposit profile? This will permenantly delete the deposit profile.",
     "toast_delete_deposit_profile" => "Successfully Deleted Deposit Profile",
+    "same_level" => "Same Level",
+    "total_pending_fund" => "Total Pending Fund",
+    "total_pending_connections" => "Total Pending Connections",
+    "pending_connection" => "Pending Connection",
 ];

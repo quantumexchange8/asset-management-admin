@@ -116,7 +116,9 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
          * ==============================
          */
         Route::prefix('connections')->group(function () {
-            Route::get('pending_connection');
+            Route::get('/pending_connection', [ConnectionController::class, 'pending_connection'])->name('connection.pending_connection');
+            Route::get('/pending_connection_data', [ConnectionController::class, 'pending_connection_data'])->name('connection.pending_connection_data');
+            Route::put('/pendingConnectionApproval', [ConnectionController::class, 'pendingConnectionApproval'])->name('connection.pendingConnectionApproval');
             Route::get('broker_connection', [ConnectionController::class, 'broker_connection'])->name('connection.broker_connection');
             Route::get('getConnections', [ConnectionController::class, 'getConnections'])->name('connection.getConnections');
             Route::get('/download_import_example', [ConnectionController::class, 'download_import_example'])->name('connection.download_import_example');

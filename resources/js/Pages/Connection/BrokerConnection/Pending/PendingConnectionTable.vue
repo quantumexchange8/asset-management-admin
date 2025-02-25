@@ -23,16 +23,16 @@ import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
 import EmptyData from "@/Components/EmptyData.vue";
+import PendingConnectionAction from '../Partial/PendingConnectionAction.vue';
 
-const exportStatus = ref(false);
 const isLoading = ref(false);
 const dt = ref(null);
 const connections = ref([]);
 const {formatAmount} = generalFormat();
 const totalRecords = ref(0);
 const first = ref(0);
-const totalActiveFund = ref();
-const totalConnections = ref();
+const totalPendingFund = ref();
+const totalPendingConnections = ref();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -57,14 +57,15 @@ const loadLazyData = (event) => {
                 lazyEvent: JSON.stringify(lazyParams.value)
             };
 
-            const url = route('connection.getConnections', params);
+            const url = route('connection.pending_connection_data', params);
             const response = await fetch(url);
             const results = await response.json();
 
             connections.value = results?.data?.data;
+            console.log(results?.data?.data)
             totalRecords.value = results?.data?.total;
-            totalActiveFund.value = results?.totalActiveFund;
-            totalConnections.value = results?.totalConnections;
+            totalPendingFund.value = results?.totalPendingFund;
+            totalPendingConnections.value = results?.totalPendingConnections;
             isLoading.value = false;
 
         }, 100);
@@ -138,10 +139,10 @@ watch(selectedDate, (newDateRange) => {
 const emit = defineEmits(['update-totals']);
 
 // Emit the totals whenever they change
-watch([totalActiveFund, totalConnections], () => {
+watch([totalPendingFund, totalPendingConnections], () => {
     emit('update-totals', {
-        totalActiveFund: totalActiveFund.value,
-        totalConnections: totalConnections.value,
+        totalPendingFund: totalPendingFund.value,
+        totalPendingConnections: totalPendingConnections.value,
     });
 });
 
@@ -156,57 +157,13 @@ const clearFilter = () => {
     lazyParams.value.filters = filters.value ;
 };
 
-const exportTable = () => {
-    exportStatus.value = true;
-    isLoading.value = true;
-
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    lazyParams.value.filters = filters.value;
-
-    if (filters.value) {
-        lazyParams.value.filters = { ...filters.value };
-    } else {
-        lazyParams.value.filters = {};
-    }
-
-    let params = {
-        include: [],
-        lazyEvent: JSON.stringify(lazyParams.value),
-        exportStatus: true,
-    };
-
-    const url = route('connection.getConnections', params);
-
-    try {
-
-        window.location.href = url;
-    } catch (e) {
-        console.error('Error occurred during export:', e);
-    } finally {
-        isLoading.value = false;
-        exportStatus.value = false;
-    }
-};
-
-const getSeverity = (status) => {
-    switch (status) {
-        case 'removed':
-            return 'danger';
-
-        case 'active':
-            return 'success';
-
-        case 'pending':
-            return 'info';
-    }
-}
-
 watchEffect(() => {
     if (usePage().props.toast !== null) {
         loadLazyData();
     }
 });
 </script>
+
 
 <template>
     <Card class="w-full">
@@ -268,27 +225,13 @@ watchEffect(() => {
                                     {{ $t('public.filter') }}
                                 </Button>
                             </div>
-
-                            <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
-                                <!-- Export button -->
-                                <Button
-                                    type="button"
-                                    severity="info"
-                                    class="w-full md:w-auto"
-                                    @click="exportTable"
-                                    :disabled="exportStatus"
-                                >
-                                    <span class="pr-1">{{ $t('public.export') }}</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
-                            </div>
                         </div>
                     </template>
 
                     <template #empty>
-                        <div v-if="totalConnections === 0">
+                        <div v-if="totalPendingConnections === 0">
                             <EmptyData
-                                :title="$t('public.no_connections')"
+                                :title="$t('public.no_connection')"
                             />
                         </div>
                     </template>
@@ -369,14 +312,13 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="status"
-                            :header="$t('public.status')"
+                            field="action"
+                            :header="$t('public.action')"
                             sortable
                         >
                             <template #body="{ data }">
-                                <Tag
-                                    :value="$t(`public.${data.status}`)"
-                                    :severity="getSeverity(data.status)"
+                                <PendingConnectionAction 
+                                    :pendingConnection="data"
                                 />
                             </template>
                         </Column>

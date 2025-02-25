@@ -271,6 +271,8 @@ class SettingController extends Controller
         $depositProfile->edited_by = Auth::id();
 
         $depositProfile->update();
+
+        return back()->with('toast', 'success');
     }
 
     public function updateDepositProfileStatus(Request $request)
@@ -279,6 +281,8 @@ class SettingController extends Controller
 
         $depositProfile->status = $depositProfile->status == 'active' ? 'inactive' : 'active';
         $depositProfile->update();
+
+        return back()->with('toast', 'success');
     }
 
     public function deleteDepositProfile(Request $request){
@@ -286,5 +290,7 @@ class SettingController extends Controller
 
         $depositProfile->deleted_at = now();
         $depositProfile->update();
+
+        return back()->with('toast', 'success');
     }
 }

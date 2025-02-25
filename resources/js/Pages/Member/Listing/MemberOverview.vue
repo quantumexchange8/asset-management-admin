@@ -27,7 +27,7 @@ const isLoading = ref(false);
                                 {{ $t('public.all_members') }}
                             </div>
                             <div class="text-3xl font-semibold">
-                                <div v-if="isLoading">
+                                <div v-if="totalRecords === null">
                                     <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
                                 </div>
 
@@ -57,7 +57,7 @@ const isLoading = ref(false);
                                 {{ $t('public.verified') }}
                             </div>
                             <div class="text-3xl font-semibold">
-                                <div v-if="isLoading">
+                                <div v-if="verifiedUser === null">
                                     <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
                                 </div>
 
@@ -87,7 +87,7 @@ const isLoading = ref(false);
                                 {{ $t('public.unverified') }}
                             </div>
                             <div class="text-3xl font-semibold">
-                                <div v-if="isLoading">
+                                <div v-if="unverifiedUser === null">
                                     <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
                                 </div>
 

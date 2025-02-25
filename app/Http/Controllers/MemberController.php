@@ -403,14 +403,10 @@ class MemberController extends Controller
                 throw ValidationException::withMessages(['amount' => trans('Insufficient Demo Fund Balance')]);
             }
         } else {
-            if ($validatedData['action'] == 'withdrawal' && $wallet->real_fund < $validatedData['amount']) {
-                throw ValidationException::withMessages(['amount' => trans('Insufficient Real Fund Balance')]);
+            if ($validatedData['action'] == 'withdrawal' && $wallet->balance < $validatedData['amount']) {
+                throw ValidationException::withMessages(['amount' => trans('Insufficient Balance')]);
             }
         }
-
-        // if ($validatedData['action'] == 'withdrawal' && $wallet->balance < $validatedData['amount']) {
-        //     throw ValidationException::withMessages(['amount' => trans('Insufficient Balance')]);
-        // }
 
         //seperate demo and real fund amount during transaction
         $new_demo_fund = $validatedData['action'] == 'withdrawal' ? $wallet->demo_fund - $validatedData['amount'] : $wallet->demo_fund + $validatedData['amount'];

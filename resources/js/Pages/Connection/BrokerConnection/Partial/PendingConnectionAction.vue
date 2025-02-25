@@ -13,7 +13,7 @@ import { generalFormat } from '@/Composables/format';
 import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
-    pending: Object,
+    pendingConnection: Object,
 });
 
 const toast = useToast();
@@ -27,16 +27,16 @@ const openDialog = async (action) => {
 }
 
 const form = useForm({
-    transaction_id: props.pending.id,
+    connection_id: props.pendingConnection.id,
     action: '',
     remarks: '',
 });
 
-const emit = defineEmits(['pendingWithdrawalActionCompleted']);
+const emit = defineEmits(['pendingConnectionActionCompleted']);
 
 const submitForm = () => {
     form.action = dialogType.value;
-    form.put(route('transaction.pending.pendingWithdrawalApproval'), {
+    form.put(route('connection.pendingConnectionApproval'), {
         onSuccess: () => {
             visible.value = false;
             form.reset();
@@ -47,7 +47,7 @@ const submitForm = () => {
                 life: 3000,
             });
             // Emit the custom event to parent
-            emit('pendingWithdrawalActionCompleted');
+            emit('pendingConnectionActionCompleted');
         },
         onError: (errors) => {
             console.error(errors);
@@ -61,7 +61,7 @@ const closeDialog = () => {
 </script>
 
 <template>
-    <div class="flex items-center self-stretch gap-x-2">
+     <div class="flex items-center self-stretch gap-x-2">
         <Button
             type="button"
             severity="success"
@@ -105,11 +105,11 @@ const closeDialog = () => {
         <div class="flex flex-col items-center gap-4 divide-y dark:divide-surface-700 self-stretch">
             <div class="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch w-full">
                 <div class="flex flex-col items-start w-full">
-                    <span class="text-surface-950 dark:text-white font-medium">{{ pending.user.name }}</span>
-                    <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
+                    <span class="text-surface-950 dark:text-white font-medium">{{ pendingConnection.user.name }}</span>
+                    <span class="text-surface-500 text-sm">{{ pendingConnection.user.email }}</span>
                 </div>
                 <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
-                    $ {{ formatAmount(pending.amount) }}
+                    $ {{ formatAmount(pendingConnection.capital_fund) }}
                 </div>
             </div>
 
@@ -119,52 +119,34 @@ const closeDialog = () => {
                         {{ $t('public.request_date') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ dayjs(pending.approval_at).format('DD/MM/YYYY HH:mm:ss') }}
+                        {{ dayjs(pendingConnection.created_at).format('DD/MM/YYYY HH:mm:ss') }}
                     </div>
                 </div>
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.transaction_number') }}
+                        {{ $t('public.broker_name') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ pending.transaction_number }}
+                        {{ pendingConnection.broker.name }}
                     </div>
                 </div>
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.wallet') }}
+                        {{ $t('public.connection_number') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ pending.from_wallet?.type ? $t(`public.${pending.from_wallet.type}`) : '-' }}
+                        {{ pendingConnection.connection_number }}
                     </div>
                 </div>
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.to') }}
+                        {{ $t('public.broker_login') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ pending.to_payment_account_name }}
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                    <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.fee') }}
-                    </div>
-                    <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        $ {{ formatAmount(pending.transaction_charges ?? 0) }}
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                    <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.receive') }}
-                    </div>
-                    <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        $ {{ formatAmount(pending.transaction_amount ?? 0) }}
+                        {{ pendingConnection.broker_login }}
                     </div>
                 </div>
 
@@ -173,9 +155,9 @@ const closeDialog = () => {
                         {{ $t('public.upline') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ props.pending.user.upline?.name || '-' }}
+                        {{ pendingConnection.user.upline?.name || '-' }}
                         <span class="text-surface-500">
-                            {{ props.pending.user.upline?.email }}
+                            {{ pendingConnection.user.upline?.email }}
                         </span>
                     </div>
                 </div>

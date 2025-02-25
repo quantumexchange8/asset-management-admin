@@ -491,6 +491,7 @@ class TransactionController extends Controller
             $transaction->status = 'success';
 
             $wallet->balance += $transaction->amount;
+            $wallet->real_fund += $transaction->amount;
             $wallet->save();
         } else {
             $transaction->status = 'rejected';
@@ -521,15 +522,24 @@ class TransactionController extends Controller
         ]);
 
         $transaction = Transaction::find($request->transaction_id);
+        $wallet = Wallet::find($transaction->from_wallet_id);
 
         if ($request->action == 'approve_transaction') {
             $transaction->status = 'success';
             $transaction->transaction_amount = $transaction->amount - $transaction->transaction_charges;
-            $transaction->update();
+            
+            $wallet->balance -= $transaction->amount;
+            $wallet->real_fund -= $transaction->amount;
+            $wallet->save();
         } else {
             $transaction->status = 'rejected';
             $transaction->remarks = $validatedData['remarks'];
-            $transaction->update();
         }
+        $transaction->new_wallet_amount = $wallet->balance;
+        $transaction->approval_at = now();
+        $transaction->handle_by = \Auth::id();
+        $transaction->update();
+
+        return back()->with('toast', 'success');
     }
 }

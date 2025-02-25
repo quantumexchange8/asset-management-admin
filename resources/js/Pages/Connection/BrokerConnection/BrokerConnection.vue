@@ -5,10 +5,6 @@ import ConnectionTable from "@/Pages/Connection/BrokerConnection/ConnectionTable
 import ImportConnection from "@/Pages/Connection/BrokerConnection/ImportConnection.vue";
 import {ref} from "vue";
 
-const props = defineProps({
-    connectionCounts: Number,
-});
-
 const totalActiveFund = ref(null);
 const totalConnections = ref(null);
 
@@ -31,7 +27,6 @@ const handleOverview = (data) => {
             </div>
 
             <ConnectionTable
-                :connectionCounts="connectionCounts"
                 @update-totals="handleOverview"
             />
         </div>

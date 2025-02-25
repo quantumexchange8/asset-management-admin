@@ -306,5 +306,9 @@ return [
     "delete_deposit_profile" => "删除存款资料",
     "delete_deposit_profile_caption" => "您确定要删除此存款资料吗？这将永久删除该存款资料。",
     "toast_delete_deposit_profile" => "成功删除存款资料",
+    "same_level" => "相同等级",
+    "total_pending_fund" => "待处理资金总额",
+    "total_pending_connections" => "待处理连接总数",
+    "pending_connection" => "待处理连接",
 
 ];

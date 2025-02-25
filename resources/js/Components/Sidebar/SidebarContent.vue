@@ -125,6 +125,12 @@ watchEffect(() => {
                 :active="route().current('connection.broker_connection')"
                 v-if="hasPermission('access_connections')"
             />
+            <SidebarCollapsibleItem
+                title="pending_connection"
+                :href="route('connection.pending_connection')"
+                :active="route().current('connection.pending_connection')"
+                v-if="hasPermission('access_connections')"
+            />
         </SidebarCollapsible>
 
         <!-- Transaction -->
