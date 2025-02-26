@@ -26,8 +26,8 @@ const requireConfirmation = (action_type) => {
     const messages = {
         delete_item: {
             group: 'headless-error',
-            header: trans('public.delete_deposit_profile'),
-            text: trans('public.delete_deposit_profile_caption'),
+            header: trans('public.delete_admin'),
+            text: trans('public.delete_admin_caption'),
             cancelButton: trans('public.cancel'),
             acceptButton: trans('public.confirm'),
             action: () => {
@@ -40,7 +40,7 @@ const requireConfirmation = (action_type) => {
                         toast.add({
                             severity: 'success',
                             summary: trans('public.success'),
-                            detail: trans('public.toast_delete_deposit_profile'),
+                            detail: trans('public.toast_delete_admin'),
                             life: 4000,
                         });
                     },
