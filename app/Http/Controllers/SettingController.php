@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
@@ -37,6 +38,9 @@ class SettingController extends Controller
                 'super_admin',
                 'admin',
             ])
+                ->with([
+                    'permissions:id,name,type,category'
+                ])
                 ->withCount('permissions');
 
             // Filter keyword
@@ -105,6 +109,48 @@ class SettingController extends Controller
 
             $user->givePermissionTo($permissions);
         }
+
+        return back()->with('toast', 'success');
+    }
+
+    public function updateAdminInfo(Request $request)
+    {
+        Validator::make($request->all(), [
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\p{M}. @]+$/u', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($request->user_id)],
+            'role' => ['required'],
+        ])->setAttributeNames([
+            'name' => trans('public.name'),
+            'email' => trans('public.email'),
+            'role' => trans('public.role'),
+        ])->validate();
+
+        $user = User::find($request->user_id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+        $user->update();
+        // Sync role (replaces old role with the new one)
+        $user->syncRoles([$request->role]);
+        // Sync permissions (adds new and removes unselected)
+        if ($request->has('permissions') && is_array($request->permissions)) {
+            $permissions = Permission::whereIn('id', $request->permissions)
+                ->get()
+                ->pluck('name')
+                ->toArray();
+
+            $user->syncPermissions($permissions);
+        }
+
+        return back()->with('toast', 'success');
+    }
+
+    public function deleteAdmin(Request $request)
+    {
+        $admin = User::find($request->id);
+        $admin->delete_at = now();
+        $admin->syncPermissions([]);
+        $admin->update();
 
         return back()->with('toast', 'success');
     }
@@ -215,7 +261,8 @@ class SettingController extends Controller
         return redirect()->back()->with('toast');
     }
 
-    public function updateDepositProfile(Request $request){
+    public function updateDepositProfile(Request $request)
+    {
         $depositProfile = DepositProfile::find($request->id);
 
         $validatedData = $request->validate([
@@ -285,7 +332,8 @@ class SettingController extends Controller
         return back()->with('toast', 'success');
     }
 
-    public function deleteDepositProfile(Request $request){
+    public function deleteDepositProfile(Request $request)
+    {
         $depositProfile = DepositProfile::find($request->id);
 
         $depositProfile->deleted_at = now();

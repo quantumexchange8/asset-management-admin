@@ -315,4 +315,8 @@ return [
     "front_identity" => "身份证正面",
     "back_identity" => "身份证反面",
     "remarks_required_reject" => "拒绝时备注字段为必填项"
+    "delete_admin" => "删除管理员",
+    "delete_admin_caption" => "您确定要删除此管理员吗？这将永久删除该管理员，并限制其使用管理网站。",
+    "toast_delete_admin" => "成功删除管理员",
+
 ];

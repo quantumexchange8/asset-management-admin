@@ -16,8 +16,6 @@ const props = defineProps({
     depositProfile: Object,
 });
 
-const visible = ref(false);
-
 const emit = defineEmits(['update:visible']);
 
 //country
@@ -74,10 +72,6 @@ const networks = ref([
     { name: 'Omni'},
 ]);
 
-const closeDialog = () => {
-    visible.value = false;
-}
-
 const form = useForm({
     id: props.depositProfile.id,
     name: props.depositProfile.name,
@@ -108,7 +102,6 @@ const submitForm = () => {
 
     form.put(route('settings.updateDepositProfile'), {
         onSuccess: () => {
-            closeDialog();
             form.reset();
             emit('update:visible', false);
             toast.add({

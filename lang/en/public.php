@@ -315,4 +315,7 @@ return [
     "front_identity" => "Front Identity",
     "back_identity" => "Back Identity",
     "remarks_required_reject" => "Remarks field is required when rejected",
+    "delete_admin" => "Delete Admin",
+    "delete_admin_caption" => "Are you sure you want to delete this admin? This will permenantly delete the admin and restrict from using admin site.",
+    "toast_delete_admin" => "Successfully Deleted Admin",
 ];

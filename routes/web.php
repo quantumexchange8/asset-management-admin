@@ -183,8 +183,9 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
         // Admin
         Route::get('/admin_listing', [SettingController::class, 'admin_listing'])->name('settings.admin_listing');
         Route::get('/getAdminListingData', [SettingController::class, 'getAdminListingData'])->name('settings.getAdminListingData');
-
         Route::post('addAdmin', [SettingController::class, 'addAdmin'])->name('settings.addAdmin');
+        Route::put('/updateAdminInfo', [SettingController::class, 'updateAdminInfo'])->name('settings.updateAdminInfo');
+        Route::put('/deleteAdmin', [SettingController::class, 'deleteAdmin'])->name('settings.deleteAdmin');
 
         //default profile
         Route::get('/deposit_profile', [SettingController::class, 'depositProfile'])->name('settings.depositProfile');
