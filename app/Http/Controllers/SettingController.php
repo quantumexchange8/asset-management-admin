@@ -145,6 +145,16 @@ class SettingController extends Controller
         return back()->with('toast', 'success');
     }
 
+    public function deleteAdmin(Request $request)
+    {
+        $admin = User::find($request->id);
+        $admin->delete_at = now();
+        $admin->syncPermissions([]);
+        $admin->update();
+
+        return back()->with('toast', 'success');
+    }
+
     public function depositProfile()
     {
         return Inertia::render('Settings/DepositProfile/DepositProfile');
