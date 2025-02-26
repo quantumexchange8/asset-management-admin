@@ -307,7 +307,7 @@ class MemberController extends Controller
         $wallet->currency_symbol = '$';
         $wallet->save();
 
-        return redirect()->back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     public function memberDetail($id_number)
@@ -443,7 +443,7 @@ class MemberController extends Controller
         $wallet->balance = $new_balance;
         $wallet->update();
 
-        return back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     public function upgradeRank(Request $request)
@@ -453,7 +453,7 @@ class MemberController extends Controller
         $user->rank_up_status = 'manual';
         $user->update();
 
-        return back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     public function changeUpline(Request $request)
@@ -476,7 +476,7 @@ class MemberController extends Controller
             $this->updateDownLineHierarchy($user->id, $newHierarchyList);
         }
 
-        return back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     private function updateDownLineHierarchy($userId, $parentHierarchy)

@@ -410,7 +410,7 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.to') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.to_payment_account_name }}
+                                {{ data.to_payment_account_name ?? $t('public.wallet_adjustment')}}
                             </template>
                         </Column>
 
@@ -425,7 +425,7 @@ watchEffect(() => {
                             <template #body="{ data }">
                                 <Tag 
                                     :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
-                                    :value="$t(`public.${data.to_payment_platform}`)"
+                                    :value="data.to_payment_platform ? $t(`public.${data.to_payment_platform}`) : '-'"
                                 />
                             </template>
                         </Column>

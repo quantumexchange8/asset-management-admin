@@ -325,4 +325,10 @@ return [
     "exists_email_import" => "Email does not exist",
     "top_up" => "Top Up",
     "initial_join" => "Initial Join",
+    "connection_type" => "Connection Type",
+    "method" => "Method",
+    "crypto_tether_required" => "Crypto Tether field is required when type is crypto",
+    "crypto_network_required" => "Crypto Network field is required when type is crypto",
+    "bank_name_required" => "Bank Name field is required when type is bank",
+    "bank_branch" => "Bank Branch field is required when type is bank",
 ];

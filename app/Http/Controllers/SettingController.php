@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
 
@@ -203,116 +204,112 @@ class SettingController extends Controller
 
     public function addDepositProfile(Request $request)
     {
-        $validatedData = $request->validate([
+
+        $validator =  Validator::make($request->all(), [
             'name' => ['required'],
             'account_number' => ['required'],
-            'bank_name' => ['required_if:type,bank'],
-            'bank_branch' => ['required_if:type,bank'],
-            'crypto_tether' => ['required_if:type,crypto'],
-            'crypto_network' => ['required_if:type,crypto'],
             'currency' => ['required'],
-        ], [
-            'bank_name.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.bank_name'),
-                'other' => trans('public.type'),
-                'value' => trans('public.bank')
-            ]),
-
-            'bank_branch.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.bank_branch'),
-                'other' => trans('public.type'),
-                'value' => trans('public.bank')
-            ]),
-
-            'crypto_tether.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.crypto_tether'),
-                'other' => trans('public.type'),
-                'value' => trans('public.crypto')
-            ]),
-
-            'crypto_network.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.crypto_network'),
-                'other' => trans('public.type'),
-                'value' => trans('public.crypto')
-            ]),
-
-        ], [
+        ])->setAttributeNames([
             'name' => trans('public.name'),
             'account_number' => trans('public.account_number'),
             'currency' => trans('public.currency'),
         ]);
 
+        // Collect errors from initial validation
+        $errors = $validator->errors()->messages();
+
+        // Add additional validation for crypto type
+        if ($request->type === 'crypto') {
+            if (!$request->crypto_tether) {
+                $errors['crypto_tether'][] = trans('public.crypto_tether_required');
+            }
+
+            if (!$request->crypto_network) {
+                $errors['crypto_network'][] = trans('public.crypto_network_required');
+            }
+        } else {
+            if (!$request->bank_name) {
+                $errors['bank_name'][] = trans('public.bank_name_required');
+            }
+
+            if (!$request->bank_branch) {
+                $errors['bank_branch'][] = trans('public.bank_branch_required');
+            }
+        }
+
+        // If there are any errors, throw a ValidationException
+        if (!empty($errors)) {
+            throw ValidationException::withMessages($errors);
+        }
+
         $currency = $request->currency;
 
         $depositProfile = new DepositProfile();
-        $depositProfile->name = $validatedData['name'];
+        $depositProfile->name = $request->name;
         $depositProfile->type = $request->type;
-        $depositProfile->account_number = $validatedData['account_number'];
-        $depositProfile->bank_name = $validatedData['bank_name'];
-        $depositProfile->bank_branch = $validatedData['bank_branch'];
-        $depositProfile->crypto_tether = $validatedData['crypto_tether'];
-        $depositProfile->crypto_network = $validatedData['crypto_network'] ?? null;
+        $depositProfile->account_number = $request->account_number;
+        $depositProfile->bank_name = $request->bank_name;
+        $depositProfile->bank_branch = $request->bank_branch;
+        $depositProfile->crypto_tether = $request->crypto_tether;
+        $depositProfile->crypto_network = $request->crypto_network ?? null;
         $depositProfile->country_id = $request->type === 'bank' ? $currency['id'] : null;
         $depositProfile->currency = $request->type === 'bank' ? $currency['currency'] : $currency;
         $depositProfile->edited_by = Auth::id();
-
         $depositProfile->save();
 
-        return redirect()->back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     public function updateDepositProfile(Request $request)
     {
         $depositProfile = DepositProfile::find($request->id);
 
-        $validatedData = $request->validate([
+        $validator =  Validator::make($request->all(), [
             'name' => ['required'],
             'account_number' => ['required'],
-            'bank_name' => ['required_if:type,bank'],
-            'bank_branch' => ['required_if:type,bank'],
-            'crypto_tether' => ['required_if:type,crypto'],
-            'crypto_network' => ['required_if:type,crypto'],
             'currency' => ['required'],
-        ], [
-            'bank_name.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.bank_name'),
-                'other' => trans('public.type'),
-                'value' => trans('public.bank')
-            ]),
-
-            'bank_branch.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.bank_branch'),
-                'other' => trans('public.type'),
-                'value' => trans('public.bank')
-            ]),
-
-            'crypto_tether.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.crypto_tether'),
-                'other' => trans('public.type'),
-                'value' => trans('public.crypto')
-            ]),
-
-            'crypto_network.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.crypto_network'),
-                'other' => trans('public.type'),
-                'value' => trans('public.crypto')
-            ]),
-
-        ], [
+        ])->setAttributeNames([
             'name' => trans('public.name'),
             'account_number' => trans('public.account_number'),
             'currency' => trans('public.currency'),
         ]);
 
+        // Collect errors from initial validation
+        $errors = $validator->errors()->messages();
+
+        // Add additional validation for crypto type
+        if ($request->type === 'crypto') {
+            if (!$request->crypto_tether) {
+                $errors['crypto_tether'][] = trans('public.crypto_tether_required');
+            }
+
+            if (!$request->crypto_network) {
+                $errors['crypto_network'][] = trans('public.crypto_network_required');
+            }
+        } else {
+            if (!$request->bank_name) {
+                $errors['bank_name'][] = trans('public.bank_name_required');
+            }
+
+            if (!$request->bank_branch) {
+                $errors['bank_branch'][] = trans('public.bank_branch_required');
+            }
+        }
+
+        // If there are any errors, throw a ValidationException
+        if (!empty($errors)) {
+            throw ValidationException::withMessages($errors);
+        }
+
         $currency = $request->currency;
 
-        $depositProfile->name = $validatedData['name'];
+        $depositProfile->name = $request->name;
         $depositProfile->type = $request->type;
-        $depositProfile->account_number = $validatedData['account_number'];
-        $depositProfile->bank_name = $validatedData['bank_name'];
-        $depositProfile->bank_branch = $validatedData['bank_branch'];
-        $depositProfile->crypto_tether = $validatedData['crypto_tether'];
-        $depositProfile->crypto_network = $validatedData['crypto_network'] ?? null;
+        $depositProfile->account_number = $request->account_number;
+        $depositProfile->bank_name = $request->bank_name;
+        $depositProfile->bank_branch = $request->bank_branch;
+        $depositProfile->crypto_tether = $request->crypto_tether;
+        $depositProfile->crypto_network = $request->crypto_network ?? null;
         $depositProfile->country_id = $request->type === 'bank' ? $currency['id'] : null;
         $depositProfile->currency = $request->type === 'bank' ? $currency['currency'] : $currency;
         $depositProfile->edited_by = Auth::id();

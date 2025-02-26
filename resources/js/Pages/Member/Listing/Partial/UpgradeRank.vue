@@ -24,7 +24,7 @@ const loadingRanks = ref(false);
 const {formatNameLabel} = generalFormat();
 
 //close dialog after save and refresh rank after save
-const emit = defineEmits(['update:visible', 'rank-updated']);
+const emit = defineEmits(['update:visible']);
 
 const getRanks = async () => {
     loadingRanks.value = true;
@@ -55,7 +55,7 @@ const submitForm = () => {
     form.put(route('member.upgradeRank'), {
         onSuccess:() => {
             emit('update:visible', false);
-            emit('rank-updated', form.rank); // Emit updated rank event
+            //emit('rank-updated', form.rank); // Emit updated rank event
             toast.add({
                 severity: 'success',
                 summary: trans('public.success'),

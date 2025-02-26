@@ -18,7 +18,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['update:visible', 'upline-updated']);
+const emit = defineEmits(['update:visible']);
 
 const users = ref([]);
 const selectedUpline = ref();
@@ -87,7 +87,6 @@ const submitForm = () => {
     form.put(route('member.changeUpline'), {
         onSuccess:() => {
             emit('update:visible', false);
-            emit('upline-updated', form.upline); // Emit change upline event
             toast.add({
                 severity: 'success',
                 summary: trans('public.success'),

@@ -325,5 +325,12 @@ return [
     "exists_email_import" => "电子邮件不存在",
     "top_up" => "充值",
     "initial_join" => "初始加入",
+    "connection_type" => "连接类型",
+    "method" => "方法",
+    "crypto_tether_required" => "当类型为加密货币时，加密货币字段是必填项",
+    "crypto_network_required" => "当类型为加密货币时，加密网络字段是必填项",
+    "bank_name_required" => "当类型为银行时，银行名称字段是必填项",
+    "bank_branch" => "当类型为银行时，银行分行字段是必填项",
+
 
 ];

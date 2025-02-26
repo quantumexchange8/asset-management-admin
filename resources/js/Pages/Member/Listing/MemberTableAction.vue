@@ -20,8 +20,6 @@ const props = defineProps({
     member: Object,
 })
 
-const emit = defineEmits(['rank-updated', 'upline-updated']);
-
 const menu = ref();
 const visible = ref(false);
 
@@ -126,7 +124,6 @@ const toggle = (event) => {
             <UpgradeRank
                 :member="member"
                 @update:visible="visible = false"
-                @rank-updated="(newRank) => $emit('rank-updated', member.id, newRank)" 
             />
         </template>
 
@@ -134,7 +131,6 @@ const toggle = (event) => {
             <ChangeUpline
                 :member="member"
                 @update:visible="visible = false"
-                @upline-updated="(newUpline) => $emit('upline-updated', member.id, newUpline)" 
             />
         </template>
     </Dialog>

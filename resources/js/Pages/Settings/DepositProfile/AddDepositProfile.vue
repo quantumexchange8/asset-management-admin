@@ -99,7 +99,6 @@ const submitForm = () => {
         onSuccess: () => {
             closeDialog();
             form.reset();
-
             toast.add({
                 severity: 'success',
                 summary: trans('public.success'),
