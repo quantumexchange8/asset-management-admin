@@ -350,7 +350,6 @@ watchEffect(() => {
 
                             <Column
                                 field="action"
-                                :header="$t('public.action')"
                             >
                                 <template #body="{data}">
                                     <KycAction

@@ -127,7 +127,7 @@ class MemberController extends Controller
     public function getPendingKyc()
     {
         Gate::authorize('access-kyc', User::class);
-       
+
         return Inertia::render('Member/Listing/KycPending');
     }
 
@@ -190,10 +190,8 @@ class MemberController extends Controller
                 ->count();
 
             $users->each(function ($user) {
-                $user->kyc_images = $user->getMedia('kyc_image')
-                    ->map(function ($media) {
-                        return $media->getUrl();
-                    });
+                $user->front_identity = $user->getFirstMediaUrl('front_identity');
+                $user->back_identity = $user->getFirstMediaUrl('back_identity');
             });
 
             return response()->json([
@@ -210,15 +208,11 @@ class MemberController extends Controller
     {
         Gate::authorize('manage-kyc', User::class);
 
-        $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject'],
-        ], [
-                'remarks.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.remarks'),
-                'other' => trans('public.action'),
-                'value' => trans('public.reject')
-            ])
-        ]);
+        Validator::make($request->all(), [
+            'action' => ['required'],
+        ])->setAttributeNames([
+            'action' => trans('public.action'),
+        ])->validate();
 
         $user = User::find($request->user_id);
 
@@ -226,8 +220,12 @@ class MemberController extends Controller
             $user->kyc_status = 'verified';
             $user->kyc_approval_at = now();
         } else {
+            if (!$request->remarks) {
+                throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
+            }
+
             $user->kyc_status = 'rejected';
-            $user->kyc_approval_description = $validatedData['remarks'];
+            $user->kyc_approval_description = $request->remarks;
         }
         $user->update();
 

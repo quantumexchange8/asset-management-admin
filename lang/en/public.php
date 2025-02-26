@@ -310,4 +310,9 @@ return [
     "total_pending_fund" => "Total Pending Fund",
     "total_pending_connections" => "Total Pending Connections",
     "pending_connection" => "Pending Connection",
+    "view" => "View",
+    "view_kyc" => "View KYC",
+    "front_identity" => "Front Identity",
+    "back_identity" => "Back Identity",
+    "remarks_required_reject" => "Remarks field is required when rejected",
 ];

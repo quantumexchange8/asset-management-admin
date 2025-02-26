@@ -1,5 +1,4 @@
 <script setup>
-import { IconX, IconCheck } from '@tabler/icons-vue';
 import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -7,7 +6,6 @@ import Textarea from 'primevue/textarea';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import { ref } from 'vue';
-import Galleria from 'primevue/galleria';
 import {useForm} from '@inertiajs/vue3';
 import Image from "primevue/image";
 import {trans} from "laravel-vue-i18n";
@@ -19,12 +17,10 @@ const props = defineProps({
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref('');
 const {locale} = useLangObserver();
 
-const openDialog = async (action) => {
+const openDialog = () => {
     visible.value = true;
-    dialogType.value = action;
 }
 
 const form = useForm({
@@ -33,8 +29,8 @@ const form = useForm({
     remarks: '',
 });
 
-const submitForm = () => {
-    form.action = dialogType.value;
+const submitForm = (action) => {
+    form.action = action;
     form.post(route('member.kycPendingApproval'), {
         onSuccess: () => {
             closeDialog();
@@ -42,7 +38,7 @@ const submitForm = () => {
             toast.add({
                 severity: 'success',
                 summary: trans('public.success'),
-                detail: trans(`public.toast_${dialogType.value}_kyc_success`),
+                detail: trans(`public.toast_${action}_kyc_success`),
                 life: 3000,
             });
         },
@@ -61,43 +57,19 @@ const closeDialog = () => {
     <div class="flex items-center self-stretch gap-2">
         <Button
             type="button"
-            severity="success"
-            text
-            rounded
-            aria-label="approve"
+            severity="secondary"
             size="small"
-            class="!p-2"
-            @click="openDialog('approve')"
-        >
-            <IconCheck :size="20" stroke-width="1.5" />
-        </Button>
-        <Button
-            type="button"
-            severity="danger"
-            text
-            rounded
-            aria-label="reject"
-            size="small"
-            class="!p-2"
-            @click="openDialog('reject')"
-        >
-            <IconX :size="20" stroke-width="1.5" />
-        </Button>
+            :label="$t('public.view')"
+            @click="openDialog"
+        />
     </div>
 
     <Dialog
         v-model:visible="visible"
         modal
-        class="dialog-xs md:dialog-md"
+        :header="$t('public.view_kyc')"
+        class="dialog-xs md:dialog-lg"
     >
-        <template #header>
-            <div class="flex items-center gap-4">
-                <div class="text-xl font-bold">
-                    {{ $t(`public.${dialogType}_kyc`) }}
-                </div>
-            </div>
-        </template>
-
         <div class="flex flex-col items-center gap-4">
             <div class="flex flex-row items-center gap-3 self-stretch w-full">
                 <div class="flex flex-col items-start w-full">
@@ -110,36 +82,38 @@ const closeDialog = () => {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-1 items-start self-stretch w-full">
-                <InputLabel for="kyc">
-                    {{ $t('public.proof_of_identity') }}:
-                </InputLabel>
-                <Galleria
-                    :value="pending.kyc_images"
-                    :numVisible="5"
-                    :circular="true"
-                    :showThumbnails="false"
-                    :showIndicators="true"
-                    :showItemNavigators="true"
-                    :changeItemOnIndicatorHover="true"
-                    :showIndicatorsOnItem="true"
-                    indicatorsPosition="bottom"
-                    container-class="w-full"
-                >
-                    <!-- Template for displaying individual images -->
-                    <template #item="slotProps">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
+                <div class="flex flex-col gap-1 items-start self-stretch">
+                    <InputLabel for="front_identity">{{ $t('public.front_identity' )}}</InputLabel>
+                    <div
+                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                    >
                         <Image
-                            :src="slotProps.item"
-                            alt="Image"
-                            imageClass="w-full h-[300px] object-contain"
-                            class="w-full"
+                            role="presentation"
+                            alt="front_identity_image"
+                            :src="pending.front_identity"
                             preview
+                            imageClass="w-full object-contain h-44"
                         />
-                    </template>
-                </Galleria>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1 items-start self-stretch">
+                    <InputLabel for="front_identity">{{ $t('public.back_identity' )}}</InputLabel>
+                    <div
+                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                    >
+                        <Image
+                            role="presentation"
+                            alt="back_identity_image"
+                            :src="pending.back_identity"
+                            preview
+                            imageClass="w-full object-contain h-44"
+                        />
+                    </div>
+                </div>
             </div>
 
-            <div v-if="dialogType === 'reject'" class="flex flex-col gap-1 items-start self-stretch">
+            <div class="flex flex-col gap-1 items-start self-stretch">
                 <InputLabel for="remarks" :value="$t('public.remarks')" />
                 <Textarea
                     id="remarks"
@@ -155,20 +129,22 @@ const closeDialog = () => {
                 <InputError :message="form.errors.remarks" />
             </div>
 
-            <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
+            <div class="flex gap-3 justify-between self-stretch pt-2 w-full">
                 <Button
                     type="button"
-                    severity="secondary"
-                    class="w-full md:w-fit"
-                    @click="closeDialog"
-                    :label="$t('public.cancel')"
+                    severity="danger"
+                    class="w-full"
+                    :disabled="form.processing"
+                    @click="submitForm('reject')"
+                    :label="$t('public.reject_kyc')"
                 />
                 <Button
                     type="submit"
-                    class="w-full md:w-fit"
+                    severity="success"
+                    class="w-full"
                     :disabled="form.processing"
-                    @click.prevent="submitForm"
-                    :label="$t('public.confirm')"
+                    @click.prevent="submitForm('approve')"
+                    :label="$t('public.approve_kyc')"
                 />
             </div>
         </div>

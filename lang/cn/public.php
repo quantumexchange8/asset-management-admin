@@ -310,5 +310,9 @@ return [
     "total_pending_fund" => "待处理资金总额",
     "total_pending_connections" => "待处理连接总数",
     "pending_connection" => "待处理连接",
-
+    "view" => "查看",
+    "view_kyc" => "查看KYC",
+    "front_identity" => "身份证正面",
+    "back_identity" => "身份证反面",
+    "remarks_required_reject" => "拒绝时备注字段为必填项"
 ];
