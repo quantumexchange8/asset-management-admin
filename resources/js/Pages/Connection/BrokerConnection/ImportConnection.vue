@@ -6,12 +6,15 @@ import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import {
     IconTableImport,
-    IconFileCheck
+    IconFileCheck,
+    IconHomeDollar,
+    IconWallet
 } from '@tabler/icons-vue';
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
 import {trans} from "laravel-vue-i18n";
+import InputIconWrapper from '@/Components/InputIconWrapper.vue';
 
 const visible = ref(false);
 
@@ -21,6 +24,14 @@ const openDialog = () => {
     file.value = null
 }
 
+//type
+const selectedType = ref();
+const types = ref([
+    { name: 'deposit' },
+    { name: 'withdrawal' }
+]);
+
+//broker
 const selectedBroker = ref(null);
 const brokers = ref([]);
 const loadingBrokers = ref(false);
@@ -79,6 +90,7 @@ const validateFile = (fileInput) => {
 
 const form = useForm({
     broker_id: '',
+    type: '',
     import_file: null,
 });
 
@@ -87,6 +99,7 @@ const toast = useToast();
 
 const submit = () => {
     form.broker_id = selectedBroker.value.id;
+    form.type = selectedType.value;
     form.post(route('connection.importBrokerConnection'), {
         onSuccess: () => {
             visible.value = false;
@@ -101,14 +114,17 @@ const submit = () => {
         onError: (errors) => {
             console.error(errors);
 
-            const errorMessages = Object.values(errors);
+             // Filter out the 'broker' field from the errors
+            const errorMessages = Object.entries(errors)
+                .filter(([key]) => key !== 'broker_id' && key !== 'type') // Exclude 'broker' and 'type' fields
+                .map(([, value]) => value); // Extract only the error messages
 
             let str = '';
 
             for(let i = 0; i < errorMessages.length; i++){
                 str += errorMessages[i] + "<br />";
             }
-
+            
             form.errors.import_file = str;
         }
     });
@@ -116,8 +132,10 @@ const submit = () => {
 
 const closeModal = () => {
     visible.value = false;
-    form.reset();
+    selectedType.value = '';
+    form.import_file = '';
     form.errors.broker = '';
+    form.errors.type = '';
     form.errors.import_file = '';
 }
 
@@ -176,24 +194,64 @@ const downloadTemplate = async () => {
     >
         <form @submit.prevent="submit">
             <div class="flex flex-col gap-5 self-stretch">
-                <div class="flex flex-col gap-1 items-start self-stretch">
-                    <InputLabel :value="$t('public.broker')" for="broker_id"/>
-                    <Select
-                        v-model="selectedBroker"
-                        :options="brokers"
-                        :loading="loadingBrokers"
-                        optionLabel="name"
-                        placeholder="Select Upline"
-                        class="block w-full"
-                        :invalid="form.errors.broker_id"
-                        filter
-                    >
-                        <template #option="slotProps">
-                            {{ slotProps.option.name }}
-                        </template>
-                    </Select>
-                    <InputError :message="form.errors.broker_id"/>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
+
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <InputLabel :value="$t('public.broker')" for="broker_id"/>
+                        <InputIconWrapper>
+                            <template #icon>
+                                <IconHomeDollar :size="20" stroke-width="1.5"/>
+                            </template>
+                            <Select
+                                v-model="selectedBroker"
+                                :options="brokers"
+                                :loading="loadingBrokers"
+                                optionLabel="name"
+                                :placeholder="$t('public.select_broker')"
+                                class="pl-7 block w-full"
+                                :invalid="!!form.errors.broker_id"
+                                filter
+                            >
+                                <template #option="slotProps">
+                                    {{ slotProps.option.name }}
+                                </template>
+                            </Select>
+                        </InputIconWrapper>
+                        <InputError :message="form.errors.broker_id"/>
+                    </div>
+
+                    <div class="flex flex-col gap-1 items-start self-stretch">
+                        <InputLabel :value="$t('public.type')" for="type"/>
+                        <InputIconWrapper>
+                            <template #icon>
+                                <IconWallet :size="20" stroke-width="1.5"/>
+                            </template>
+                            <Select
+                                v-model="selectedType"
+                                :options="types"
+                                optionLabel="name"
+                                optionValue="name"
+                                :placeholder="$t('public.select_type')"
+                                class="pl-7 block w-full"
+                                :invalid="!!form.errors.type"
+                                filter
+                            >
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center">
+                                        <div>{{ $t(`public.${slotProps.value}`) }}</div>
+                                    </div>
+                                    <span v-else>{{ slotProps.placeholder }}</span>
+                                </template>
+    
+                                <template #option="slotProps">
+                                    {{ $t(`public.${slotProps.option.name}`) }}
+                                </template>
+                            </Select>
+                        </InputIconWrapper>
+                        <InputError :message="form.errors.type"/>
+                    </div>
                 </div>
+                
                 <div class="flex flex-col gap-1 self-stretch">
                     <div
                         :class="[

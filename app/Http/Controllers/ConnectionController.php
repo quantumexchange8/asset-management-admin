@@ -205,15 +205,17 @@ class ConnectionController extends Controller
 
         Validator::make($request->all(), [
             'broker_id' => ['required'],
+            //'type' => ['required'],
             'import_file' => ['required', 'mimes:xlsx,xls,csv', 'max:25000'],
         ])->setAttributeNames([
             'broker_id' => trans('public.broker'),
+            //'type' => trans('public.type'),
             'import_file' => trans('public.file'),
         ])->validate();
 
         $file = $request->file('import_file');
 
-        $import = new BrokerConnectionImport($request->broker_id);
+        $import = new BrokerConnectionImport($request->broker_id, $request->type);
         $import->import($file);
 
         return back()->with('toast');

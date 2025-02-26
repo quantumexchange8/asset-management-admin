@@ -168,7 +168,7 @@ class SettingController extends Controller
             $query = DepositProfile::query();
 
             if ($data['filters']['global']['value']) {
-                $query->where(function ($q) use ($data) { //function() allow to add more condition' use ($data) means $data is passed into the clause to be use
+                $query->where(function ($q) use ($data) {
                     $keyword = $data['filters']['global']['value'];
 
                     $q->where('name', 'like', '%' . $keyword . '%');

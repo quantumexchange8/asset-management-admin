@@ -359,6 +359,16 @@ watchEffect(() => {
                         </Column>
 
                         <Column
+                            field="connection_type"
+                            :header="$t('public.connection_type')"
+                            sortable
+                        >
+                            <template #body="{ data }">
+                                {{$t(`public.${data.connection_type}`) }}
+                            </template>
+                        </Column>
+
+                        <Column
                             field="capital_fund"
                             :header="$t('public.fund')"
                             sortable

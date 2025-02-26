@@ -256,6 +256,7 @@ return [
     "rebate_bonus_loading_caption" => "Loading Rebate Bonus data. Please wait.",
     "filter_by_type" => "Filter By Type",
     "select_type" => "Select Type",
+    "select_broker" => "Select Broker",
     "bank" => "Bank",
     "crypto" => "Crypto",
     "add_deposit_profile" => "Add Deposit Profile",
@@ -313,4 +314,10 @@ return [
     "delete_admin" => "Delete Admin",
     "delete_admin_caption" => "Are you sure you want to delete this admin? This will permenantly delete the admin and restrict from using admin site.",
     "toast_delete_admin" => "Successfully Deleted Admin",
+    "file" => "File",
+    "required_email_import" => "Email field is required",
+    "format_email_import" => "Wrong email format",
+    "exists_email_import" => "Email does not exist",
+    "top_up" => "Top Up",
+    "initial_join" => "Initial Join",
 ];

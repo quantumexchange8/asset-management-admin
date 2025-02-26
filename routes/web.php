@@ -66,7 +66,6 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
         //kyc status
         Route::get('/get_pending_kyc', [MemberController::class, 'getPendingKyc'])->name('member.getPendingKyc');
         Route::get('/get_pending_kyc_data', [MemberController::class, 'getPendingKycData'])->name('member.getPendingKycData');
-
         Route::post('/kycPendingApproval', [MemberController::class, 'kycPendingApproval'])->name('member.kycPendingApproval');
 
         Route::prefix('detail')->group(function () {
@@ -98,12 +97,9 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
          */
         Route::prefix('broker')->group(function () {
             Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
-
-            Route::put('/updateBrokerStatus', [BrokerController::class, 'updateBrokerStatus'])->name('broker.updateBrokerStatus');
-
-            Route::get('/get_broker_list', [BrokerController::class, 'getBrokerList'])->name('broker.getBrokerList');
             Route::get('/get_broker_data', [BrokerController::class, 'getBrokerData'])->name('broker.getBrokerData');
             Route::post('/addNewBroker', [BrokerController::class, 'addNewBroker'])->name('broker.addNewBroker');
+            Route::put('/updateBrokerStatus', [BrokerController::class, 'updateBrokerStatus'])->name('broker.updateBrokerStatus');
 
             Route::prefix('detail')->group(function () {
                 Route::post('/updateBrokerInfo', [BrokerController::class, 'updateBrokerInfo'])->name('broker.detail.updateBrokerInfo');
@@ -116,9 +112,12 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
          * ==============================
          */
         Route::prefix('connections')->group(function () {
+            //pending connections
             Route::get('/pending_connection', [ConnectionController::class, 'pending_connection'])->name('connection.pending_connection');
             Route::get('/pending_connection_data', [ConnectionController::class, 'pending_connection_data'])->name('connection.pending_connection_data');
             Route::put('/pendingConnectionApproval', [ConnectionController::class, 'pendingConnectionApproval'])->name('connection.pendingConnectionApproval');
+
+            //connections
             Route::get('broker_connection', [ConnectionController::class, 'broker_connection'])->name('connection.broker_connection');
             Route::get('getConnections', [ConnectionController::class, 'getConnections'])->name('connection.getConnections');
             Route::get('/download_import_example', [ConnectionController::class, 'download_import_example'])->name('connection.download_import_example');

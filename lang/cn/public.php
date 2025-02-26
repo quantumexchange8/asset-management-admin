@@ -313,5 +313,13 @@ return [
     "delete_admin" => "删除管理员",
     "delete_admin_caption" => "您确定要删除此管理员吗？这将永久删除该管理员，并限制其使用管理网站。",
     "toast_delete_admin" => "成功删除管理员",
+    "select_broker" => "选择经纪商",
+    "file" => "文件",
+    "required_email_import" => "电子邮件字段是必填项",
+    "format_email_import" => "电子邮件格式错误",
+    "exists_email_import" => "电子邮件不存在",
+    "top_up" => "充值",
+    "initial_join" => "初始加入",
+
 
 ];

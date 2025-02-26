@@ -10,22 +10,25 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class BrokerConnectionImport implements ToCollection, WithHeadingRow
+class BrokerConnectionImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use Importable;
 
     private $broker_id;
+    private $type;
 
-    public function __construct($broker_id)
+    public function __construct($broker_id, $type)
     {
         $this->broker_id = $broker_id;
+        $this->type = $type;
     }
 
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $collection): void
     {
         foreach ($collection as $row) {
@@ -34,15 +37,16 @@ class BrokerConnectionImport implements ToCollection, WithHeadingRow
             if ($user) {
                 $existingConnection = BrokerConnection::where([
                     'user_id' => $user->id,
+                    'broker_id' => $this->broker_id,
                     'broker_login' => $row['login'],
-                    'status' => 'active'
+                    'status' => 'active',
                 ])->first();
 
                 $joinedDate = is_numeric($row['joined_date'])
                     ? Carbon::instance(Date::excelToDateTimeObject($row['joined_date']))->format('Y-m-d')
                     : Carbon::parse($row['joined_date'])->format('Y-m-d');
 
-                if ($existingConnection) {
+                if ($existingConnection && $this->type === 'deposit') {
                     BrokerConnection::create([
                         'user_id' => $user->id,
                         'broker_id' => $this->broker_id,
@@ -52,6 +56,28 @@ class BrokerConnectionImport implements ToCollection, WithHeadingRow
                         'connection_number' => RunningNumberService::getID('connection'),
                         'joined_at' => $joinedDate,
                         'status' => 'active'
+                    ]);
+                } elseif ($this->type === 'deposit') {
+                    BrokerConnection::create([
+                        'user_id' => $user->id,
+                        'broker_id' => $this->broker_id,
+                        'broker_login' => $row['login'],
+                        'capital_fund' => $row['amount'],
+                        'connection_type' => 'deposit',
+                        'connection_number' => RunningNumberService::getID('connection'),
+                        'joined_at' => $joinedDate,
+                        'status' => 'active'
+                    ]);
+                } elseif ($this->type === 'withdrawal') {
+                    BrokerConnection::create([
+                        'user_id' => $user->id,
+                        'broker_id' => $this->broker_id,
+                        'broker_login' => $row['login'],
+                        'capital_fund' => $row['amount'],
+                        'connection_type' => 'withdrawal',
+                        'connection_number' => RunningNumberService::getID('connection'),
+                        'removed_at' => $joinedDate,
+                        'status' => 'removed'
                     ]);
                 } else {
                     BrokerConnection::create([
@@ -67,5 +93,21 @@ class BrokerConnectionImport implements ToCollection, WithHeadingRow
                 }
             }
         }
+    }
+
+    public function rules(): array
+    {
+        return [
+            'email' => 'required|email|exists:users,email',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            'email.required' => trans('public.required_email_import'),
+            'email.email' =>  trans('public.format_email_import'),
+            'email.exists' =>  trans('public.exists_email_import'),
+        ];
     }
 }
