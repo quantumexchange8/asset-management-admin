@@ -3,6 +3,7 @@ import { h, ref } from "vue";
 import Button from "@/Components/Button.vue";
 import TieredMenu from "primevue/tieredmenu";
 import Dialog from "primevue/dialog";
+import {useConfirm} from "primevue/useconfirm";
 import {
     IconDotsVertical,
     IconId,
@@ -15,10 +16,66 @@ import {
 } from "@tabler/icons-vue";
 import UpgradeRank from "./Partial/UpgradeRank.vue";
 import ChangeUpline from "./Partial/ChangeUpline.vue";
+import {trans} from "laravel-vue-i18n";
 
 const props = defineProps({
     member: Object,
-})
+});
+
+const confirm = useConfirm();
+
+const requireConfirmation = (action_type) => {
+    const messages = {
+        delete_item: {
+            group: 'headless-error',
+            header: trans('public.delete_member'),
+            text: trans('public.delete_member_caption'),
+            cancelButton: trans('public.cancel'),
+            acceptButton: trans('public.confirm'),
+            action: () => {
+                router.visit(route('member.deleteMember', props.member.id), {
+                    method: 'put',
+                    data: {
+                        id: props.member.id,
+                    },
+                    onSuccess: () => {
+                        toast.add({
+                            severity: 'success',
+                            summary: trans('public.success'),
+                            detail: trans('public.toast_delete_member'),
+                            life: 4000,
+                        });
+                    },
+                    onError: (errors) => {
+                        console.error(errors);
+                    }
+                })
+
+                    .value = !checked.value;
+            }
+        },
+    };
+
+    const { group, header, text, dynamicText, suffix, actionType, cancelButton, acceptButton, action } = messages[action_type];
+
+    confirm.require({
+        group,
+        header,
+        actionType,
+        text,
+        dynamicText,
+        suffix,
+        cancelButton,
+        acceptButton,
+        accept: action
+    });
+};
+
+const handleStatus = () => {
+    if (props.member.deleted_at === null) {
+        requireConfirmation('delete_item')
+    } 
+}
 
 const menu = ref();
 const visible = ref(false);
@@ -69,6 +126,9 @@ const items = ref([
     {
         label: 'delete',
         icon: h(IconTrash),
+        command: () => {
+            handleStatus();
+        }
     },
 
 ]);

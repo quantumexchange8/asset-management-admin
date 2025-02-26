@@ -42,8 +42,9 @@ class MemberController extends Controller
                     'country:id,name,emoji,iso2,translations',
                     'rank:id,rank_name',
                     'upline:id,name,email,upline_id',
-                ])->where('role', 'user');
-
+                ])
+                ->where('role', 'user');
+                
             //global filter
             if ($data['filters']['global']['value']) {
                 $query->where(function ($q) use ($data) { //function() allow to add more condition' use ($data) means $data is passed into the clause to be use
@@ -366,6 +367,15 @@ class MemberController extends Controller
         $user->nationality = $country->nationality;
 
         $user->update();
+    }
+
+    public function deleteMember(Request $request){
+        $user = User::find($request->id);
+        $user->delete_at = now();
+        $user->status = 'inactive';
+        $user->update();
+
+        return back()->with('toast', 'success');
     }
 
     public function getWalletData($id_number)

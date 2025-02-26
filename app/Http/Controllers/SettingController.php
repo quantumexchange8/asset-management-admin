@@ -150,6 +150,7 @@ class SettingController extends Controller
     {
         $admin = User::find($request->id);
         $admin->delete_at = now();
+        $admin->status = 'inactive';
         $admin->syncPermissions([]);
         $admin->update();
 

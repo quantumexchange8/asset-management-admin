@@ -331,6 +331,6 @@ return [
     "crypto_network_required" => "当类型为加密货币时，加密网络字段是必填项",
     "bank_name_required" => "当类型为银行时，银行名称字段是必填项",
     "bank_branch" => "当类型为银行时，银行分行字段是必填项",
-
+    "delete_member_caption" => "您确定要删除此会员吗？这将永久删除该会员。",
 
 ];

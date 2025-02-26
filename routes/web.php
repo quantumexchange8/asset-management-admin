@@ -60,6 +60,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
         Route::get('/access_portal/{user}', [MemberController::class, 'access_portal'])->name('member.access_portal');
 
         Route::post('/addNewMember', [MemberController::class, 'addNewMember'])->name('member.addNewMember');
+        Route::put('/deleteMember', [MemberController::class, 'deleteMember'])->name('member.deleteMember');
         Route::put('/upgradeRank', [MemberController::class, 'upgradeRank'])->name('member.upgradeRank');
         Route::put('/changeUpline', [MemberController::class, 'changeUpline'])->name('member.changeUpline');
 

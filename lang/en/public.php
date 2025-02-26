@@ -331,4 +331,5 @@ return [
     "crypto_network_required" => "Crypto Network field is required when type is crypto",
     "bank_name_required" => "Bank Name field is required when type is bank",
     "bank_branch" => "Bank Branch field is required when type is bank",
+    "delete_member_caption" => "Are you sure you want to delete this member? This will permenantly delete the member.",
 ];
