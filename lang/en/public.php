@@ -318,4 +318,7 @@ return [
     "delete_admin" => "Delete Admin",
     "delete_admin_caption" => "Are you sure you want to delete this admin? This will permenantly delete the admin and restrict from using admin site.",
     "toast_delete_admin" => "Successfully Deleted Admin",
+    "authorization" => "Authorization",
+    "actions" => "Actions",
+    "register" => "Register",
 ];

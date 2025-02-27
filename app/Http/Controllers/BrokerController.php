@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Broker;
+use App\Models\BrokerAction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class BrokerController extends Controller
             $query = Broker::query()
                 ->with([
                     'user:id,name',
+                    'actions'
                 ])
                 ->withCount(['connections as connections_count' => function($query) {
                     $query->select(DB::raw('count(distinct(user_id))'));
@@ -58,7 +60,7 @@ class BrokerController extends Controller
                 $sortType = $data['sortOrder'];
                 switch ($sortType) {
                     case 'latest':
-                        $query->orderBy('created_at', 'desc');
+                        $query->orderByRaw('id = 1 DESC, id DESC');
                         break;
 
                     case 'largest_fund':
@@ -73,14 +75,14 @@ class BrokerController extends Controller
                         return response()->json(['error' => 'Invalid filter'], 400);
                 }
             } else {
-                $query->latest();
+                $query->orderByRaw('id = 1 DESC, id DESC');
             }
 
             $brokers = $query->paginate($data['rows']);
 
             foreach ($brokers as $broker) {
                 $broker->broker_image = $broker->getMedia('broker_image')->map(function ($media) {
-                    return $media->getUrl();  // Return the media URL
+                    return $media->getUrl();
                 });
             }
 
@@ -168,11 +170,10 @@ class BrokerController extends Controller
 
         $validator->validate();
 
-        $broker = Broker::find($request->id);
+        $broker = Broker::with('actions')->find($request->id);
         $broker->name = $request->name;
         $broker->url = $request->url;
         $broker->description = $request->description_translation;
-
         $broker->update();
 
         if ($request->hasFile('broker_image')) {
@@ -180,7 +181,18 @@ class BrokerController extends Controller
             $broker->addMediaFromRequest('broker_image')->toMediaCollection('broker_image');
         }
 
-         return back()->with('toast');
+        if ($request->action_url) {
+            $broker->actions()->delete();
+            foreach ($request->action_url as $action => $url) {
+                BrokerAction::create([
+                    'broker_id' => $broker->id,
+                    'broker_action' => $action,
+                    'action_url' => $url,
+                ]);
+            }
+        }
+
+         return back()->with('toast', 'success');
     }
 
     public function updateBrokerStatus(Request $request)

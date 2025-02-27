@@ -119,6 +119,7 @@ const submitForm = () => {
     <Button
         class="w-full md:w-auto"
         @click="openDialog"
+        size="small"
     >
         <IconCirclePlus size="20" stroke-width="1.5" />
         <span class="pl-2">{{ $t('public.add_deposit_profile') }}</span>

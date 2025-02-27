@@ -24,6 +24,12 @@ const props = defineProps({
 })
 
 const visible = ref(false);
+const brokerActions = ref([
+    'register',
+    'deposit'
+]);
+
+const selectedActions = ref([]);
 
 const form = useForm({
     locales: props.locales,
@@ -33,6 +39,7 @@ const form = useForm({
     },
     url: '',
     broker_image: null,
+    action_url: {},
 });
 
 const toast = useToast();
@@ -76,7 +83,11 @@ const handleLogoUpload = (event) => {
 </script>
 
 <template>
-    <Button class="w-full md:w-auto flex gap-1" @click="visible = true">
+    <Button
+        class="w-full md:w-auto flex gap-1"
+        @click="visible = true"
+        size="small"
+    >
         <IconCirclePlus size="20" stroke-width="1.5" />
         {{ $t('public.add_broker') }}
     </Button>
@@ -217,6 +228,57 @@ const handleLogoUpload = (event) => {
                                             cols="30"
                                         />
                                         <InputError :message="form.errors[`description_translation.${locale}`]" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col gap-3 items-start self-stretch md:col-span-2 ">
+                        <span class="font-bold text-gray-950 dark:text-white w-full text-left">{{ $t('public.authorization') }}</span>
+                        <div class="flex flex-col md:flex-row gap-5 self-stretch w-full">
+                            <!-- Checkbox for selecting locales -->
+                            <div class="flex flex-col gap-1 items-start self-stretch min-w-40">
+                                <InputLabel :value="$t('public.actions')" />
+                                <div class="flex flex-row md:flex-col gap-1">
+                                    <div
+                                        v-for="action in brokerActions"
+                                        :key="action"
+                                        class="flex items-center"
+                                    >
+                                        <Checkbox
+                                            v-model="selectedActions"
+                                            :inputId="action"
+                                            :value="action"
+                                        />
+                                        <label :for="action" class="ml-2 text-sm">{{ $t(`public.${action}`) }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dynamically generated input fields for each selected actions -->
+                            <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                                <div class="grid md:grid-cols-2 gap-3 w-full">
+                                    <div
+                                        v-for="action in selectedActions"
+                                        :key="'input-' + action"
+                                        class="flex flex-col items-start gap-1 self-stretch"
+                                    >
+                                        <InputLabel
+                                            :for="'action_' + action"
+                                            :value="`${$t('public.url')} (${$t(`public.${action}`)})`"
+                                            :invalid="!!form.errors[`action_url.${action}`]"
+                                        />
+                                        <InputText
+                                            :id="'action_' + action"
+                                            type="text"
+                                            class="block w-full"
+                                            v-model="form.action_url[action]"
+                                            :placeholder="$t('public.enter_url')"
+                                            :invalid="!!form.errors[`action_url.${action}`]"
+                                        />
+                                        <InputError :message="form.errors[`action_url.${action}`]" />
                                     </div>
                                 </div>
                             </div>
