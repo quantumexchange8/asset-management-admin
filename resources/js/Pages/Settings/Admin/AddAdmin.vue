@@ -69,6 +69,7 @@ const closeDialog = () => {
     <Button
         class="w-full md:w-auto flex gap-1"
         @click="visible = true"
+        size="small"
     >
         <IconUser size="20" stroke-width="1.5" />
         {{ $t('public.add_admin') }}

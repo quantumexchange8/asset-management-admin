@@ -33,4 +33,9 @@ class Broker extends Model implements HasMedia
     {
         return $this->hasMany(BrokerConnection::class, 'broker_id', 'id');
     }
+
+    public function actions(): HasMany
+    {
+        return $this->hasMany(BrokerAction::class, 'broker_id', 'id');
+    }
 }

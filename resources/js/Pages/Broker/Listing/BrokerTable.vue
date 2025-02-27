@@ -166,7 +166,7 @@ const getSeverity = (status) => {
 
 watchEffect(() => {
     if (usePage().props.toast !== null) {
-        loadLazyData({ first: first.value, rows: rows.value });
+        loadLazyData();
     }
 });
 </script>
@@ -314,19 +314,19 @@ watchEffect(() => {
                                 >
                                     <IconCircleLetterB size="28" stroke-width="1.5" />
                                 </div>
-                                <div class="flex flex-col items-start">
+                                <div class="flex flex-col items-start w-full">
                                     <div class="self-stretch truncate text-gray-950 dark:text-white font-bold">
                                         {{ broker.name }}
                                     </div>
                                     <a
                                         :href="broker.url"
                                         target="_blank"
-                                        class="text-sm text-surface-500 hover:text-blue-500"
+                                        class="text-sm text-surface-500 hover:text-blue-500 max-w-80 truncate"
                                     >
                                         {{ broker.url }}
                                     </a>
                                 </div>
-                                <div class="flex gap-3 items-center w-full justify-end">
+                                <div class="flex gap-3 items-center justify-end w-8">
                                     <BrokerTableAction
                                         :broker="broker"
                                         :locales="locales"

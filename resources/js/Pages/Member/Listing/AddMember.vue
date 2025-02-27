@@ -113,6 +113,7 @@ const closeDialog = () => {
     <Button
         class="w-full md:w-auto"
         @click="openDialog"
+        size="small"
     >
         <IconUserPlus size="16" />
         <span class="pl-2">{{ $t('public.add_member') }}</span>

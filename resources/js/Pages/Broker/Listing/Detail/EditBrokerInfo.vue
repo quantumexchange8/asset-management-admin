@@ -20,21 +20,47 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible']);
 
+const brokerActions = ref([
+    'register',
+    'deposit'
+]);
+
+const selectedActions = ref(
+    props.broker.actions
+        ? props.broker.actions
+            .filter(action => brokerActions.value.includes(action.broker_action))
+            .map(action => action.broker_action)
+        : []
+);
+
+const defaultActionUrls = brokerActions.value.reduce((acc, action) => {
+    acc[action] = props.broker.actions?.find(a => a.broker_action === action)?.action_url || '';
+    return acc;
+}, {});
+
 const form = useForm({
     locales: props.locales,
     id: props.broker.id,
     name: props.broker.name || '',
     description_translation: props.locales.reduce((acc, locale) => {
-        acc[locale] = props.broker.description?.[locale] || ''; // Ensure it doesn't break if undefined
+        acc[locale] = props.broker.description?.[locale] || '';
         return acc;
     }, {}),
     url: props.broker.url || '',
     broker_image: null,
+    action_url: { ...defaultActionUrls },
 });
 
 const toast = useToast();
 
 const submitForm = () => {
+    form.action_url = Object.keys(defaultActionUrls)
+        .filter(action => selectedActions.value.includes(action)) // Keep only selected actions
+        .reduce((acc, action) => {
+            acc[action] = defaultActionUrls[action];
+            return acc;
+        }, {});
+
     form.post(route('broker.detail.updateBrokerInfo'), {
         onSuccess: () => {
             closeDialog();
@@ -212,6 +238,57 @@ const handleLogoUpload = (event) => {
                                         cols="30"
                                     />
                                     <InputError :message="form.errors[`description_translation.${locale}`]" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col gap-3 items-start self-stretch md:col-span-2 ">
+                    <span class="font-bold text-gray-950 dark:text-white w-full text-left">{{ $t('public.authorization') }}</span>
+                    <div class="flex flex-col md:flex-row gap-5 self-stretch w-full">
+                        <!-- Checkbox for selecting locales -->
+                        <div class="flex flex-col gap-1 items-start self-stretch min-w-40">
+                            <InputLabel :value="$t('public.actions')" />
+                            <div class="flex flex-row md:flex-col gap-1">
+                                <div
+                                    v-for="action in brokerActions"
+                                    :key="action"
+                                    class="flex items-center"
+                                >
+                                    <Checkbox
+                                        v-model="selectedActions"
+                                        :inputId="action"
+                                        :value="action"
+                                    />
+                                    <label :for="action" class="ml-2 text-sm">{{ $t(`public.${action}`) }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamically generated input fields for each selected actions -->
+                        <div class="flex flex-col gap-1 items-start self-stretch w-full">
+                            <div class="grid md:grid-cols-2 gap-3 w-full">
+                                <div
+                                    v-for="action in selectedActions"
+                                    :key="'input-' + action"
+                                    class="flex flex-col items-start gap-1 self-stretch"
+                                >
+                                    <InputLabel
+                                        :for="'action_' + action"
+                                        :value="`${$t('public.url')} (${$t(`public.${action}`)})`"
+                                        :invalid="!!form.errors[`action_url.${action}`]"
+                                    />
+                                    <InputText
+                                        :id="'action_' + action"
+                                        type="text"
+                                        class="block w-full"
+                                        v-model="defaultActionUrls[action]"
+                                        :placeholder="$t('public.enter_url')"
+                                        :invalid="!!form.errors[`action_url.${action}`]"
+                                    />
+                                    <InputError :message="form.errors[`action_url.${action}`]" />
                                 </div>
                             </div>
                         </div>
