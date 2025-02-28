@@ -107,6 +107,7 @@ class DashboardController extends Controller
         return response()->json([
             'pendingKycCount' => (new SidebarService())->getPendingKycCount(),
             'pendingDepositCounts' => (new SidebarService())->getPendingDepositCount(),
+            'getPendingAccountCount' => (new SidebarService())->getPendingAccountCount(),
         ]);
     }
 

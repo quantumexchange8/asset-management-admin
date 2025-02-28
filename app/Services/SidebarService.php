@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BrokerAccount;
 use App\Models\Transaction;
 use App\Models\User;
 
@@ -25,6 +26,14 @@ class SidebarService
                 'status' => 'processing',
                 'transaction_type' => 'deposit'
             ]);
+
+        return $query->count();
+    }
+
+    public function getPendingAccountCount(): int
+    {
+        $query = BrokerAccount::query()
+            ->where('status', 'pending');
 
         return $query->count();
     }

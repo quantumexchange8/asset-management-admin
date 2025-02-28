@@ -280,36 +280,20 @@ watchEffect(() => {
                             </template>
                         </Column>
 
-                        
+
                         <Column
-                            field="broker_id"
+                            field="broker"
                             :header="$t('public.broker')"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
                                     <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
-                                    <span>{{ data.broker.name }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-surface-950 dark:text-white font-medium">{{ data.broker_login }}</span>
+                                        <span class="text-surface-500">{{ data.broker.name }}</span>
+                                    </div>
                                 </div>
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="broker_login"
-                            :header="$t('public.login')"
-                            sortable
-                        >
-                            <template #body="{ data }">
-                                {{ data.broker_login }}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="broker_capital"
-                            :header="$t('public.broker_capital')"
-                            sortable
-                        >
-                            <template #body="{ data }">
-                                {{ formatAmount(data.broker_capital)}}
                             </template>
                         </Column>
 
@@ -319,15 +303,15 @@ watchEffect(() => {
                         >
                             <template #body="{ data }">
                                 <div class="flex items-center gap-2">
-                                    <IconEye 
-                                        v-if="!showPassword[data.id]" 
-                                        size="20" stroke-width="1.5" 
+                                    <IconEye
+                                        v-if="!showPassword[data.id]"
+                                        size="20" stroke-width="1.5"
                                         class="cursor-pointer text-gray-500"
                                         @click="togglePassword(data.id)"
                                     />
-                                    <IconEyeOff 
-                                        v-else 
-                                        size="20" stroke-width="1.5" 
+                                    <IconEyeOff
+                                        v-else
+                                        size="20" stroke-width="1.5"
                                         class="cursor-pointer text-gray-500"
                                         @click="togglePassword(data.id)"
                                     />
@@ -342,7 +326,7 @@ watchEffect(() => {
                             field="action"
                         >
                             <template #body="{data}">
-                                <PendingAccountAction 
+                                <PendingAccountAction
                                     :accounts="data"
                                 />
                             </template>

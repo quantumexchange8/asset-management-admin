@@ -18,6 +18,8 @@ class BrokerAccount extends Model implements HasMedia
         'broker_login',
         'broker_capital',
         'master_password',
+        'status',
+        'remarks',
     ];
 
     public function user(): BelongsTo

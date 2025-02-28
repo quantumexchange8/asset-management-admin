@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
             'permissions' => $request->user() ? $request->user()->getAllPermissions()->pluck('name')->toArray() : 'no permission',
             'getPendingKycCount' => $sidebarService->getPendingKycCount(),
             'getPendingDepositCount' => $sidebarService->getPendingDepositCount(),
+            'getPendingAccountCount' => $sidebarService->getPendingAccountCount(),
         ];
     }
 }

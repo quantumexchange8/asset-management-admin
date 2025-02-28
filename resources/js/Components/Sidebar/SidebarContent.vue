@@ -25,6 +25,7 @@ import { usePermission } from "@/Composables/index.js";
 const page = usePage();
 const pendingKycCount = ref(page.props.getPendingKycCount);
 const pendingDepositCounts = ref(page.props.getPendingDepositCount);
+const pendingAccountCounts = ref(page.props.getPendingAccountCount);
 const { hasRole, hasPermission } = usePermission();
 
 // Update pending counts
@@ -33,6 +34,7 @@ const getPendingCounts = async () => {
         const response = await axios.get(route('dashboard.getPendingCounts'));
         pendingKycCount.value = response.data.pendingKycCount;
         pendingDepositCounts.value = response.data.pendingDepositCounts;
+        pendingAccountCounts.value = response.data.getPendingAccountCount;
     } catch (error) {
         console.error('Error pending counts:', error);
     }
@@ -96,7 +98,7 @@ watchEffect(() => {
 
         <!-- Marketplace -->
         <SidebarCategoryLabel
-            v-if="hasPermission('access_broker') || hasPermission('access_connections')"
+            v-if="hasPermission('access_broker') || hasPermission('access_connections') || hasPermission('access_account_listing')"
             title="marketplace"
         />
         <!-- Broker -->
@@ -110,6 +112,31 @@ watchEffect(() => {
                 <IconHomeDollar size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
+
+        <!-- Broker account -->
+        <SidebarCollapsible
+            title="accounts"
+            :active="route().current('broker_accounts.*')"
+            :pending-counts="pendingAccountCounts"
+            v-if="hasPermission('access_account_listing') || hasPermission('access_pending_account')"
+        >
+            <template #icon>
+                <IconHomeStar size="20" stroke-width="1.5" />
+            </template>
+            <SidebarCollapsibleItem
+                title="account_listing"
+                :href="route('broker_accounts.account_listing')"
+                :active="route().current('broker_accounts.account_listing')"
+                v-if="hasPermission('access_account_listing')"
+            />
+            <SidebarCollapsibleItem
+                title="pending_account"
+                :href="route('broker_accounts.pending_account')"
+                :active="route().current('broker_accounts.pending_account')"
+                :pending-counts="pendingAccountCounts"
+                v-if="hasPermission('access_pending_account')"
+            />
+        </SidebarCollapsible>
 
         <!-- Connections -->
         <SidebarCollapsible
@@ -126,35 +153,12 @@ watchEffect(() => {
                 :active="route().current('connection.broker_connection')"
                 v-if="hasPermission('access_connections')"
             />
-            <SidebarCollapsibleItem
-                title="pending_connection"
-                :href="route('connection.pending_connection')"
-                :active="route().current('connection.pending_connection')"
-                v-if="hasPermission('access_connections')"
-            />
-        </SidebarCollapsible>
-
-        <!-- broker account -->
-        <SidebarCollapsible
-            title="accounts"
-            :active="route().current('broker_accounts.*')"
-           
-        >
-            <template #icon>
-                <IconHomeStar size="20" stroke-width="1.5" />
-            </template>
-            <SidebarCollapsibleItem
-                title="account_listing"
-                :href="route('broker_accounts.account_listing')"
-                :active="route().current('broker_accounts.account_listing')"
-              
-            />
-            <SidebarCollapsibleItem
-                title="pending_account"
-                :href="route('broker_accounts.pending_account')"
-                :active="route().current('broker_accounts.pending_account')"
-            
-            />
+<!--            <SidebarCollapsibleItem-->
+<!--                title="pending_connection"-->
+<!--                :href="route('connection.pending_connection')"-->
+<!--                :active="route().current('connection.pending_connection')"-->
+<!--                v-if="hasPermission('access_connections')"-->
+<!--            />-->
         </SidebarCollapsible>
 
         <!-- Transaction -->

@@ -135,10 +135,9 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
          */
 
          Route::prefix('broker_accounts')->group(function () {
-            
             Route::get('/account_listing', [BrokerAccountController::class, 'account_listing'])->name('broker_accounts.account_listing');
             Route::get('/get_account_listing_data', [BrokerAccountController::class, 'getAccountListingData'])->name('broker_accounts.getAccountListingData');
-           
+
             Route::get('/pending_account', [BrokerAccountController::class, 'pending_account'])->name('broker_accounts.pending_account');
             Route::get('/get_pending_account_data', [BrokerAccountController::class, 'getPendingAccountData'])->name('broker_accounts.getPendingAccountData');
             Route::post('/pendingAccountApproval', [BrokerAccountController::class, 'pendingAccountApproval'])->name('broker_accounts.pendingAccountApproval');

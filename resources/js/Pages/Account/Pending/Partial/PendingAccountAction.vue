@@ -71,7 +71,7 @@ const closeDialog = () => {
         :header="$t('public.view_account')"
         class="dialog-xs md:dialog-md"
     >
-       
+
         <div class="flex flex-col items-center gap-4 divide-y dark:divide-surface-700 self-stretch">
             <div class="flex flex-col-reverse md:flex-row md:items-center gap-3 self-stretch w-full">
                 <div class="flex flex-col items-start w-full">
@@ -107,7 +107,7 @@ const closeDialog = () => {
                         {{ $t('public.master_password') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ accounts.decrypt_master_password }}
+                        {{ accounts.decrypted_master_password }}
                     </div>
                 </div>
             </div>
@@ -152,7 +152,6 @@ const closeDialog = () => {
                     :invalid="!!form.errors.remarks"
                     :placeholder="$t('public.remarks')"
                     class="block w-full"
-                    autofocus
                     rows="5"
                     cols="30"
                 />

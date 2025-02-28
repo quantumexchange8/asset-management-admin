@@ -148,13 +148,6 @@ class BrokerAccountController extends Controller
 
             $accounts = $query->paginate($data['rows']);
 
-            $accounts->each(function ($user) {
-                $user->profile_photo = $user->getMedia('account_image')
-                    ->map(function ($media) {
-                        return $media->getUrl();
-                    });
-            });
-
             $pendingAccountCounts = (clone $query)
                 ->distinct('user_id')
                 ->count();
@@ -162,16 +155,13 @@ class BrokerAccountController extends Controller
             $totalPendingCapital = (clone $query)
                 ->sum('broker_capital');
 
-            $accounts->each(function ($transaction) {
-                $transaction->broker_account_image = $transaction->getMedia('account_proof')
+            $accounts->each(function ($account) {
+                $account->broker_account_image = $account->getMedia('account_proof')
                     ->map(function ($media) {
                         return $media->getUrl();
                     });
+                $account->decrypted_master_password = decrypt($account->master_password);
             });
-
-            // $accounts->each(function ($account) {
-            //     $account->decrypted_master_password = Crypt::decrypt($account->master_password);
-            // });
 
             return response()->json([
                 'success' => true,
@@ -186,7 +176,6 @@ class BrokerAccountController extends Controller
 
     public function pendingAccountApproval(Request $request)
     {
-
         Validator::make($request->all(), [
             'action' => ['required'],
         ])->setAttributeNames([

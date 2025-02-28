@@ -12,8 +12,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('broker_id')->nullable();
             $table->string('broker_login')->nullable();
-            $table->string('broker_capital')->nullable();
+            $table->decimal('broker_capital', 13)->nullable();
             $table->string('master_password')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
