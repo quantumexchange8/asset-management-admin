@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -474,28 +476,27 @@ class TransactionController extends Controller
     {
         Gate::authorize('edit-pending-deposit', Transaction::class);
 
-        $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject_transaction'],
-        ], [
-            'remarks.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.remarks'),
-                'other' => trans('public.action'),
-                'value' => trans('public.reject_transaction')
-            ])
-        ]);
+        Validator::make($request->all(), [
+            'action' => ['required'],
+        ])->setAttributeNames([
+            'action' => trans('public.action'),
+        ])->validate();
 
         $transaction = Transaction::find($request->transaction_id);
         $wallet = Wallet::find($transaction->to_wallet_id);
 
-        if ($request->action == 'approve_transaction') {
+        if ($request->action == 'approve') {
             $transaction->status = 'success';
 
             $wallet->balance += $transaction->amount;
             $wallet->real_fund += $transaction->amount;
             $wallet->save();
         } else {
+            if(!$request->remarks) {
+                throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
+            }
             $transaction->status = 'rejected';
-            $transaction->remarks = $validatedData['remarks'];
+            $transaction->remarks = $request->remarks;
         }
         $transaction->new_wallet_amount = $wallet->balance;
         $transaction->approval_at = now();
@@ -509,22 +510,16 @@ class TransactionController extends Controller
     {
         Gate::authorize('edit-pending-withdrawal', Transaction::class);
 
-        $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject_transaction'],
-        ], [
-            'remarks.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.remarks'),
-                'other' => trans('public.action'),
-                'value' => trans('public.reject_transaction')
-            ])
-        ], [
-            'remarks' => trans('public.remarks')
-        ]);
+        Validator::make($request->all(), [
+            'action' => ['required'],
+        ])->setAttributeNames([
+            'action' => trans('public.action'),
+        ])->validate();
 
         $transaction = Transaction::find($request->transaction_id);
         $wallet = Wallet::find($transaction->from_wallet_id);
 
-        if ($request->action == 'approve_transaction') {
+        if ($request->action == 'approve') {
             $transaction->status = 'success';
             $transaction->transaction_amount = $transaction->amount - $transaction->transaction_charges;
             
@@ -532,8 +527,11 @@ class TransactionController extends Controller
             $wallet->real_fund -= $transaction->amount;
             $wallet->save();
         } else {
+            if(!$request->remarks) {
+                throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
+            }
             $transaction->status = 'rejected';
-            $transaction->remarks = $validatedData['remarks'];
+            $transaction->remarks = $request->remarks;
         }
         $transaction->new_wallet_amount = $wallet->balance;
         $transaction->approval_at = now();

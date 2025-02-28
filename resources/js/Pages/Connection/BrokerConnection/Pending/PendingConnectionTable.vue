@@ -313,8 +313,6 @@ watchEffect(() => {
 
                         <Column
                             field="action"
-                            :header="$t('public.action')"
-                            sortable
                         >
                             <template #body="{ data }">
                                 <PendingConnectionAction 

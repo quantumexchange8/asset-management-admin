@@ -295,7 +295,7 @@ class SettingController extends Controller
             if (!$request->bank_branch) {
                 $errors['bank_branch'][] = trans('public.bank_branch_required');
             }
-        }
+        }   
 
         // If there are any errors, throw a ValidationException
         if (!empty($errors)) {

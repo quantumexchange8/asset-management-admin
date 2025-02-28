@@ -21,12 +21,10 @@ const props = defineProps({
 
 const toast = useToast();
 const visible = ref(false);
-const dialogType = ref('');
 const {formatAmount} = generalFormat();
 
-const openDialog = async (action) => {
+const openDialog = () => {
     visible.value = true;
-    dialogType.value = action;
 }
 
 const form = useForm({
@@ -34,8 +32,6 @@ const form = useForm({
     action: '',
     remarks: '',
 });
-
-const emit = defineEmits(['pendingDepositActionCompleted']);
 
 const tooltipText = ref('copy')
 
@@ -63,8 +59,8 @@ function copyToClipboard(text) {
 }
 
 
-const submitForm = () => {
-    form.action = dialogType.value;
+const submitForm = (action) => {
+    form.action = action;
     form.put(route('transaction.pending.pendingDepositApproval'), {
         onSuccess: () => {
             closeDialog();
@@ -72,11 +68,9 @@ const submitForm = () => {
             toast.add({
                 severity: 'success',
                 summary: trans('public.success'),
-                detail: trans(`public.toast_${dialogType.value}_success`),
+                detail: trans(`public.toast_${action}_transaction_success`),
                 life: 3000,
             });
-            // Emit the custom event to parent
-            emit('pendingDepositActionCompleted');
         },
         onError: (errors) => {
             console.error(errors);
@@ -90,38 +84,20 @@ const closeDialog = () => {
 </script>
 
 <template>
-    <div class="flex items-center self-stretch gap-x-2">
+    <div class="flex items-center self-stretch gap-2">
         <Button
             type="button"
-            severity="success"
-            text
-            rounded
-            aria-label="approve"
+            severity="secondary"
             size="small"
-            class="!p-2"
-            @click="openDialog('approve_transaction')"
-        >
-            <IconCheck :size="20" stroke-width="1.5"/>
-        </Button>
-
-        <Button
-            type="button"
-            severity="danger"
-            text
-            rounded
-            aria-label="reject"
-            size="small"
-            class="!p-2"
-            @click="openDialog('reject_transaction')"
-        >
-            <IconX :size="20" stroke-width="1.5"/>
-        </Button>
+            :label="$t('public.view')"
+            @click="openDialog"
+        />
     </div>
 
     <Dialog
         v-model:visible="visible"
         modal
-        :header="$t(`public.${dialogType}`)"
+        :header="$t('public.view_transaction')"
         class="dialog-xs md:dialog-md"
     >
         <div class="flex flex-col items-center gap-4 divide-y dark:divide-surface-700 self-stretch">
@@ -217,14 +193,14 @@ const closeDialog = () => {
                 </div>
             </div>
 
-            <div v-if="dialogType === 'reject_transaction'" class="flex flex-col items-start gap-1 self-stretch pt-4">
+            <div class="flex flex-col items-start gap-1 self-stretch pt-4">
                 <InputLabel for="remarks">{{ $t('public.remarks') }}</InputLabel>
                 <Textarea
                     id="remarks"
                     type="text"
                     class="flex flex-1 self-stretch"
                     v-model="form.remarks"
-                    :placeholder="$t(`public.${dialogType}`)"
+                    :placeholder="$t('public.remarks')"
                     :invalid="!!form.errors.remarks"
                     rows="5"
                     cols="30"
@@ -233,23 +209,22 @@ const closeDialog = () => {
                 <InputError :message="form.errors.remarks" />
             </div>
 
-            <div class="pt-5 flex gap-3 justify-end items-center self-stretch w-full">
+            <div class="flex gap-3 justify-between self-stretch pt-2 w-full">
                 <Button
                     type="button"
-                    :label="$t('public.cancel')"
-                    severity="secondary"
-                    variant="outlined"
-                    class="px-3 w-full md:w-auto"
+                    severity="danger"
+                    class="w-full"
                     :disabled="form.processing"
-                    @click="closeDialog"
+                    @click="submitForm('reject')"
+                    :label="$t('public.reject_transaction')"
                 />
-
                 <Button
                     type="submit"
-                    class="px-3 w-full md:w-auto"
-                    :label="$t('public.confirm')"
+                    severity="success"
+                    class="w-full"
                     :disabled="form.processing"
-                    @click.prevent="submitForm"
+                    @click.prevent="submitForm('approve')"
+                    :label="$t('public.approve_transaction')"
                 />
             </div>
         </div>

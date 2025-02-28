@@ -44,7 +44,7 @@ class MemberController extends Controller
                     'upline:id,name,email,upline_id',
                 ])
                 ->where('role', 'user');
-                
+
             //global filter
             if ($data['filters']['global']['value']) {
                 $query->where(function ($q) use ($data) { //function() allow to add more condition' use ($data) means $data is passed into the clause to be use
@@ -369,7 +369,10 @@ class MemberController extends Controller
         $user->update();
     }
 
-    public function deleteMember(Request $request){
+    public function deleteMember(Request $request)
+    {
+        Gate::authorize('delete', User::class);
+
         $user = User::find($request->id);
         $user->delete_at = now();
         $user->status = 'inactive';

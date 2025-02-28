@@ -19,6 +19,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import PendingDepositAction from './PendingDepositAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 import {generalFormat} from "@/Composables/format.js";
+import { usePage } from '@inertiajs/vue3';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -202,9 +203,11 @@ const exportDeposit = () => {
     }
 };
 
-const refreshTable = () => {
-    loadLazyData();
-};
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        loadLazyData();
+    }
+});
 </script>
 
 <template>
@@ -381,12 +384,10 @@ const refreshTable = () => {
 
                         <Column
                             field="action"
-                            :header="$t('public.action')"
                         >
                             <template #body="{data}">
                                 <PendingDepositAction
                                     :pending="data"
-                                    @pendingDepositActionCompleted="refreshTable"
                                 />
                             </template>
                         </Column>

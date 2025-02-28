@@ -259,7 +259,7 @@ watchEffect(() => {
 </script>
 
 <template>
-    <Card>
+    <Card class="w-full">
         <template #content>
             <div class="w-full">
                 <DataTable

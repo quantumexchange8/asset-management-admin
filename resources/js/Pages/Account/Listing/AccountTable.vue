@@ -1,43 +1,37 @@
 <script setup>
-import Card from "primevue/card";
-import dayjs from "dayjs";
-import DataTable from "primevue/datatable";
-import InputText from "primevue/inputtext";
-import Column from "primevue/column";
-import {
-    IconAdjustments,
-    IconSearch,
-    IconXboxX,
-    IconDownload,
-} from "@tabler/icons-vue";
-import ProgressSpinner from "primevue/progressspinner";
-import Button from "primevue/button";
-import IconField from "primevue/iconfield";
-import InputIcon from "primevue/inputicon";
-import {onMounted, ref, watch, watchEffect} from "vue";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Button from 'primevue/button';
+import IconField from 'primevue/iconfield';
+import InputText from 'primevue/inputtext';
+import InputIcon from 'primevue/inputicon';
+import Tag from 'primevue/tag';
+import DatePicker from 'primevue/datepicker';
+import ProgressSpinner from 'primevue/progressspinner';
+import Popover from 'primevue/popover';
+import Card from 'primevue/card';
+import { IconXboxX, IconSearch, IconAdjustments, IconEye, IconEyeOff } from '@tabler/icons-vue';
+import { onMounted, ref, watch, watchEffect } from 'vue';
 import debounce from "lodash/debounce.js";
+import dayjs from 'dayjs';
 import { FilterMatchMode } from '@primevue/core/api';
 import {generalFormat} from "@/Composables/format.js";
-import {usePage} from "@inertiajs/vue3";
-import Tag from "primevue/tag";
-import Popover from "primevue/popover";
-import DatePicker from "primevue/datepicker";
+import { usePage } from '@inertiajs/vue3';
 import EmptyData from "@/Components/EmptyData.vue";
 
-const exportStatus = ref(false);
 const isLoading = ref(false);
 const dt = ref(null);
-const connections = ref([]);
+const accounts = ref([]);
 const {formatAmount} = generalFormat();
 const totalRecords = ref(0);
+const accountCounts = ref();
+const totalBrokerCapital = ref();
 const first = ref(0);
-const totalActiveFund = ref();
-const totalConnections = ref();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    start_join_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    end_join_date: { value: null, matchMode: FilterMatchMode.EQUALS },
+    start_request_date: { value: null, matchMode: FilterMatchMode.EQUALS },
+    end_request_date: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 const lazyParams = ref({});
@@ -57,23 +51,24 @@ const loadLazyData = (event) => {
                 lazyEvent: JSON.stringify(lazyParams.value)
             };
 
-            const url = route('connection.getConnections', params);
+            const url = route('broker_accounts.getAccountListingData', params);
             const response = await fetch(url);
             const results = await response.json();
 
-            connections.value = results?.data?.data;
+            accounts.value = results?.data?.data;
+            accountCounts.value = results?.accountCounts;
+            totalBrokerCapital.value = results?.totalBrokerCapital;
             totalRecords.value = results?.data?.total;
-            totalActiveFund.value = results?.totalActiveFund;
-            totalConnections.value = results?.totalConnections;
             isLoading.value = false;
 
         }, 100);
     }  catch (e) {
-        connections.value = [];
+        accounts.value = [];
         totalRecords.value = 0;
         isLoading.value = false;
     }
 };
+
 const onPage = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
@@ -124,8 +119,8 @@ const clearJoinDate = () => {
 watch(selectedDate, (newDateRange) => {
     if (Array.isArray(newDateRange)) {
         const [startDate, endDate] = newDateRange;
-        filters.value['start_join_date'].value = startDate;
-        filters.value['end_join_date'].value = endDate;
+        filters.value['start_request_date'].value = startDate;
+        filters.value['end_request_date'].value = endDate;
 
         if (startDate !== null && endDate !== null) {
             loadLazyData();
@@ -138,67 +133,39 @@ watch(selectedDate, (newDateRange) => {
 const emit = defineEmits(['update-totals']);
 
 // Emit the totals whenever they change
-watch([totalActiveFund, totalConnections], () => {
+watch([accountCounts, totalBrokerCapital], () => {
     emit('update-totals', {
-        totalActiveFund: totalActiveFund.value,
-        totalConnections: totalConnections.value,
+        accountCounts: accountCounts.value,
+        totalBrokerCapital: totalBrokerCapital.value,
     });
 });
 
 const clearFilter = () => {
     filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        start_join_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-        end_join_date: { value: null, matchMode: FilterMatchMode.EQUALS },
+        start_request_date: { value: null, matchMode: FilterMatchMode.EQUALS },
+        end_request_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     };
 
     selectedDate.value = [];
     lazyParams.value.filters = filters.value ;
 };
 
-const exportTable = () => {
-    exportStatus.value = true;
-    isLoading.value = true;
-
-    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
-    lazyParams.value.filters = filters.value;
-
-    if (filters.value) {
-        lazyParams.value.filters = { ...filters.value };
-    } else {
-        lazyParams.value.filters = {};
-    }
-
-    let params = {
-        include: [],
-        lazyEvent: JSON.stringify(lazyParams.value),
-        exportStatus: true,
-    };
-
-    const url = route('connection.getConnections', params);
-
-    try {
-
-        window.location.href = url;
-    } catch (e) {
-        console.error('Error occurred during export:', e);
-    } finally {
-        isLoading.value = false;
-        exportStatus.value = false;
-    }
-};
-
 const getSeverity = (status) => {
     switch (status) {
-        case 'removed':
-            return 'danger';
-
-        case 'active':
+        case 'linked':
             return 'success';
 
-        case 'pending':
-            return 'info';
+        case 'unlink':
+            return 'danger';
     }
+}
+
+//hide password
+const showPassword = ref({});
+
+const togglePassword = (id) => {
+    showPassword.value[id] = !showPassword.value[id]
 }
 
 watchEffect(() => {
@@ -213,7 +180,7 @@ watchEffect(() => {
         <template #content>
             <div class="w-full">
                 <DataTable
-                    :value="connections"
+                    :value="accounts"
                     lazy
                     paginator
                     removableSort
@@ -230,7 +197,7 @@ watchEffect(() => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['name', 'email', 'connection_number']"
+                    :globalFilterFields="['name', 'email']"
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
@@ -268,27 +235,13 @@ watchEffect(() => {
                                     {{ $t('public.filter') }}
                                 </Button>
                             </div>
-
-                            <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
-                                <!-- Export button -->
-                                <Button
-                                    type="button"
-                                    severity="info"
-                                    class="w-full md:w-auto"
-                                    @click="exportTable"
-                                    :disabled="exportStatus"
-                                >
-                                    <span class="pr-1">{{ $t('public.export') }}</span>
-                                    <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
-                            </div>
                         </div>
                     </template>
 
                     <template #empty>
-                        <div v-if="totalConnections === 0">
+                        <div v-if="accountCounts === 0">
                             <EmptyData
-                                :title="$t('public.no_connection')"
+                                :title="$t('public.no_accounts')"
                             />
                         </div>
                     </template>
@@ -298,18 +251,21 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.connection_loading_caption') }}</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.account_loading_caption') }}</span>
                         </div>
                     </template>
 
-                    <template v-if="connections?.length > 0">
+                    <template v-if="accounts?.length > 0">
                         <Column
-                            field="joined_at"
-                            :header="$t('public.join_date')"
+                            field="created_at"
+                            :header="$t('public.request_date')"
                             sortable
                         >
                             <template #body="{ data }">
-                                {{ dayjs(data.joined_at).isValid() ? dayjs(data.joined_at).format('YYYY-MM-DD') : "-" }}
+                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
                             </template>
                         </Column>
 
@@ -326,6 +282,7 @@ watchEffect(() => {
                             </template>
                         </Column>
 
+                        
                         <Column
                             field="broker_id"
                             :header="$t('public.broker')"
@@ -349,32 +306,37 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="connection_number"
-                            :header="$t('public.connection_number')"
+                            field="broker_capital"
+                            :header="$t('public.broker_capital')"
                             sortable
                         >
                             <template #body="{ data }">
-                                {{ data.connection_number }}
+                                {{ formatAmount(data.broker_capital)}}
                             </template>
                         </Column>
 
                         <Column
-                            field="connection_type"
-                            :header="$t('public.connection_type')"
-                            sortable
+                            field="master_password"
+                            :header="$t('public.master_password')"
                         >
                             <template #body="{ data }">
-                                {{$t(`public.${data.connection_type}`) }}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="capital_fund"
-                            :header="$t('public.fund')"
-                            sortable
-                        >
-                            <template #body="{ data }">
-                                ${{ formatAmount(data.capital_fund) }}
+                                <div class="flex items-center gap-2">
+                                    <IconEye 
+                                        v-if="!showPassword[data.id]" 
+                                        size="20" stroke-width="1.5" 
+                                        class="cursor-pointer text-gray-500"
+                                        @click="togglePassword(data.id)"
+                                    />
+                                    <IconEyeOff 
+                                        v-else 
+                                        size="20" stroke-width="1.5" 
+                                        class="cursor-pointer text-gray-500"
+                                        @click="togglePassword(data.id)"
+                                    />
+                                    <span>
+                                        {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
+                                    </span>
+                                </div>
                             </template>
                         </Column>
 
@@ -390,6 +352,7 @@ watchEffect(() => {
                                 />
                             </template>
                         </Column>
+
                     </template>
                 </DataTable>
             </div>
@@ -401,7 +364,7 @@ watchEffect(() => {
             <!-- Filter Join Date-->
             <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-xs text-surface-950 dark:text-white font-semibold">
-                    {{ $t('public.filter_join_date') }}
+                    {{ $t('public.filter_request_date') }}
                 </div>
                 <div class="relative w-full">
                     <DatePicker

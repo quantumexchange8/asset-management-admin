@@ -18,7 +18,7 @@ const handleOverview = (data) => {
 
 <template>
     <AuthenticatedLayout title="member_listing">
-        <div class="space-y-4"> <!-- Adds vertical gap between child elements -->
+        <div class="flex flex-col gap-5 items-center self-stretch w-full">
             <!-- Add User Button -->
             <div class="flex justify-end w-full">
                 <AddMember />

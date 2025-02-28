@@ -91,7 +91,7 @@ function copyToClipboard(text) {
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
                     {{ $t('public.fee') }}
                 </div>
-                <div class="text-surface-950 dark:text-white text-sm font-medium">
+                <div class="text-red-500 text-sm font-medium">
                     $ {{ formatAmount(withdrawalHistory.transaction_charges ?? 0) }}
                 </div>
             </div>

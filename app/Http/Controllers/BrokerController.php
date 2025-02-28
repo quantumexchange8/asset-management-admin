@@ -136,7 +136,7 @@ class BrokerController extends Controller
             $broker->addMediaFromRequest('broker_image')->toMediaCollection('broker_image');
         }
 
-        return back()->with('toast');
+        return back()->with('toast', 'success');
     }
 
     public function updateBrokerInfo(Request $request)

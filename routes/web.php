@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrokerAccountController;
 use App\Http\Controllers\BrokerController;
 use App\Http\Controllers\ConnectionController;
 use App\Http\Controllers\DashboardController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SelectOptionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransactionController;
+use App\Models\BrokerAccount;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
@@ -125,6 +127,22 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
 
             Route::post('/importBrokerConnection', [ConnectionController::class, 'importBrokerConnection'])->name('connection.importBrokerConnection');
         });
+
+        /**
+         * ==============================
+         *          Broker Account
+         * ==============================
+         */
+
+         Route::prefix('broker_accounts')->group(function () {
+            
+            Route::get('/account_listing', [BrokerAccountController::class, 'account_listing'])->name('broker_accounts.account_listing');
+            Route::get('/get_account_listing_data', [BrokerAccountController::class, 'getAccountListingData'])->name('broker_accounts.getAccountListingData');
+           
+            Route::get('/pending_account', [BrokerAccountController::class, 'pending_account'])->name('broker_accounts.pending_account');
+            Route::get('/get_pending_account_data', [BrokerAccountController::class, 'getPendingAccountData'])->name('broker_accounts.getPendingAccountData');
+            Route::post('/pendingAccountApproval', [BrokerAccountController::class, 'pendingAccountApproval'])->name('broker_accounts.pendingAccountApproval');
+         });
     });
 
     //Transaction
@@ -139,7 +157,6 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
 
             Route::get('/get_withdrawal_history', [TransactionController::class, 'getWithdrawalHistory'])->name('transaction.history.getWithdrawalHistory');
             Route::get('/get_withdrawal_history_data', [TransactionController::class, 'getWithdrawalHistoryData'])->name('transaction.history.getWithdrawalHistoryData');
-
         });
 
         Route::prefix('pending')->group(function () {

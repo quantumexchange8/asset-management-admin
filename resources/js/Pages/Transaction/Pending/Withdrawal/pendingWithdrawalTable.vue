@@ -19,6 +19,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 import { generalFormat } from '@/Composables/format';
+import { usePage } from '@inertiajs/vue3';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -212,10 +213,11 @@ const exportWithdrawal = () => {
     }
 };
 
-// Define a method to refresh the table
-const refreshTable = () => {
-    loadLazyData();
-};
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        loadLazyData();
+    }
+});
 </script>
 
 <template>
@@ -281,14 +283,14 @@ const refreshTable = () => {
 
                             <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                 <!-- Export button -->
-                                <Button
+                                <!-- <Button
                                     class="w-full md:w-auto flex justify-center items-center"
                                     @click="exportWithdrawal"
                                     :disabled="exportTable==='yes'"
                                 >
                                     <span class="pr-1">{{ $t('public.export') }}</span>
                                     <IconDownload size="16" stroke-width="1.5"/>
-                                </Button>
+                                </Button> -->
                             </div>
                         </div>
                     </template>
@@ -479,12 +481,10 @@ const refreshTable = () => {
 
                         <Column
                                 field="action"
-                                :header="$t('public.action')"
                             >
                                 <template #body="{data}">
                                     <PendingWithdrawalAction
                                         :pending="data"
-                                        @pendingWithdrawalActionCompleted="refreshTable"
                                     />
                                 </template>
                             </Column>

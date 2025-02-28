@@ -119,7 +119,7 @@ const getSeverity = (status) => {
                         <Timeline :value="recentApprovals">
                             <template #opposite="slotProps">
                                 <div class="flex flex-col"> 
-                                    <small class="text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).add(8, 'hour').format('YYYY/MM/DD') }}</small>
+                                    <small class="text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).format('YYYY/MM/DD') }}</small>
                                     <small class="text-xs text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).add(8, 'hour').format('hh:mm:ss A') }}</small>
                                 </div>
                             </template>

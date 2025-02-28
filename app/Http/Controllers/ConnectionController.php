@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -40,6 +41,7 @@ class ConnectionController extends Controller
 
             if ($data['filters']['global']['value']) {
                 $keyword = $data['filters']['global']['value'];
+
 
                 $query->where(function ($q) use ($keyword) {
                     $q->whereHas('user', function ($query) use ($keyword) {
@@ -97,8 +99,6 @@ class ConnectionController extends Controller
 
     public function pending_connection_data(Request $request)
     {
-        Gate::authorize('access', BrokerConnection::class);
-
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
@@ -159,32 +159,28 @@ class ConnectionController extends Controller
 
     public function pendingConnectionApproval(Request $request)
     {
-        Gate::authorize('edit-pending-connections', BrokerConnection::class);
 
-        $validatedData = $request->validate([
-            'remarks' => ['required_if:action,reject_transaction'],
-        ], [
-            'remarks.required_if' => trans('validation.required_if', [
-                'attribute' => trans('public.remarks'),
-                'other' => trans('public.action'),
-                'value' => trans('public.reject_transaction')
-            ])
-        ], [
-            'remarks' => trans('public.remarks')
-        ]);
+        Validator::make($request->all(), [
+            'action' => ['required'],
+        ])->setAttributeNames([
+            'action' => trans('public.action'),
+        ])->validate();
 
         $connections = BrokerConnection::find($request->connection_id);
 
-        if ($request->action == 'approve_transaction') {
+        if ($request->action == 'approve') {
             $connections->status = 'active';
             $connections->joined_at = now();
         } else {
+            if (!$request->remarks) {
+                throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
+            }
             $connections->status = 'rejected';
-            $connections->remarks = $validatedData['remarks'];
+            $connections->remarks = $request->remarks;
             $wallet = Wallet::where('user_id', $connections->user_id)
                 ->where('type', 'cash_wallet')
                 ->first();
-           
+
             $wallet->balance += $connections->capital_fund;
             $wallet->real_fund += $connections->capital_fund;
             $wallet->save();

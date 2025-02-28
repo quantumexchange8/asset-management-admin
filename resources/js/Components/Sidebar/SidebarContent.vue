@@ -13,7 +13,8 @@ import {
     IconBusinessplan,
     IconCoin,
     IconUserCog,
-    IconAdjustmentsAlt
+    IconAdjustmentsAlt,
+    IconHomeStar
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -130,6 +131,29 @@ watchEffect(() => {
                 :href="route('connection.pending_connection')"
                 :active="route().current('connection.pending_connection')"
                 v-if="hasPermission('access_connections')"
+            />
+        </SidebarCollapsible>
+
+        <!-- broker account -->
+        <SidebarCollapsible
+            title="accounts"
+            :active="route().current('broker_accounts.*')"
+           
+        >
+            <template #icon>
+                <IconHomeStar size="20" stroke-width="1.5" />
+            </template>
+            <SidebarCollapsibleItem
+                title="account_listing"
+                :href="route('broker_accounts.account_listing')"
+                :active="route().current('broker_accounts.account_listing')"
+              
+            />
+            <SidebarCollapsibleItem
+                title="pending_account"
+                :href="route('broker_accounts.pending_account')"
+                :active="route().current('broker_accounts.pending_account')"
+            
             />
         </SidebarCollapsible>
 
