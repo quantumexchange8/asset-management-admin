@@ -82,6 +82,16 @@ class ReferralController extends Controller
             // Build the hierarchy tree
             $referrals = $this->buildTree($users);
 
+            $users->each(function ($user) {
+                $user->profile_photo = $user->getFirstMediaUrl('profile_photo') ?: null; // Ensure it's a string or null
+
+                if ($user->upline) {
+                    $user->upline_profile_photo = $user->upline->getFirstMediaUrl('profile_photo') ?: null;
+                } else {
+                    $user->upline_profile_photo = null;
+                }
+            });
+
             Log::info('referrals:', ['referrals' => $referrals]);
 
             return response()->json([

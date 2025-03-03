@@ -3,10 +3,14 @@ import Card from 'primevue/card';
 import Divider from 'primevue/divider';
 import Tag from 'primevue/tag';
 import Image from 'primevue/image';
-
+import Avatar from 'primevue/avatar';
+import { generalFormat } from '@/Composables/format';
 const props = defineProps({
     referral: Object,
 })
+
+const {formatNameLabel} = generalFormat();
+
 const getSeverity = (status) => {
     switch (status) {
         case 'unverified':
@@ -32,15 +36,19 @@ const getSeverity = (status) => {
                     <div class="flex flex-col md:flex-row gap-3 md:gap-5 items-center self-stretch">
                         <div
                             class="w-20 md:w-28 h-20 md:h-28 grow-0 shrink-0 rounded-full overflow-hidden bg-primary-200 dark:bg-surface-800">
-                            <div>
-                                <div v-if="props.referral">
-                                    <div
-                                        class="w-full h-full p-2 flex justify-center items-center bg-primary-200 dark:bg-surface-800">
-                                        <Image
-                                            :src="referral.profile_photo ? referral.profile_photo : 'https://img.freepik.com/free-icon/referral_318-159711.jpg'"
-                                            alt="referralPic" />
-                                    </div>
-                                </div>
+                            <div v-if="referral" class="w-full h-full flex justify-center items-center">
+                                <Avatar
+                                    v-if="referral.profile_photo"
+                                    :image="referral.profile_photo"
+                                    shape="circle"
+                                    class="w-full h-full object-cover"
+                                />
+                                <Avatar
+                                    v-else
+                                    :label="formatNameLabel(referral.name)"
+                                    shape="circle"
+                                    class="w-full h-full flex items-center justify-center text-lg md:text-xl font-bold text-white bg-primary-500"
+                                />
                             </div>
                         </div>
     
@@ -110,14 +118,18 @@ const getSeverity = (status) => {
                                 </div>
                                 <div class="flex items-center gap-2 w-full">
                                     <div class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">
-                                        <div v-if="props.referral.upline_profile_photo">
-                                            <img :src="props.referral.upline_profile_photo" alt="Profile Photo" />
-                                        </div>
-                                        <div v-else class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">
-                                            <Image
-                                                :src="referral.profile_photo ? referral.profile_photo : 'https://img.freepik.com/free-icon/referral_318-159711.jpg'"
-                                                alt="referralPic" />
-                                        </div>
+                                        <Avatar
+                                            v-if="referral.upline_profile_photo"
+                                            :image="referral.upline_profile_photo"
+                                            shape="circle"
+                                            class="w-full h-full object-cover"
+                                        />
+                                        <Avatar
+                                            v-else
+                                            :label="formatNameLabel(referral.upline?.name)"
+                                            shape="circle"
+                                            class="w-full h-full flex items-center justify-center text-sm md:text-xs font-bold text-white bg-primary-500"
+                                        />
                                     </div>
                                     <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
                                         {{ props.referral.upline?.name ?? "-" }}
