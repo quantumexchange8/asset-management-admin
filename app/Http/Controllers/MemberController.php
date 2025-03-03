@@ -323,16 +323,19 @@ class MemberController extends Controller
             ->first();
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
-
-        $kycImages = $user->getMedia('kyc_image')->map(fn($image) => $image->getUrl());
+        $upline_profile_photo = $user->upline ? $user->upline->getFirstMediaUrl('profile_photo') : null;
+        $front_identity_image =  $user->getFirstMediaUrl('front_identity');
+        $back_identity_image = $user->getFirstMediaUrl('back_identity');
 
         $refereeCount = User::where('upline_id', $user->id)->count();
 
         return Inertia::render('Member/Listing/Detail/MemberDetail', [
             'user' => $user,
             'refereeCount' => $refereeCount,
-            'kycImages' => $kycImages,
+            'front_identity_image' => $front_identity_image,
+            'back_identity_image' => $back_identity_image,
             'profile_photo' => $profile_photo,
+            'upline_profile_photo' => $upline_profile_photo,
         ]);
     }
 

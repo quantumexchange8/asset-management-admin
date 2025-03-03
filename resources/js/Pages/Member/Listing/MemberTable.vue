@@ -355,7 +355,7 @@ watchEffect(() => {
 
                         <Column
                             field="name"
-                            style="min-width: 12rem"
+                            style="min-width: 8rem"
                             sortable
                             frozen
                         >
@@ -371,7 +371,7 @@ watchEffect(() => {
 
                         <Column
                             field="email"
-                            style="min-width: 12rem"
+                            style="min-width: 13rem"
                             sortable
                         >
                             <template #header>
@@ -384,7 +384,7 @@ watchEffect(() => {
 
                         <Column
                             field="upline_id"
-                            style="min-width: 12rem"
+                            style="min-width: 10rem"
                             sortable
                         >
                             <template #header>
@@ -411,7 +411,7 @@ watchEffect(() => {
 
                         <Column
                             field="setting_rank_id"
-                            style="min-width: 10rem"
+                            style="min-width: 8rem"
                             sortable
                         >
                             <template #header>
@@ -427,7 +427,7 @@ watchEffect(() => {
 
                         <Column
                             field="role"
-                            style="min-width: 10rem"
+                            style="min-width: 7rem"
                             sortable
                         >
                             <template #header>
@@ -440,7 +440,7 @@ watchEffect(() => {
 
                         <Column
                             field="country_id"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>

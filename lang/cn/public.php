@@ -358,6 +358,8 @@ return [
     "toast_approve_connection_success" => "成功批准连接",
     "toast_reject_connection_success" => "成功拒绝连接",
     "view_transaction" => "查看交易",
+    "access_account_listing" => "访问账户列表",
+    "access_pending_account" => "访问待处理账户",
 
 
 ];

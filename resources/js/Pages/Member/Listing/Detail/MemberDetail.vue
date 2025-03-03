@@ -15,8 +15,10 @@ import KycProfile from './KycProfile.vue';
 const props = defineProps({
     user: Object,
     refereeCount: Number,
-    kycImages: Array,
-    profile_photo: Object,
+    front_identity_image: String,
+    back_identity_image: String,
+    profile_photo: String,
+    upline_profile_photo: String,
 });
 
 const home = ref({
@@ -71,11 +73,13 @@ const tabs = ref([
                     :user="user" 
                     :refereeCount="refereeCount"
                     :profile_photo="profile_photo"
+                    :upline_profile_photo="upline_profile_photo"
                 />
 
                 <KycProfile
                     :user="user" 
-                    :kycImages="kycImages"
+                    :front_identity_image="front_identity_image"
+                    :back_identity_image="back_identity_image"
                 />
                
             </div>

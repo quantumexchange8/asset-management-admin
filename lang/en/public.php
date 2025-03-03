@@ -358,4 +358,6 @@ return [
     "toast_approve_connection_success" => "Successfully Approved Connection",
     "toast_reject_connection_success" => "Successfully Rejected Connection",
     "view_transaction" => "View Transaction",
+    "access_account_listing" => "Access Account Listing",
+    "access_pending_account" => "Access Pending Account",
 ];

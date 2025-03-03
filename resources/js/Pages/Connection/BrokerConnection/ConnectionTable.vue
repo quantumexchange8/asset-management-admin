@@ -327,24 +327,17 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="broker_id"
+                            field="broker"
                             :header="$t('public.broker')"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
                                     <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
-                                    <span>{{ data.broker.name }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="text-surface-950 dark:text-white font-medium">{{ data.broker_login }}</span>
+                                        <span class="text-surface-500">{{ data.broker.name }}</span>
+                                    </div>
                                 </div>
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="broker_login"
-                            :header="$t('public.login')"
-                            sortable
-                        >
-                            <template #body="{ data }">
-                                {{ data.broker_login }}
                             </template>
                         </Column>
 

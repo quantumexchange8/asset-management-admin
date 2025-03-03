@@ -60,7 +60,7 @@ class ReferralController extends Controller
                 }
             } else {
                 // If no global filter, fetch users with a hierarchy only
-                $allUsers = User::all(); // Fetch all users to identify those with hierarchy
+                $allUsers = User::select(['id', 'name', 'email', 'upline_id', 'hierarchyList'])->get(); // Fetch all users to identify those with hierarchy
                 $hierarchyUserIds = [];
 
                 foreach ($allUsers as $user) {

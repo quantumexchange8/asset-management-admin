@@ -10,7 +10,8 @@ import Avatar from 'primevue/avatar';
 const props = defineProps({
     user: Object,
     refereeCount: Number,
-    profile_photo: Object,
+    upline_profile_photo: String,
+    profile_photo: String,
 });
 
 const {formatNameLabel} = generalFormat();
@@ -127,14 +128,18 @@ const getSeverity = (status) => {
                             </div>
                             <div class="flex items-center gap-2 w-full">
                                 <div class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">
-                                    <div v-if="props.user.upline_profile_photo">
-                                        <img :src="props.user.upline_profile_photo" alt="Profile Photo" />
-                                    </div>
-                                    <div v-else class="w-6 h-6 grow-0 shrink-0 rounded-full overflow-hidden">
-                                        <Image
-                                            :src="user.profile_photo ? user.profile_photo : 'https://img.freepik.com/free-icon/user_318-159711.jpg'"
-                                            alt="userPic" />
-                                    </div>
+                                    <Avatar
+                                        v-if="props.upline_profile_photo"
+                                        :image="props.upline_profile_photo"
+                                        shape="circle"
+                                        class="w-full h-full object-cover"
+                                    />
+                                    <Avatar
+                                        v-else
+                                        :label="formatNameLabel(user.name)"
+                                        shape="circle"
+                                        class="w-full h-full flex items-center justify-center text-sm md:text-xs font-bold text-white bg-primary-500"
+                                    />
                                 </div>
                                 <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
                                     {{ props.user.upline?.name ?? "-" }}
