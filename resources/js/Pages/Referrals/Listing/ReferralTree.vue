@@ -36,7 +36,8 @@ const lazyParams = ref({}); //track table parameters that need to be send to bac
 
 const loadLazyData = (event) => { // event will retrieve from the datatable attribute
     isLoading.value = true;
-
+    referrals.value = [];
+    expandedUsers.value = {};
     lazyParams.value = {
         ...lazyParams.value,
         first: event?.first || 0,
@@ -79,11 +80,13 @@ onMounted(() => {
 
 //monitor changes to global filter, debounce ensure loadLazyData tiggered 300ms after user stop typing
 watch(
-    filters.value['global'],
+    () => filters.value['global'].value,
     debounce(() => {
+        expandedUsers.value = {}; // Collapse all expanded users before searching
         loadLazyData();
     }, 300)
 );
+
 
 //clear global filter
 const clearFilterGlobal = () => {
@@ -128,7 +131,7 @@ watchEffect(() => {
                         <template v-for="user in referrals" :key="user.id">
                             <div :class="[
                                 'p-4 rounded-lg bg-gray-100 dark:bg-surface-800 flex items-center',
-                                locale === 'en' ? 'min-w-[1190px]' : 'min-w-[950px]',
+                                locale === 'en' ? 'max-w-[1190px] min-w-[1190px]' : 'max-w-[950px] min-w-[950px]',
                             ]">
                                 <div class="flex items-center w-full relative gap-6">
                                     <!-- Left: Expand Button -->
@@ -150,7 +153,7 @@ watchEffect(() => {
                                     <!-- Grid for User Info & Other Details -->
                                     <div :class="[
                                        'gap-x-6 gap-y-2 text-sm pr-10',
-                                       locale === 'en' ? 'grid grid-cols-[1.5fr_1fr_2fr_2fr_1fr]' : 'grid grid-cols-[3fr_1.5fr_2.5fr_2.5fr_1fr]',
+                                       locale === 'en' ? 'grid grid-cols-[1.5fr_1fr_2fr_2fr_1fr_1fr]' : 'grid grid-cols-[3fr_1.5fr_2.5fr_2.5fr_1fr_1fr]',
                                     ]">
                                         <!-- Name & Email -->
                                         <div class="flex flex-col items-start whitespace-nowrap">
@@ -184,13 +187,16 @@ watchEffect(() => {
                                             <span class="font-semibold">{{ $t('public.direct_downlines') }}</span>
                                             <span class="dark:text-surface-400">{{ user.downlines_count }}</span>
                                         </div>
+
+                                        <div class="flex flex-col items-start whitespace-nowrap">
+                                            <ReferralDetail :referral="user" />
+                                        </div>
                                     </div>
-                                    <ReferralDetail :referral="user" />
                                 </div>
                             </div>
 
                             <!-- Show downlines only when expanded -->
-                            <div v-if="expandedUsers[user.id]" class="pl-8 border-l border-gray-300">
+                            <div v-if="expandedUsers[user.id]" class="pl-8 border-l border-gray-300 -mt-4">
                                 <ReferralDownline 
                                     :downlines="user.children" 
                                     :expandedUsers="expandedUsers" 

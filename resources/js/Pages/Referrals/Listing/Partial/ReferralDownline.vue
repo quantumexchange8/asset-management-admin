@@ -32,7 +32,7 @@ const toggleExpand = (id) => {
             v-if="downline?.id" 
             :class="[
                'p-4 rounded-lg bg-gray-200 dark:bg-surface-700 flex justify-between items-center overflow-x-auto mt-4',
-               locale === 'en' ? 'min-w-[1200px]' : 'min-w-[950px]',
+               locale === 'en' ? 'max-w-[1200px] min-w-[1200px]' : 'max-w-[950px] min-w-[950px]',
             ]"
         >
             <div class="flex items-center gap-6 w-full relative">
@@ -55,7 +55,7 @@ const toggleExpand = (id) => {
                 <!-- Grid for Downline Info & Other Details -->
                 <div :class="[
                     'gap-x-6 gap-y-2 text-sm pr-7',
-                    locale === 'en' ? 'grid grid-cols-[1.5fr_1fr_2fr_2fr_1fr]' : 'grid grid-cols-[3fr_1.5fr_2.5fr_2.5fr_1fr]',
+                    locale === 'en' ? 'grid grid-cols-[1.5fr_1fr_2fr_2fr_1fr_1fr]' : 'grid grid-cols-[3fr_1.5fr_2.5fr_2.5fr_1fr_1fr]',
             
                 ]">
                     <!-- Name & Email -->
@@ -90,8 +90,11 @@ const toggleExpand = (id) => {
                         <span class="font-semibold">{{ $t('public.direct_downlines') }}</span>
                         <span class="dark:text-surface-400">{{ downline.downlines_count }}</span>
                     </div>
+
+                    <div class="flex flex-col items-start whitespace-nowrap">
+                        <ReferralDetail :referral="downline" />
+                    </div>
                 </div>
-                <ReferralDetail :referral="downline" />
             </div>
         </div>
 
