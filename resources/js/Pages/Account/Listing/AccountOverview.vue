@@ -23,7 +23,7 @@ const {formatAmount} = generalFormat();
                     <div class="flex items-end gap-1">
                         <div class="flex flex-col items-start gap-2">
                             <div class="text-surface-500 text-sm">
-                                {{ $t('public.total_broker_capital') }}
+                                {{ $t('public.total_capital_fund') }}
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="totalBrokerCapital === null">

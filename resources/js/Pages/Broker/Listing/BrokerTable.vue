@@ -354,7 +354,7 @@ watchEffect(() => {
                                     <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
                                         <IconPremiumRights size="20" stroke-width="1.5" />
                                         <div class="text-gray-950 dark:text-white text-sm font-medium">
-                                            <span class="text-primary-500">$ {{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.fund_capital') }}
+                                            <span class="text-primary-500">$ {{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.capital_fund') }}
                                         </div>
                                     </div>
                                 </div>

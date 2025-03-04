@@ -64,25 +64,17 @@ class BrokerAccountController extends Controller
 
             $accounts = $query->paginate($data['rows']);
 
-            $accounts->each(function ($user) {
-                $user->profile_photo = $user->getMedia('account_image')
-                    ->map(function ($media) {
-                        return $media->getUrl();
-                    });
+            $accounts->each(function ($account) {
+                if ($account->master_password) {
+                    $account->decrypted_master_password = decrypt($account->master_password);
+                }
             });
 
             $accountCounts = (clone $query)
-                ->distinct('user_id')
                 ->count();
 
             $totalBrokerCapital = (clone $query)
                 ->sum('broker_capital');
-
-            // $accounts->each(function ($account) {
-            //     if (!$account->master_password == null) {
-            //         $account->decrypted_master_password = Crypt::decrypt($account->master_password);
-            //     }
-            // });
 
             return response()->json([
                 'success' => true,
