@@ -300,7 +300,7 @@ watchEffect(() => {
 
                         <Column
                             field="broker_capital"
-                            :header="$t('public.broker_capital')"
+                            :header="$t('public.capital_fund')"
                             sortable
                         >
                             <template #body="{ data }">
@@ -313,7 +313,10 @@ watchEffect(() => {
                             :header="$t('public.master_password')"
                         >
                             <template #body="{ data }">
-                                <div class="flex items-center gap-2">
+                                <div v-if="data.status === 'linked'" class="flex items-center gap-2">
+                                    <span class="mt-1">
+                                        {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
+                                    </span>
                                     <IconEye
                                         v-if="!showPassword[data.id]"
                                         size="20" stroke-width="1.5"
@@ -326,9 +329,9 @@ watchEffect(() => {
                                         class="cursor-pointer text-gray-500"
                                         @click="togglePassword(data.id)"
                                     />
-                                    <span>
-                                        {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
-                                    </span>
+                                </div>
+                                <div v-else>
+                                    -
                                 </div>
                             </template>
                         </Column>
