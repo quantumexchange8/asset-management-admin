@@ -357,5 +357,10 @@ return [
     "access_account_listing" => "Access Account Listing",
     "access_pending_account" => "Access Pending Account",
     "total_capital_fund" => "Total Capital Fund",
-    "referral_loading_caption" => "Loading referral data. Please wait."
+    "referral_loading_caption" => "Loading referral data. Please wait.",
+    "required_broker_login_import" => "Login field is required",
+    "exists_broker_login_import" => "Broker Login does not exist",
+    "required_joined_date_import" => "Date is required",
+    "required_amount_import" => "Amount is required",
+    "numeric_amount_import" => "Amount must be numeric",
 ];

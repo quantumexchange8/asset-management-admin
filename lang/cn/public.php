@@ -357,4 +357,11 @@ return [
     "access_account_listing" => "访问账户列表",
     "access_pending_account" => "访问待处理账户",
     "total_capital_fund" => "总资本基金",
+    "referral_loading_caption" => "正在加载推荐数据，请稍候。",
+    "required_broker_login_import" => "登录字段为必填项。",
+    "exists_broker_login_import" => "经纪人登录不存在。",
+    "required_joined_date_import" => "日期为必填项。",
+    "required_amount_import" => "金额为必填项。",
+    "numeric_amount_import" => "金额必须是数字。",
+
 ];

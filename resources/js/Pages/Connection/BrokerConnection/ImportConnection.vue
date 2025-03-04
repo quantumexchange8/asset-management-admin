@@ -234,7 +234,6 @@ const downloadTemplate = async () => {
                                 :placeholder="$t('public.select_type')"
                                 class="pl-7 block w-full"
                                 :invalid="!!form.errors.type"
-                                filter
                             >
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value" class="flex items-center">

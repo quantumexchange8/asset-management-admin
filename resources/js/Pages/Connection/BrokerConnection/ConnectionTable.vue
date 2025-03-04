@@ -190,14 +190,23 @@ const exportTable = () => {
 
 const getSeverity = (status) => {
     switch (status) {
-        case 'removed':
+        case 'failed':
+            return 'danger';
+        
+        case 'withdrawal':
             return 'danger';
 
-        case 'active':
+        case 'success':
             return 'success';
 
-        case 'pending':
-            return 'info';
+        case 'top_up':
+            return 'success';
+
+        case 'deposit':
+            return 'success';
+
+        case 'initial_join':
+            return 'success';
     }
 }
 
@@ -304,12 +313,11 @@ watchEffect(() => {
 
                     <template v-if="connections?.length > 0">
                         <Column
-                            field="joined_at"
-                            :header="$t('public.join_date')"
-                            sortable
+                            field="date"
+                            :header="$t('public.date')"
                         >
                             <template #body="{ data }">
-                                {{ dayjs(data.joined_at).isValid() ? dayjs(data.joined_at).format('YYYY-MM-DD') : "-" }}
+                                {{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}
                             </template>
                         </Column>
 
@@ -357,7 +365,10 @@ watchEffect(() => {
                             sortable
                         >
                             <template #body="{ data }">
-                                {{$t(`public.${data.connection_type}`) }}
+                                <Tag
+                                    :value="$t(`public.${data.connection_type}`)"
+                                    :severity="getSeverity(data.connection_type)"
+                                />
                             </template>
                         </Column>
 

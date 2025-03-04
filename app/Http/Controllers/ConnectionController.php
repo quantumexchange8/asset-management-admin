@@ -37,7 +37,7 @@ class ConnectionController extends Controller
                 'broker',
                 'broker.media'
             ])
-                ->where('status', 'active');
+                ->where('status', 'success');
 
             if ($data['filters']['global']['value']) {
                 $keyword = $data['filters']['global']['value'];
