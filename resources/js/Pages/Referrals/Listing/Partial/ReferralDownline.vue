@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, computed } from "vue";
 import Button from "primevue/button";
 import { IconPlus, IconMinus } from "@tabler/icons-vue";
 import ReferralDetail from "../Detail/ReferralDetail.vue";
@@ -25,6 +25,14 @@ const toggleExpand = (id) => {
     const updatedExpandedUsers = { ...props.expandedUsers, [id]: !props.expandedUsers[id] };
     emit("update:expandedUsers", updatedExpandedUsers);
 };
+
+const getUniqueColor = (level) => {
+    const goldenRatio = 0.6180339887; // Golden ratio for better distribution
+    const hue = (level * goldenRatio * 360) % 360; // Spread hue values evenly
+    return `hsl(${hue}, 70%, 50%)`; // Adjust saturation & lightness
+};
+
+const levelColor = computed(() => getUniqueColor(props.level));
 </script>
 <template>
     <div v-for="downline in downlines" :key="downline?.id">
@@ -48,7 +56,10 @@ const toggleExpand = (id) => {
                 </Button>
 
                 <!-- Level Indicator -->
-                <div class="w-8 h-8 flex items-center justify-center bg-red-500 text-white font-semibold rounded-full text-sm">
+                <div
+                    :style="{ backgroundColor: levelColor }"
+                    class="w-8 h-8 flex items-center justify-center text-white font-semibold rounded-full text-sm"
+                >
                     {{ level }}
                 </div>
 
@@ -59,13 +70,13 @@ const toggleExpand = (id) => {
             
                 ]">
                     <!-- Name & Email -->
-                    <div class="flex flex-col items-start whitespace-nowrap">
+                    <div class="flex flex-col items-start">
                         <span class="font-medium text-surface-950 dark:text-white truncate">{{ downline?.name }}</span>
                         <span class="text-surface-500 text-sm truncate">{{ downline?.email }}</span>
                     </div>
 
                     <!-- Rank -->
-                    <div class="flex flex-col items-start whitespace-nowrap">
+                    <div class="flex flex-col items-start">
                         <span class="font-semibold">{{ $t('public.rank') }}</span>
                         <Tag
                             severity="secondary"
@@ -74,13 +85,13 @@ const toggleExpand = (id) => {
                     </div>
 
                     <!-- Personal Fund -->
-                    <div class="flex flex-col items-start whitespace-nowrap">
+                    <div class="flex flex-col items-start">
                         <span class="font-semibold">{{ $t('public.personal_capital_fund') }} ($)</span>
                         <span class="dark:text-surface-400">{{ formatAmount(downline.total_personal_fund) }}</span>
                     </div>
 
                     <!-- Team Fund -->
-                    <div class="flex flex-col items-start whitespace-nowrap">
+                    <div class="flex flex-col items-start">
                         <span class="font-semibold">{{ $t('public.team_capital_fund') }} ($)</span>
                         <span class="dark:text-surface-400">{{ formatAmount(downline.total_team_fund) }}</span>
                     </div>
@@ -91,7 +102,7 @@ const toggleExpand = (id) => {
                         <span class="dark:text-surface-400">{{ downline.downlines_count }}</span>
                     </div>
 
-                    <div class="flex flex-col items-start whitespace-nowrap">
+                    <div class="flex flex-col items-start">
                         <ReferralDetail :referral="downline" />
                     </div>
                 </div>
@@ -99,14 +110,23 @@ const toggleExpand = (id) => {
         </div>
 
         <!-- Recursively show children when expanded -->
-        <div v-if="expandedUsers?.[downline?.id]" class="mt-3 pl-8 border-l border-gray-300">
-            <ReferralDownline
-                v-if="downline?.children?.length"
-                :downlines="downline.children"
-                :expandedUsers="expandedUsers"
-                @update:expandedUsers="emit('update:expandedUsers', $event)"
-                :level="level + 1"
-            />
-        </div>
+        <Transition
+            enter-active-class="transition-all duration-300 ease-in-out"
+            enter-from-class="opacity-0 translate-y-2 scale-y-95"
+            enter-to-class="opacity-100 translate-y-0 scale-y-100"
+            leave-active-class="transition-all duration-200 ease-in-out"
+            leave-from-class="opacity-100 translate-y-0 scale-y-100"
+            leave-to-class="opacity-0 translate-y-2 scale-y-95"
+        >
+            <div v-if="expandedUsers?.[downline?.id]" class="mt-3 pl-8 border-l border-gray-300">
+                <ReferralDownline
+                    v-if="downline?.children?.length"
+                    :downlines="downline.children"
+                    :expandedUsers="expandedUsers"
+                    @update:expandedUsers="emit('update:expandedUsers', $event)"
+                    :level="level + 1"
+                />
+            </div>
+        </Transition>
     </div>
 </template>

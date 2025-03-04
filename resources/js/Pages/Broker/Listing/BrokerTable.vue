@@ -22,7 +22,6 @@ import { onMounted, ref, watch, watchEffect } from 'vue';
 import { FilterMatchMode } from '@primevue/core/api';
 import debounce from "lodash/debounce.js";
 import { usePage } from '@inertiajs/vue3';
-import dayjs from 'dayjs';
 import BrokerTableAction from './Partial/BrokerTableAction.vue';
 import ToggleBrokerStatus from './Partial/ToggleBrokerStatus.vue';
 import EmptyData from "@/Components/EmptyData.vue";
@@ -94,16 +93,6 @@ const onPage = (event) => {
     // Update the starting index for pagination
     first.value = event.first;
     rows.value = event.rows;
-    loadLazyData(event);
-};
-
-const onSort = (event) => {
-    lazyParams.value = event;
-    loadLazyData(event);
-};
-
-const onFilter = (event) => {
-    lazyParams.value.fitlers = filters.value;
     loadLazyData(event);
 };
 

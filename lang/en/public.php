@@ -360,4 +360,5 @@ return [
     "view_transaction" => "View Transaction",
     "access_account_listing" => "Access Account Listing",
     "access_pending_account" => "Access Pending Account",
+    "referral_loading_caption" => "Loading referral data. Please wait."
 ];

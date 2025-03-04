@@ -360,6 +360,6 @@ return [
     "view_transaction" => "查看交易",
     "access_account_listing" => "访问账户列表",
     "access_pending_account" => "访问待处理账户",
-
+    "referral_loading_caption" => "正在加载推荐数据，请稍候。"
 
 ];
