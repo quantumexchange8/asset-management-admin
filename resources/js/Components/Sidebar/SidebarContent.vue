@@ -14,7 +14,9 @@ import {
     IconCoin,
     IconUserCog,
     IconAdjustmentsAlt,
-    IconHomeStar
+    IconHomeStar,
+    IconUserQuestion,
+    IconUsersGroup,
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -66,35 +68,43 @@ watchEffect(() => {
             title="member"
             v-if="hasPermission('access_member_listing') || hasPermission('access_pending_kyc') || hasPermission('access_member_referrals')"
         />
-        <SidebarCollapsible
-            title="member"
-            :active="route().current('member.*')"
-            :pending-counts="pendingKycCount"
-            v-if="hasPermission('access_member_listing') || hasPermission('access_pending_kyc') || hasPermission('access_member_referrals')"
+
+        <!-- Member Listing -->
+        <SidebarLink
+            title="member_listing"
+            :href="route('member.getMemberList')"
+            :active="route().current('member.getMemberList')"
+            v-if="hasPermission('access_member_listing')"
         >
             <template #icon>
                 <IconUsers size="20" stroke-width="1.5" />
             </template>
-            <SidebarCollapsibleItem
-                title="member_listing"
-                :href="route('member.getMemberList')"
-                :active="route().current('member.getMemberList')"
-                v-if="hasPermission('access_member_listing')"
-            />
-            <SidebarCollapsibleItem
-                title="pending_kyc"
-                :href="route('member.getPendingKyc')"
-                :active="route().current('member.getPendingKyc')"
-                v-if="hasPermission('access_pending_kyc')"
-                :pendingCounts="pendingKycCount"
-            />
-            <SidebarCollapsibleItem
-                title="member_referrals"
-                :href="route('referral.getReferralList')"
-                :active="route().current('referral.getReferralList')"
-                v-if="hasPermission('access_member_referrals')"
-            />
-        </SidebarCollapsible>
+        </SidebarLink>
+
+        <!-- Pending KYC -->
+        <SidebarLink
+            title="pending_kyc"
+            :href="route('member.getPendingKyc')"
+            :active="route().current('member.getPendingKyc')"
+            v-if="hasPermission('access_pending_kyc')"
+            :pendingCounts="pendingKycCount"
+        >
+            <template #icon>
+                <IconUserQuestion size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
+        <!-- Member Referrals -->
+        <SidebarLink
+            title="member_referrals"
+            :href="route('referral.getReferralList')"
+            :active="route().current('referral.getReferralList')"
+            v-if="hasPermission('access_member_referrals')"
+        >
+            <template #icon>
+                <IconUsersGroup size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
 
         <!-- Marketplace -->
         <SidebarCategoryLabel
