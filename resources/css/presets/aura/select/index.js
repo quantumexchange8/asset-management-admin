@@ -39,7 +39,6 @@ export default {
     label: ({ props, parent }) => ({
         class: [
             //Font
-            'leading-[normal]',
             'text-sm',
 
             // Display
@@ -126,7 +125,6 @@ export default {
             'flex items-center',
 
             // Font
-            'leading-none',
             'text-sm',
 
             // Spacing

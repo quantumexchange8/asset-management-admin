@@ -284,7 +284,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
 
                                 <!-- Search bar -->
                                 <IconField>
@@ -300,7 +300,7 @@ watchEffect(() => {
                                     <!-- Clear filter button -->
                                     <div
                                         v-if="filters['global'].value"
-                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
                                         @click="clearFilterGlobal"
                                     >
                                         <IconXboxX aria-hidden="true" :size="15" />
@@ -335,7 +335,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.member_loading_caption') }}</span>
+                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.member_loading_caption') }}</span>
                         </div>
                     </template>
 
@@ -344,6 +344,7 @@ watchEffect(() => {
                             field="created_at"
                             style="min-width: 9rem"
                             sortable
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.join_date') }}</span>
@@ -355,30 +356,35 @@ watchEffect(() => {
 
                         <Column
                             field="name"
-                            style="min-width: 8rem"
                             sortable
                             frozen
+                            class="hidden md:table-cell"
                         >
-
                             <template #header>
                                 <span class="block">{{ $t('public.name') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.name }}
+                                <div class="flex flex-col items-start">
+                                    <div class="font-medium max-w-[180px] truncate">
+                                        {{ data.name }}
+                                    </div>
+                                    <div class="text-surface-400 dark:text-surface-500 text-xs max-w-[180px] truncate">
+                                        {{ data.email }}
+                                    </div>
+                                </div>
                             </template>
-
                         </Column>
 
                         <Column
-                            field="email"
-                            style="min-width: 13rem"
+                            field="username"
                             sortable
+                            class="hidden md:table-cell"
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.email') }}</span>
+                                <span class="block">{{ $t('public.username') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.email }}
+                                {{ data.username }}
                             </template>
                         </Column>
 
@@ -386,6 +392,7 @@ watchEffect(() => {
                             field="upline_id"
                             style="min-width: 10rem"
                             sortable
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.referrer') }}</span>
@@ -399,7 +406,7 @@ watchEffect(() => {
                                     <div class="font-medium max-w-[180px] truncate">
                                         {{ data.upline.name }}
                                     </div>
-                                    <div class="text-gray-500 text-xs max-w-[180px] truncate">
+                                    <div class="text-surface-400 dark:text-surface-500 text-xs max-w-[180px] truncate">
                                         {{ data.upline.email }}
                                     </div>
                                 </div>
@@ -411,8 +418,8 @@ watchEffect(() => {
 
                         <Column
                             field="setting_rank_id"
-                            style="min-width: 8rem"
                             sortable
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.rank') }}</span>
@@ -426,22 +433,10 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="role"
-                            style="min-width: 7rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.role') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.role }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="country_id"
                             style="min-width: 9rem"
                             sortable
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.country') }}</span>
@@ -464,6 +459,7 @@ watchEffect(() => {
                             field="kyc_status"
                             sortable
                             style="min-width: 6rem;"
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.status') }}</span>
@@ -477,11 +473,56 @@ watchEffect(() => {
                             field="action"
                             frozen
                             alignFrozen="right"
-                            header=""
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.name }}
+                                            </div>
+                                            <Tag
+                                                :value="$t(`public.${data.kyc_status}`)"
+                                                :severity="getSeverity(data.kyc_status)"
+                                                class="!text-xs"
+                                            />
+                                        </div>
+                                        <div class="text-surface-400 dark:text-surface-500 text-xs max-w-[220px] truncate">
+                                            {{ data.email }}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <img
+                                                v-if="data.country.iso2"
+                                                :src="`https://flagcdn.com/w40/${data.country.iso2.toLowerCase()}.png`"
+                                                :alt="data.country.iso2"
+                                                width="18"
+                                                height="12"
+                                            />
+                                            <div class="text-xs">{{ data.country.iso2 }}</div>
+                                        </div>
+                                        <div class="flex justify-end w-full">
+                                            <Tag
+                                                severity="secondary"
+                                                :value="data.rank.rank_name === 'member' ? $t(`public.${data.rank.rank_name}`) : data.rank.rank_name"
+                                                class="!text-xs"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="action"
+                            frozen
+                            alignFrozen="right"
                             style="width: 5%"
                         >
                             <template #body="{data}">
-                                <MemberTableAction 
+                                <MemberTableAction
                                     :member="data"
                                 />
                             </template>
@@ -537,7 +578,7 @@ watchEffect(() => {
                     />
                     <div
                         v-if="selectedDate && selectedDate.length > 0"
-                        class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
+                        class="absolute top-2/4 -mt-2 right-2 text-surface-400 select-none cursor-pointer bg-transparent"
                         @click="clearDate"
                     >
                         <IconX :size="15" strokeWidth="1.5"/>

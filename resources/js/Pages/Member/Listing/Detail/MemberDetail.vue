@@ -14,7 +14,6 @@ import KycProfile from './KycProfile.vue';
 
 const props = defineProps({
     user: Object,
-    refereeCount: Number,
     front_identity_image: String,
     back_identity_image: String,
     profile_photo: String,
@@ -54,34 +53,21 @@ const tabs = ref([
 </script>
 
 <template>
-    <AuthenticatedLayout :title="'member_listing'">
+    <AuthenticatedLayout title="member_detail">
         <div class="flex flex-col gap-5">
-            <Breadcrumb :home="home" :model="items">
-                <template #item="{ item }">
-                    <Link v-if="item.route" :href="item.route">
-                        <span :class="[item.icon, 'text-color']" />
-                        <span class="text-primary font-semibold hover:text-primary-600">{{ $t(`public.${item.label}`) }}</span>
-                    </Link>
-                    <span v-else class="text-surface-700 dark:text-surface-0">{{ item.label }} - {{ $t('public.details') }}</span>
-                </template>
-            </Breadcrumb>
-
             <!-- Member Info -->
-
             <div class="flex flex-col lg:flex-row items-center w-full gap-5 self-stretch">
-                <MemberInfo 
-                    :user="user" 
-                    :refereeCount="refereeCount"
+                <MemberInfo
+                    :user="user"
                     :profile_photo="profile_photo"
                     :upline_profile_photo="upline_profile_photo"
                 />
 
                 <KycProfile
-                    :user="user" 
+                    :user="user"
                     :front_identity_image="front_identity_image"
                     :back_identity_image="back_identity_image"
                 />
-               
             </div>
 
             <!-- Tabs -->

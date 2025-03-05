@@ -357,5 +357,8 @@ return [
     "access_account_listing" => "Access Account Listing",
     "access_pending_account" => "Access Pending Account",
     "total_capital_fund" => "Total Capital Fund",
-    "referral_loading_caption" => "Loading referral data. Please wait."
+    "referral_loading_caption" => "Loading referral data. Please wait.",
+    "directs" => "Directs",
+    "networks" => "Networks",
+    "no_files_submitted" => "No Files Submitted",
 ];
