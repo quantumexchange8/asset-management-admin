@@ -190,23 +190,14 @@ const exportTable = () => {
 
 const getSeverity = (status) => {
     switch (status) {
-        case 'failed':
-            return 'danger';
-        
         case 'withdrawal':
             return 'danger';
 
-        case 'success':
+        case 'initial_join':
             return 'success';
 
         case 'top_up':
-            return 'success';
-
-        case 'deposit':
-            return 'success';
-
-        case 'initial_join':
-            return 'success';
+            return 'info';
     }
 }
 
@@ -360,19 +351,6 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="connection_type"
-                            :header="$t('public.connection_type')"
-                            sortable
-                        >
-                            <template #body="{ data }">
-                                <Tag
-                                    :value="$t(`public.${data.connection_type}`)"
-                                    :severity="getSeverity(data.connection_type)"
-                                />
-                            </template>
-                        </Column>
-
-                        <Column
                             field="capital_fund"
                             :header="$t('public.fund')"
                             sortable
@@ -383,14 +361,14 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="status"
-                            :header="$t('public.status')"
+                            field="connection_type"
+                            :header="$t('public.type')"
                             sortable
                         >
                             <template #body="{ data }">
                                 <Tag
-                                    :value="$t(`public.${data.status}`)"
-                                    :severity="getSeverity(data.status)"
+                                    :value="$t(`public.${data.connection_type}`)"
+                                    :severity="getSeverity(data.connection_type)"
                                 />
                             </template>
                         </Column>

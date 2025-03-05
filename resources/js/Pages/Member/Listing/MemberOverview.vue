@@ -1,7 +1,7 @@
 <script setup>
 import Card from 'primevue/card';
-import { 
-    IconUsers, 
+import {
+    IconUsers,
     IconUserX,
     IconUserCheck } from '@tabler/icons-vue';
 import { ref } from 'vue';
@@ -28,7 +28,7 @@ const isLoading = ref(false);
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="totalRecords === null">
-                                    <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
+                                    <Skeleton width="5rem" class="mt-1" height="2rem"></Skeleton>
                                 </div>
 
                                 <div v-else>
@@ -58,7 +58,7 @@ const isLoading = ref(false);
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="verifiedUser === null">
-                                    <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
+                                    <Skeleton width="5rem" class="mt-1" height="2rem"></Skeleton>
                                 </div>
 
                                 <div v-else>
@@ -88,7 +88,7 @@ const isLoading = ref(false);
                             </div>
                             <div class="text-3xl font-semibold">
                                 <div v-if="unverifiedUser === null">
-                                    <Skeleton width="5rem" class="mt-1.5 mb-1" height="2rem"></Skeleton>
+                                    <Skeleton width="5rem" class="mt-1" height="2rem"></Skeleton>
                                 </div>
 
                                 <div v-else>
