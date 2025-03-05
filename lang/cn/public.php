@@ -1,6 +1,6 @@
 <?php
 return [
-    "email" => "电子邮件",
+    "email" => "邮箱",
     "password" => "密码",
     "remember_me" => "记住我",
     "reset_password" => "重置密码",
@@ -236,7 +236,7 @@ return [
     "enter_identity_number" => "输入身份证号码",
     "id_passport" => "身份/护照",
     "member_detail" => "会员详情",
-    "details" => "细节",
+    "details" => "详情",
     "access_portal" => "访问门户",
     "change_upline" => "更改上线",
     "upgrade" => "升级",
@@ -364,4 +364,7 @@ return [
     "required_amount_import" => "金额为必填项。",
     "numeric_amount_import" => "金额必须是数字。",
 
+    "directs" => "直系",
+    "networks" => "团队",
+    "no_files_submitted" => "尚未上传文件"
 ];

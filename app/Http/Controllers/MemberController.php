@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Policies\UserPolicy;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -320,6 +321,10 @@ class MemberController extends Controller
                 'rank:id,rank_name',
             ])
             ->withCount('wallets')
+            ->withCount('children')
+            ->addSelect([
+                DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_network")
+            ])
             ->first();
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
@@ -327,11 +332,8 @@ class MemberController extends Controller
         $front_identity_image =  $user->getFirstMediaUrl('front_identity');
         $back_identity_image = $user->getFirstMediaUrl('back_identity');
 
-        $refereeCount = User::where('upline_id', $user->id)->count();
-
         return Inertia::render('Member/Listing/Detail/MemberDetail', [
             'user' => $user,
-            'refereeCount' => $refereeCount,
             'front_identity_image' => $front_identity_image,
             'back_identity_image' => $back_identity_image,
             'profile_photo' => $profile_photo,

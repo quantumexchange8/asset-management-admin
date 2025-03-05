@@ -85,11 +85,15 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Button 
-        @click="visible = true" 
+    <Button
+        size="small"
+        rounded
+        class="!p-2"
+        severity="secondary"
+        @click="visible = true"
         type="button"
-        >
-        <IconEdit size="20" stroke-width="1.5"/>
+    >
+        <IconEdit size="16" stroke-width="1.5"/>
     </Button>
 
     <Dialog
@@ -106,7 +110,7 @@ const submitForm = () => {
                     <InputLabel :value="$t('public.name')" for="name"/>
                     <InputIconWrapper>
                         <template #icon>
-                            <IconUser :size="20" stroke-width="1.5"/> 
+                            <IconUser :size="20" stroke-width="1.5"/>
                         </template>
 
                         <InputText
@@ -138,7 +142,7 @@ const submitForm = () => {
                             :invalid="!!form.errors.username"
                     />
                     </InputIconWrapper>
-                    
+
                     <InputError :message="form.errors.username"/>
                 </div>
 
@@ -188,7 +192,7 @@ const submitForm = () => {
                 <div class="flex flex-col gap-1 items-start self-stretch">
                     <InputLabel :value="$t('public.phone_number')" for="phone"/>
                     <div class="flex gap-2 items-center self-stretch relative">
-                        <InputIconWrapper>
+                        <InputIconWrapper class="w-[120px]">
                             <template #icon>
                                 <IconPhone :size="20" stroke-width="1.5"/>
                             </template>
@@ -225,8 +229,8 @@ const submitForm = () => {
                                 </template>
                             </Select>
                         </InputIconWrapper>
-                        
-                        <InputText 
+
+                        <InputText
                             id="phone"
                             type="text"
                             class="block w-full"
@@ -237,13 +241,13 @@ const submitForm = () => {
                     </div>
                     <InputError :message="form.errors.phone" />
                     <InputError :message="form.errors.dial_code" />
-                    <InputError :message="form.errors.phone_number"/> 
+                    <InputError :message="form.errors.phone_number"/>
                 </div>
             </div>
             <div class="flex gap-3 justify-end self-stretch pt-2 w-full">
                 <Button type="button" :label="$t('public.cancel')" severity="secondary" @click="visible = false"></Button>
                 <Button type="submit" :label="$t('public.save')" :disabled="form.processing"></Button>
             </div>
-        </form> 
+        </form>
     </Dialog>
 </template>

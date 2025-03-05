@@ -1,6 +1,6 @@
 <script setup>
 import { h, ref } from "vue";
-import Button from "@/Components/Button.vue";
+import Button from "primevue/button";
 import TieredMenu from "primevue/tieredmenu";
 import Dialog from "primevue/dialog";
 import {useConfirm} from "primevue/useconfirm";
@@ -74,7 +74,7 @@ const requireConfirmation = (action_type) => {
 const handleStatus = () => {
     if (props.member.deleted_at === null) {
         requireConfirmation('delete_item')
-    } 
+    }
 }
 
 const menu = ref();
@@ -140,16 +140,17 @@ const toggle = (event) => {
 
 <template>
     <Button
-        variant="gray-text"
-        size="sm"
+        severity="secondary"
+        size="small"
         type="button"
-        iconOnly
-        pill
+        rounded
+        text
+        class="!p-2"
         @click="toggle"
         aria-haspopup="true"
         aria-controls="overlay_tmenu"
     >
-        <IconDotsVertical size="16" stroke-width="1.25" color="#667085" />
+        <IconDotsVertical size="16" stroke-width="1.5" />
     </Button>
 
     <TieredMenu ref="menu" id="overlay_tmenu" :model="items" popup>
@@ -158,10 +159,25 @@ const toggle = (event) => {
                 class="flex items-center gap-3 self-stretch"
                 v-bind="props.action"
             >
-                <component :is="item.icon" size="20" stroke-width="1.25" :color="item.label === 'delete' ? '#F04438' : '#667085'"  />
-                <span class="font-medium" :class="{'text-error-500': item.label === 'delete'}">{{ $t(`public.${item.label}`) }}</span>
+                <div
+                    :class="{
+                        'text-surface-400 dark:text-surface-500': item.label !== 'delete',
+                        'text-red-500': item.label === 'delete',
+                    }"
+                >
+                    <component
+                        :is="item.icon"
+                        size="20"
+                        stroke-width="1.5"
+                    />
+                </div>
+
+                <span
+                    class="font-medium"
+                    :class="{'text-red-500': item.label === 'delete'}"
+                >{{ $t(`public.${item.label}`) }}</span>
                 <span v-if="hasSubmenu" class="ml-auto">
-                    <IconChevronRight size="20" stroke-width="1.25" />
+                    <IconChevronRight size="20" stroke-width="1.5" />
                 </span>
             </div>
         </template>

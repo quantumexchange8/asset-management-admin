@@ -201,8 +201,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
-
+                            <div class="flex gap-3 w-full md:w-auto">
                                 <!-- Search bar -->
                                 <IconField>
                                     <InputIcon>
