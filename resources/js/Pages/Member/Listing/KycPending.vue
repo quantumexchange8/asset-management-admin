@@ -283,8 +283,8 @@ watchEffect(() => {
                             <Column
                                 field="user_id"
                                 :header="$t('public.name')"
-                                class="hidden md:table-cell"
                                 style="min-width: 12rem"
+                                class="hidden md:table-cell"
                                 sortable
                             >
                                 <template #body="{ data }">
@@ -364,6 +364,7 @@ watchEffect(() => {
 
                             <!-- mobile view -->
                             <Column
+                                field="mobile"
                                 class="table-cell md:hidden"
                             >
                                 <template #body="{data}">

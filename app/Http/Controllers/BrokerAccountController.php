@@ -152,7 +152,7 @@ class BrokerAccountController extends Controller
                     ->map(function ($media) {
                         return $media->getUrl();
                     });
-                $account->decrypted_master_password = decrypt($account->master_password);
+               // $account->decrypted_master_password = decrypt($account->master_password);
             });
 
             return response()->json([

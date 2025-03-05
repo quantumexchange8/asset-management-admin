@@ -199,7 +199,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
 
                                 <!-- Search bar -->
                                 <IconField>
@@ -257,6 +257,8 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.request_date')"
+                            style="min-width: 11rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -270,12 +272,14 @@ watchEffect(() => {
                         <Column
                             field="user_id"
                             :header="$t('public.name')"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
                                     <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                    <span class="text-surface-500 text-xs">{{ data.user.email }}</span>
                                 </div>
                             </template>
                         </Column>
@@ -284,7 +288,8 @@ watchEffect(() => {
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
-                            style="min-width: 8rem"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -300,9 +305,14 @@ watchEffect(() => {
                         <Column
                             field="master_password"
                             :header="$t('public.master_password')"
+                            style="min-width: 14rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex items-center gap-2">
+                                <span>
+                                        {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
+                                    </span>
                                     <IconEye
                                         v-if="!showPassword[data.id]"
                                         size="20" stroke-width="1.5"
@@ -315,15 +325,71 @@ watchEffect(() => {
                                         class="cursor-pointer text-gray-500"
                                         @click="togglePassword(data.id)"
                                     />
-                                    <span>
-                                        {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
-                                    </span>
+                                </div>
+                            </template>
+                        </Column>
+
+                        <!-- mobile view -->
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            {{ data.user.email }}
+                                            <span>|</span>
+                                            <span>{{ data.broker.name }}</span>
+                                            <span>|</span>
+                                            <span>{{ data.broker_login }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <div v-if="data.status === 'pending'" class="flex items-center gap-2">
+                                                <span class="mt-1">
+                                                    {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
+                                                </span>
+                                                <IconEye
+                                                    v-if="!showPassword[data.id]"
+                                                    size="20" stroke-width="1.5"
+                                                    class="cursor-pointer text-gray-500"
+                                                    @click="togglePassword(data.id)"
+                                                />
+                                                <IconEyeOff
+                                                    v-else
+                                                    size="20" stroke-width="1.5"
+                                                    class="cursor-pointer text-gray-500"
+                                                    @click="togglePassword(data.id)"
+                                                />
+                                            </div>
+                                            <div v-else>
+                                                -
+                                            </div>
+                                        </div>
+
+                                        <div class="flex justify-end w-full">
+                                         
+                                        </div>
+                                    </div>
+
                                 </div>
                             </template>
                         </Column>
 
                         <Column
                             field="action"
+                            :style="locale === 'en' 
+                                ? 'width: 5%'
+                                : 'width: 5%; min-width: 86px;'"
                         >
                             <template #body="{data}">
                                 <PendingAccountAction

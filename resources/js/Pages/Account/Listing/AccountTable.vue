@@ -259,6 +259,8 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.request_date')"
+                            style="min-width: 11rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -272,6 +274,8 @@ watchEffect(() => {
                         <Column
                             field="user_id"
                             :header="$t('public.name')"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -285,7 +289,8 @@ watchEffect(() => {
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
-                            style="min-width: 8rem"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -301,6 +306,8 @@ watchEffect(() => {
                         <Column
                             field="broker_capital"
                             :header="$t('public.capital_fund')"
+                            style="min-width: 12rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -311,6 +318,8 @@ watchEffect(() => {
                         <Column
                             field="master_password"
                             :header="$t('public.master_password')"
+                            style="min-width: 14rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div v-if="data.status === 'linked'" class="flex items-center gap-2">
@@ -339,6 +348,7 @@ watchEffect(() => {
                         <Column
                             field="status"
                             :header="$t('public.status')"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -349,6 +359,66 @@ watchEffect(() => {
                             </template>
                         </Column>
 
+                        <!-- mobile view -->
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
+                                            <Tag
+                                                :value="$t(`public.${data.status}`)"
+                                                :severity="getSeverity(data.status)"
+                                            />
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            {{ data.user.email }}
+                                            <span>|</span>
+                                            <span>{{ data.broker.name }}</span>
+                                            <span>|</span>
+                                            <span>{{ data.broker_login }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <div v-if="data.status === 'linked'" class="flex items-center gap-2">
+                                                <span class="mt-1">
+                                                    {{ showPassword[data.id] ? data.decrypted_master_password : '*****' }}
+                                                </span>
+                                                <IconEye
+                                                    v-if="!showPassword[data.id]"
+                                                    size="20" stroke-width="1.5"
+                                                    class="cursor-pointer text-gray-500"
+                                                    @click="togglePassword(data.id)"
+                                                />
+                                                <IconEyeOff
+                                                    v-else
+                                                    size="20" stroke-width="1.5"
+                                                    class="cursor-pointer text-gray-500"
+                                                    @click="togglePassword(data.id)"
+                                                />
+                                            </div>
+                                            <div v-else>
+                                                -
+                                            </div>
+                                           
+                                        </div>
+
+                                        <div class="flex justify-end w-full">
+                                            <div class="text-xs">${{ data.broker_capital }}</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </template>
+                        </Column>
                     </template>
                 </DataTable>
             </div>
