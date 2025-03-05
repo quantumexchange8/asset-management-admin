@@ -35,7 +35,6 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    fund_type: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 //get user data
@@ -124,9 +123,6 @@ watch(selectedDate, (newDateRange) => {
     }
 });
 
-//filter fund type
-const fundType = ref(['demo_fund','real_fund']);
-
 //filter toggle
 const op = ref();
 const toggle = (event) => {
@@ -153,17 +149,11 @@ watch(
     }, 300)
 )
 
-//ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
-watch([filters.value['fund_type']], () => {
-    loadLazyData()
-});
-
 //clear all selected filter
 const clearAll = () => {
     filters.value['global'].value = null;
     filters.value['start_date'].value = null;
     filters.value['end_date'].value = null;
-    filters.value['fund_type'].value = null;
     selectedDate.value = [];
 };
 
@@ -236,7 +226,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
 
                                 <!-- Search bar -->
                                 <IconField>
@@ -308,16 +298,20 @@ watchEffect(() => {
                             field="created_at"
                             sortable
                             :header="$t('public.date')"
-                            class="min-w-40"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
                             </template>
                         </Column>
 
                         <Column
                             field="user_id"
                             sortable
+                            style="min-width: 8rem"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.name') }}</span>
@@ -325,13 +319,14 @@ watchEffect(() => {
                             <template #body="{ data }">
                                 <div class="flex flex-col">
                                     <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                    <span class="text-surface-500 text-xs">{{ data.user.email }}</span>
                                 </div>
                             </template>
                         </Column>
 
                         <Column
                             field="user.upline"
+                            style="min-width: 8rem"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.upline') }}</span>
@@ -342,7 +337,7 @@ watchEffect(() => {
                                     class="flex flex-col"
                                 >
                                     <span class="text-surface-950 dark:text-white">{{ data.user.upline.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.upline.email }}</span>
+                                    <span class="text-surface-500 text-xs">{{ data.user.upline.email }}</span>
                                 </div>
                                 <div v-else>
                                     -
@@ -353,7 +348,7 @@ watchEffect(() => {
                         <Column
                             field="transaction_number"
                             sortable
-                            class="min-w-60"
+                            style="min-width: 10rem"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.transaction_number') }}</span>
@@ -366,6 +361,7 @@ watchEffect(() => {
                         <Column
                             field="to_wallet_id"
                             :header="$t('public.wallet')"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
                                 {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
@@ -375,6 +371,7 @@ watchEffect(() => {
                         <Column
                             field="amount"
                             :header="$t('public.amount')"
+                            style="min-width: 8rem"
                             sortable
                         >
                             <template #body="{ data }">
@@ -420,24 +417,6 @@ watchEffect(() => {
                         <IconX :size="15" strokeWidth="1.5"/>
                     </div>
                 </div>
-            </div>
-
-            <!-- Filter fund type -->
-            <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    {{ $t('public.filter_by_fund_type') }}
-                </div>
-                <Select
-                    v-model="filters['fund_type'].value"
-                    :options="fundType"
-                    :placeholder="$t('public.select_fund_type')"
-                    class="w-full"
-                    showClear
-                >
-                    <template #option="slotProps">
-                        {{ $t(`public.${slotProps.option}`) }}
-                    </template>
-                </Select>
             </div>
 
             <Button

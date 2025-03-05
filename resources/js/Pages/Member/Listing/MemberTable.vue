@@ -469,10 +469,8 @@ watchEffect(() => {
                             </template>
                         </Column>
 
+                        <!-- mobile view -->
                         <Column
-                            field="action"
-                            frozen
-                            alignFrozen="right"
                             class="table-cell md:hidden"
                         >
                             <template #body="{data}">
@@ -492,6 +490,7 @@ watchEffect(() => {
                                             {{ data.email }}
                                         </div>
                                     </div>
+                                    
                                     <div class="flex flex-col items-start">
                                         <div class="flex items-center gap-1 justify-end w-full">
                                             <img

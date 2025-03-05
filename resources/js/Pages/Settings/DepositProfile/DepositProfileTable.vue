@@ -224,7 +224,6 @@ watchEffect(() => {
                             field="name"
                             style="min-width: 12rem"
                             sortable
-                            frozen
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.name') }}</span>

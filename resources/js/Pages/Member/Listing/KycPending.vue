@@ -269,22 +269,28 @@ watchEffect(() => {
                                 field="kyc_requested_at"
                                 :header="$t('public.date')"
                                 sortable
-                                class="min-w-28"
+                                style="min-width: 9rem"
+                                class="hidden md:table-cell"
                             >
                                 <template #body="{ data }">
                                     {{ dayjs(data.kyc_requested_at).format('YYYY-MM-DD') }}
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ dayjs(data.kyc_requested_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                    </div>
                                 </template>
                             </Column>
 
                             <Column
-                                field="name"
+                                field="user_id"
                                 :header="$t('public.name')"
+                                class="hidden md:table-cell"
+                                style="min-width: 12rem"
                                 sortable
                             >
                                 <template #body="{ data }">
                                     <div class="flex flex-col">
                                         <span class="text-surface-950 dark:text-white">{{ data.name }}</span>
-                                        <span class="text-surface-500">{{ data.email }}</span>
+                                        <span class="text-surface-500 text-xs">{{ data.email }}</span>
                                     </div>
                                 </template>
                             </Column>
@@ -292,6 +298,8 @@ watchEffect(() => {
                             <Column
                                 field="identity_number"
                                 :header="$t('public.identity_number')"
+                                style="min-width: 13rem"
+                                class="hidden md:table-cell"
                             >
                                 <template #body="{data}">
                                     {{ data.identity_number }}
@@ -301,6 +309,8 @@ watchEffect(() => {
                             <Column
                                 field="upline_id"
                                 :header="$t('public.referrer')"
+                                style="min-width: 11rem"
+                                class="hidden md:table-cell"
                             >
                                 <template #body="{data}">
                                     <div
@@ -308,7 +318,7 @@ watchEffect(() => {
                                         class="flex flex-col"
                                     >
                                         <span class="text-surface-950 dark:text-white">{{ data.upline.name }}</span>
-                                        <span class="text-surface-500">{{ data.upline.email }}</span>
+                                        <span class="text-surface-500 text-xs">{{ data.upline.email }}</span>
                                     </div>
                                     <div v-else>
                                         -
@@ -319,6 +329,8 @@ watchEffect(() => {
                             <Column
                                 field="setting_rank_id"
                                 :header="$t('public.rank')"
+                                style="min-width: 8rem"
+                                class="hidden md:table-cell"
                                 sortable
                             >
                                 <template #body="{ data }">
@@ -332,6 +344,8 @@ watchEffect(() => {
                             <Column
                                 field="country_id"
                                 :header="$t('public.country')"
+                                style="min-width: 10rem"
+                                class="hidden md:table-cell"
                                 sortable
                             >
                                 <template #body="{data}">
@@ -348,15 +362,66 @@ watchEffect(() => {
                                 </template>
                             </Column>
 
+                            <!-- mobile view -->
                             <Column
-                                field="action"
+                                class="table-cell md:hidden"
                             >
                                 <template #body="{data}">
-                                    <KycAction
-                                        :pending="data"
-                                    />
+                                    <div class="flex items-center gap-3 justify-between w-full">
+                                        <div class="flex flex-col items-start">
+                                            <div class="flex items-center gap-1">
+                                                <div class="font-medium max-w-[180px] truncate">
+                                                    {{ data.name }}
+                                                </div>
+                                                <Tag
+                                                    severity="secondary"
+                                                    :value="data.rank.rank_name === 'member' ? $t(`public.${data.rank.rank_name}`) : data.rank.rank_name"
+                                                />
+                                            </div>
+                                            <div class="text-surface-400 dark:text-surface-500 text-xs max-w-[220px] truncate">
+                                                {{ data.email }}
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col items-start">
+                                            <div class="flex items-center gap-1 justify-end w-full">
+                                                <img
+                                                    v-if="data.country.iso2"
+                                                    :src="`https://flagcdn.com/w40/${data.country.iso2.toLowerCase()}.png`"
+                                                    :alt="data.country.iso2"
+                                                width="18"
+                                                    height="12"
+                                                />
+                                                <div class="text-xs">{{ data.country.iso2 }}</div>
+                                            </div>
+
+                                            <div class="flex justify-end w-full">
+                                                <Tag
+                                                    severity="secondary"
+                                                    :value="data.identity_number"
+                                                    class="!text-xs"
+                                                />
+                                            </div>
+                                       </div>
+                                    </div>
                                 </template>
                             </Column>
+
+                            <Column
+                                field="action"
+                                :style="locale === 'en' 
+                                    ? 'width: 5%'
+                                    : 'width: 5%; min-width: 86px;'"
+                            >
+                                <template #body="{ data }">
+                                   
+                                        <KycAction 
+                                            :pending="data"
+                                        />
+                                    
+                                </template>
+                            </Column>
+
                         </template>
                     </DataTable>
                 </div>

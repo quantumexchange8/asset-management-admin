@@ -201,7 +201,8 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex gap-3 w-full md:w-auto">
+                            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                                
                                 <!-- Search bar -->
                                 <IconField>
                                     <InputIcon>
@@ -276,7 +277,7 @@ watchEffect(() => {
                             <template #body="{ data }">
                                 <div class="flex flex-col">
                                     <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                    <span class="text-surface-500 text-xs">{{ data.user.email }}</span>
                                 </div>
                             </template>
                         </Column>

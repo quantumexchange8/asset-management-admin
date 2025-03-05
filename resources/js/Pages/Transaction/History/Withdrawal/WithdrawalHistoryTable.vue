@@ -36,7 +36,6 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     start_date: { value: null, matchMode: FilterMatchMode.EQUALS },
     end_date: { value: null, matchMode: FilterMatchMode.EQUALS },
-    fund_type: { value: null, matchMode: FilterMatchMode.EQUALS },
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
@@ -128,9 +127,6 @@ watch(selectedDate, (newDateRange) => {
     }
 });
 
-//filter fund type
-const fundType = ref(['demo_fund','real_fund']);
-
 //filter status
 const status = ref(['success','rejected']);
 
@@ -161,7 +157,7 @@ watch(
 )
 
 //ensure table data is updated dynamically to reflect filter changes (immediate trigger after changes)
-watch([filters.value['fund_type'], filters.value['status']], () => {
+watch([filters.value['status']], () => {
     loadLazyData()
 });
 
@@ -171,7 +167,6 @@ const clearAll = () => {
     filters.value['start_date'].value = null;
     filters.value['end_date'].value = null;
     filters.value['status'].value = null;
-    filters.value['fund_type'].value = null;
     selectedDate.value = [];
 };
 
@@ -256,7 +251,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <div class="flex gap-3 w-full md:w-auto">
 
                                 <!-- Search bar -->
                                 <IconField>
@@ -327,7 +322,7 @@ watchEffect(() => {
                     <template v-if="withdrawalHistory?.length > 0">
                         <Column
                             field="transaction_number"
-                            style="min-width: 17rem"
+                            style="min-width: 15rem"
                             sortable
                         >
                             <template #header>
@@ -340,7 +335,7 @@ watchEffect(() => {
 
                         <Column
                             field="user_id"
-                            style="min-width: 12rem"
+                            style="min-width: 11rem"
                             sortable
                         >
                             <template #header>
@@ -356,7 +351,7 @@ watchEffect(() => {
 
                         <Column
                             field="user.upline"
-                            style="min-width: 12rem"
+                            style="min-width: 11rem"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.upline') }}</span>
@@ -376,21 +371,8 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="fund_type"
-                            style="min-width: 12rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.fund_type') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ $t(`public.${data.fund_type}`) }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="from_wallet_id"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
@@ -403,20 +385,20 @@ watchEffect(() => {
 
                         <Column
                             field="to_payment_account_name"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             sortable
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.to') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.to_payment_account_name ?? $t('public.wallet_adjustment')}}
+                                {{ data.to_payment_account_name ?? '-'}}
                             </template>
                         </Column>
 
                         <Column
                             field="to_payment_platform"
-                            style="min-width: 12rem"
+                            style="min-width: 11rem"
                             sortable
                         >
                             <template #header>
@@ -425,14 +407,14 @@ watchEffect(() => {
                             <template #body="{ data }">
                                 <Tag 
                                     :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
-                                    :value="data.to_payment_platform ? $t(`public.${data.to_payment_platform}`) : '-'"
+                                    :value="data.to_payment_platform ? $t(`public.${data.to_payment_platform}`) : $t('public.wallet_adjustment')"
                                 />
                             </template>
                         </Column>
 
                         <Column
                             field="amount"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             dataType="numeric"
                             sortable
                         >
@@ -446,7 +428,7 @@ watchEffect(() => {
 
                         <Column
                             field="transaction_charges"
-                            style="min-width: 12rem"
+                            style="min-width: 7rem"
                             dataType="numeric"
                             sortable
                         >
@@ -460,7 +442,7 @@ watchEffect(() => {
 
                         <Column
                             field="transaction_amount"
-                            style="min-width: 12rem"
+                            style="min-width: 9rem"
                             dataType="numeric"
                             sortable
                         >
@@ -474,7 +456,7 @@ watchEffect(() => {
 
                         <Column
                             field="approval_at"
-                            style="min-width: 12rem"
+                            style="min-width: 11rem"
                             dataType="date"
                             sortable
                         >
@@ -491,7 +473,6 @@ watchEffect(() => {
                         
                         <Column
                             field="status"
-                            style="min-width: 12rem"
                             sortable
                         >
                             <template #header>
@@ -502,7 +483,6 @@ watchEffect(() => {
                             </template>
                         </Column>
 
-                        
                         <Column
                             field="action"
                             alignFrozen="right"
@@ -545,26 +525,8 @@ watchEffect(() => {
                 </div>
             </div>
 
-            <!-- Filter fund type -->
+            <!-- Filter status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
-                    {{ $t('public.filter_by_fund_type') }}
-                </div>
-                <Select
-                    v-model="filters['fund_type'].value"
-                    :options="fundType"
-                    :placeholder="$t('public.select_fund_type')"
-                    class="w-full"
-                    showClear
-                >
-                    <template #option="slotProps">
-                        {{ $t(`public.${slotProps.option}`) }}
-                    </template>
-                </Select>
-            </div>
-
-                <!-- Filter status -->
-                <div class="flex flex-col gap-2 items-center self-stretch">
                 <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
                     {{ $t('public.filter_by_status') }}
                 </div>

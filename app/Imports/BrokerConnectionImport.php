@@ -144,7 +144,7 @@ class BrokerConnectionImport implements ToCollection, WithHeadingRow, WithValida
             }
         }
     }
-
+    
     public function rules(): array
     {
         return [

@@ -65,11 +65,6 @@ class TransactionController extends Controller
                 $query->whereBetween('approval_at', [$start_date, $end_date]);
             }
 
-            //fund_type filter
-            if ($data['filters']['fund_type']['value']) {
-                $query->where('fund_type', $data['filters']['fund_type']['value']);
-            }
-
             //status filter
             if ($data['filters']['status']['value']) {
                 $query->where('status', $data['filters']['status']['value']);
@@ -193,12 +188,7 @@ class TransactionController extends Controller
 
                 $query->whereBetween('approval_at', [$start_date, $end_date]);
             }
-
-            //fund_type filter
-            if ($data['filters']['fund_type']['value']) {
-                $query->where('fund_type', $data['filters']['fund_type']['value']);
-            }
-
+            
             //status filter
             if ($data['filters']['status']['value']) {
                 $query->where('status', $data['filters']['status']['value']);
@@ -323,11 +313,6 @@ class TransactionController extends Controller
                 $query->whereBetween('approval_at', [$start_date, $end_date]);
             }
 
-            //fund_type filter
-            if ($data['filters']['fund_type']['value']) {
-                $query->where('fund_type', $data['filters']['fund_type']['value']);
-            }
-
             //sort field/order
             if ($data['sortField'] && $data['sortOrder']) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
@@ -433,11 +418,6 @@ class TransactionController extends Controller
                 $end_date = Carbon::parse($data['filters']['end_date']['value'])->addDay()->endOfDay();
 
                 $query->whereBetween('approval_at', [$start_date, $end_date]);
-            }
-
-            //fund_type filter
-            if ($data['filters']['fund_type']['value']) {
-                $query->where('fund_type', $data['filters']['fund_type']['value']);
             }
 
             //sort field/order

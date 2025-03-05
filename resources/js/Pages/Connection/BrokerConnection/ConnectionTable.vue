@@ -305,21 +305,27 @@ watchEffect(() => {
                         <Column
                             field="date"
                             :header="$t('public.date')"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
-                                {{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}
+                                <div class="flex flex-col">
+                                    <span class="text-surface-950 dark:text-white">  {{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}</span>
+                                    <span class="text-surface-500 text-xs">  {{ dayjs(data.joined_at ?? data.removed_at).format('hh:mm:ss A') }}</span>
+                                </div>
+                              
                             </template>
                         </Column>
 
                         <Column
                             field="user_id"
                             :header="$t('public.name')"
+                            style="min-width: 8rem"
                             sortable
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
                                     <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                    <span class="text-surface-500 text-xs">{{ data.user.email }}</span>
                                 </div>
                             </template>
                         </Column>
@@ -327,6 +333,7 @@ watchEffect(() => {
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
+                            style="min-width: 8rem"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -342,6 +349,7 @@ watchEffect(() => {
                         <Column
                             field="connection_number"
                             :header="$t('public.connection_number')"
+                            style="min-width: 10rem"
                             sortable
                         >
                             <template #body="{ data }">
@@ -352,6 +360,7 @@ watchEffect(() => {
                         <Column
                             field="capital_fund"
                             :header="$t('public.fund')"
+                            style="min-width: 8rem"
                             sortable
                         >
                             <template #body="{ data }">
@@ -362,6 +371,7 @@ watchEffect(() => {
                         <Column
                             field="connection_type"
                             :header="$t('public.type')"
+                            style="min-width: 7rem"
                             sortable
                         >
                             <template #body="{ data }">

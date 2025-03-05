@@ -15,7 +15,7 @@ const handleOverview = (data) => {
 
 <template>
     <AuthenticatedLayout title="pending_withdrawal">
-        <div class="space-y-4">
+        <div class="flex flex-col gap-5 items-center self-stretch w-full">
             <PendingWithdrawalOverview 
                 :totalPendingAmount="totalPendingAmount"
                 :pendingWithdrawalCounts="pendingWithdrawalCounts"
