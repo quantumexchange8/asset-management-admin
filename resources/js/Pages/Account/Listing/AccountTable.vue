@@ -258,7 +258,7 @@ watchEffect(() => {
                     <template v-if="accounts?.length > 0">
                         <Column
                             field="created_at"
-                            :header="$t('public.request_date')"
+                            :header="$t('public.date')"
                             style="min-width: 11rem"
                             class="hidden md:table-cell"
                             sortable
@@ -367,22 +367,33 @@ watchEffect(() => {
                             <template #body="{data}">
                                 <div class="flex items-center gap-3 justify-between w-full">
                                     <div class="flex flex-col items-start">
-                                        <div class="flex items-center gap-1">
-                                            <div class="font-medium max-w-[180px] truncate">
-                                                {{ data.user.name }}
+                                        <div class="flex gap-2 items-center">
+                                            <!-- Broker Image -->
+                                            <img 
+                                                :src="data.broker.media[0].original_url" 
+                                                alt="broker_image" 
+                                                class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800"
+                                            >
+
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="font-medium max-w-[180px] truncate">
+                                                        {{ data.user.name }}
+                                                    </div>
+                                                    <Tag
+                                                        :value="$t(`public.${data.status}`)"
+                                                        :severity="getSeverity(data.status)"
+                                                    />
+                                                </div>
+                                                
+                                                <div class="flex gap-1 dark:text-surface-500 text-surface-400 text-xs max-w-[220px] truncate">
+                                                    {{ data.user.email }}
+                                                    <span>|</span>
+                                                    <span>{{ data.broker.name }}</span>
+                                                    <span>|</span>
+                                                    <span>{{ data.broker_login }}</span>
+                                                </div>
                                             </div>
-                                            <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
-                                            <Tag
-                                                :value="$t(`public.${data.status}`)"
-                                                :severity="getSeverity(data.status)"
-                                            />
-                                        </div>
-                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
-                                            {{ data.user.email }}
-                                            <span>|</span>
-                                            <span>{{ data.broker.name }}</span>
-                                            <span>|</span>
-                                            <span>{{ data.broker_login }}</span>
                                         </div>
                                     </div>
 

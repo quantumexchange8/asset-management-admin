@@ -19,6 +19,7 @@ import {generalFormat} from "@/Composables/format.js";
 import { usePage } from '@inertiajs/vue3';
 import EmptyData from "@/Components/EmptyData.vue";
 import PendingAccountAction from './Partial/PendingAccountAction.vue';
+import { useLangObserver } from '@/Composables/localeObserver';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -28,6 +29,7 @@ const totalRecords = ref(0);
 const pendingAccountCounts = ref();
 const totalPendingCapital = ref();
 const first = ref(0);
+const {locale} = useLangObserver();
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -375,12 +377,7 @@ watchEffect(() => {
                                                 -
                                             </div>
                                         </div>
-
-                                        <div class="flex justify-end w-full">
-                                         
-                                        </div>
                                     </div>
-
                                 </div>
                             </template>
                         </Column>

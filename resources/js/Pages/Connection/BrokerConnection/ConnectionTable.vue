@@ -306,10 +306,11 @@ watchEffect(() => {
                             field="date"
                             :header="$t('public.date')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
-                                    <span class="text-surface-950 dark:text-white">  {{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}</span>
+                                    <span class="text-surface-950 dark:text-white">{{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}</span>
                                     <span class="text-surface-500 text-xs">  {{ dayjs(data.joined_at ?? data.removed_at).format('hh:mm:ss A') }}</span>
                                 </div>
                               
@@ -320,6 +321,7 @@ watchEffect(() => {
                             field="user_id"
                             :header="$t('public.name')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -334,6 +336,7 @@ watchEffect(() => {
                             field="broker"
                             :header="$t('public.broker')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -349,7 +352,8 @@ watchEffect(() => {
                         <Column
                             field="connection_number"
                             :header="$t('public.connection_number')"
-                            style="min-width: 10rem"
+                            style="min-width: 15rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -361,6 +365,7 @@ watchEffect(() => {
                             field="capital_fund"
                             :header="$t('public.fund')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -372,6 +377,7 @@ watchEffect(() => {
                             field="connection_type"
                             :header="$t('public.type')"
                             style="min-width: 7rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -381,6 +387,62 @@ watchEffect(() => {
                                 />
                             </template>
                         </Column>
+
+                        <!-- mobile view -->
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="flex gap-2 items-center">
+
+                                                <img 
+                                                    :src="data.broker.media[0].original_url" 
+                                                    alt="broker_image" 
+                                                    class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800"
+                                                >
+
+                                                <div class="flex flex-col">
+                                                    <div class="flex items-center gap-2">
+                                                        <div class="font-medium max-w-[180px] truncate">
+                                                            {{ data.user.name }}
+                                                        </div>
+                                                        <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
+                                                            {{ dayjs(data.joined_at ?? data.removed_at).format('YYYY-MM-DD') }}
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="flex gap-1 text-surface-400 dark:text-surface-500 text-xs max-w-[220px] truncate">
+                                                        <span>{{ data.broker.name }}</span>
+                                                        <span>|</span>
+                                                        <span>{{ data.broker_login }}</span>
+                                                        <span>|</span>
+                                                        <span class="font-bold dark:text-white/60">{{ data.connection_number }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <Tag
+                                                :value="$t(`public.${data.connection_type}`)"
+                                                :severity="getSeverity(data.connection_type)"
+                                            />
+                                        </div>
+
+                                        <div class="flex justify-end w-full">
+                                            ${{ formatAmount(data.capital_fund) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+
                     </template>
                 </DataTable>
             </div>

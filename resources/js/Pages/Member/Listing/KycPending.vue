@@ -415,11 +415,9 @@ watchEffect(() => {
                                     : 'width: 5%; min-width: 86px;'"
                             >
                                 <template #body="{ data }">
-                                   
-                                        <KycAction 
-                                            :pending="data"
-                                        />
-                                    
+                                    <KycAction 
+                                        :pending="data"
+                                    />
                                 </template>
                             </Column>
 
