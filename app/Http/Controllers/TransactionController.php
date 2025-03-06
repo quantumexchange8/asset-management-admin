@@ -12,6 +12,7 @@ use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -501,21 +502,20 @@ class TransactionController extends Controller
 
         if ($request->action == 'approve') {
             $transaction->status = 'success';
-            $transaction->transaction_amount = $transaction->amount - $transaction->transaction_charges;
-            
-            $wallet->balance -= $transaction->amount;
-            $wallet->real_fund -= $transaction->amount;
-            $wallet->save();
+           
         } else {
             if(!$request->remarks) {
                 throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
             }
             $transaction->status = 'rejected';
             $transaction->remarks = $request->remarks;
+            
+            $wallet->balance += $transaction->amount;
+            $wallet->save();
         }
         $transaction->new_wallet_amount = $wallet->balance;
         $transaction->approval_at = now();
-        $transaction->handle_by = \Auth::id();
+        $transaction->handle_by = Auth::id();
         $transaction->update();
 
         return back()->with('toast', 'success');
