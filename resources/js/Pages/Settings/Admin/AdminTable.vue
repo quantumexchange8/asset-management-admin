@@ -178,6 +178,7 @@ watchEffect(() => {
                         <Column
                             field="name"
                             :header="$t('public.admin')"
+                       
                             sortable
                         >
                             <template #body="{ data }">
@@ -191,6 +192,7 @@ watchEffect(() => {
                         <Column
                             field="role"
                             :header="$t('public.role')"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 {{ $t(`public.${data.role}`) }}
@@ -200,12 +202,35 @@ watchEffect(() => {
                         <Column
                             field="scope_of_permissions"
                             :header="$t('public.scope_of_permissions')"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 <Tag
                                     :severity="data.permissions_count === permissionsCount ? 'success' : 'danger'"
                                     :value="data.permissions_count === permissionsCount ? $t('public.full_access') : $t('public.limited')"
                                 />
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-end w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <Tag
+                                                :severity="data.permissions_count === permissionsCount ? 'success' : 'danger'"
+                                                :value="data.permissions_count === permissionsCount ? $t('public.full_access') : $t('public.limited')"
+                                            />
+                                        </div>
+
+                                        <div class="flex justify-end w-full">
+                                            {{ $t(`public.${data.role}`) }}
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                         </Column>
 

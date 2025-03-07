@@ -20,6 +20,7 @@ import PendingWithdrawalAction from './PendingWithdrawalAction.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 import { generalFormat } from '@/Composables/format';
 import { usePage } from '@inertiajs/vue3';
+import { useLangObserver } from '@/Composables/localeObserver';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -29,6 +30,7 @@ const totalRecords= ref(0);
 const totalPendingAmount = ref();
 const pendingWithdrawalCounts = ref();
 const {formatAmount} = generalFormat();
+const {locale} = useLangObserver();
 
 //filteration type and methods
 const filters = ref({
@@ -305,8 +307,27 @@ watchEffect(() => {
 
                     <template v-if="pendingWithdrawal?.length > 0">
                         <Column
+                            field="created_at"
+                            style="min-width: 11rem"
+                            class="hidden md:table-cell"
+                            dataType="date"
+                            sortable
+                        >
+                            <template #header>
+                                <span class="block">{{ $t('public.date') }}</span>
+                            </template>
+                            <template #body="{ data }">
+                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                </div>
+                            </template>
+                        </Column>
+
+                        <Column
                             field="transaction_number"
                             style="min-width: 15rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -320,6 +341,7 @@ watchEffect(() => {
                         <Column
                             field="user_id"
                             style="min-width: 11rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -336,6 +358,7 @@ watchEffect(() => {
                         <Column
                             field="user.upline"
                             style="min-width: 11rem"
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.upline') }}</span>
@@ -355,51 +378,23 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="from_wallet_id"
-                            style="min-width: 9rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.from') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.from_wallet?.type ? $t(`public.${data.from_wallet.type}`) : '-' }}
-                            </template>
-
-                        </Column>
-
-                        <Column
                             field="to_payment_account_name"
                             style="min-width: 9rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.to') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.to_payment_account_name || '-'}}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="to_payment_platform"
-                            style="min-width: 9rem"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.method') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                <Tag 
-                                    :severity="data.to_payment_platform === 'crypto' ? 'info' : 'secondary'"
-                                    :value="$t(`public.${data.to_payment_platform}`)"
-                                />
+                                {{ data.to_payment_platform_name}}
                             </template>
                         </Column>
 
                         <Column
                             field="amount"
                             style="min-width: 9rem"
+                            class="hidden md:table-cell"
                             dataType="numeric"
                             sortable
                         >
@@ -411,53 +406,49 @@ watchEffect(() => {
                             </template>
                         </Column>
 
+                        <!-- mobile view-->
                         <Column
-                            field="transaction_charges"
-                            style="min-width: 7rem"
-                            dataType="numeric"
-                            sortable
+                            field="mobile"
+                            class="table-cell md:hidden"
                         >
-                            <template #header>
-                                <span class="block">{{ $t('public.fee') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                <span class="text-red-500">  $ {{ data.transaction_charges || '0.00'}}</span>
-                            </template>
-                        </Column>
+                            <template #body="{data}">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
+                                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            </span>
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            {{ data.user.email }}
+                                            <span>|</span>
+                                            <span class="font-bold dark:text-white/60">{{ data.transaction_number }}</span>
+                                        </div>
+                                    </div>
 
-                        <Column
-                            field="transaction_amount"
-                            style="min-width: 9rem"
-                            dataType="numeric"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.receive') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                $ {{ data.transaction_amount || '-'}}
-                            </template>
-                        </Column>
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            {{ data.to_payment_platform_name}}
+                                        </div>
 
-                        <Column
-                            field="created_at"
-                            style="min-width: 11rem"
-                            dataType="date"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.request_date') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                                <div class="text-xs text-gray-500 mt-1">
-                                    {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                        <div class="flex justify-end w-full">
+                                            ${{ formatAmount(data.amount) }}
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </Column>
 
                         <Column
                             field="action"
+                            frozen
+                            alignFrozen="right"
+                            :style="locale === 'en' 
+                                    ? 'width: 5%'
+                                    : 'width: 5%; min-width: 86px;'"
                         >
                             <template #body="{data}">
                                 <PendingWithdrawalAction

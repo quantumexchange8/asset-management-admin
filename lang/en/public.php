@@ -367,4 +367,6 @@ return [
     "required_joined_date_import" => "Date is required",
     "required_amount_import" => "Amount is required",
     "numeric_amount_import" => "Amount must be numeric",
+    "see_more" => "See More",
+    "see_less" => "See Less",
 ];

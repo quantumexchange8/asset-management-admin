@@ -164,7 +164,7 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                            <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
 
                                 <!-- Search bar -->
                                 <IconField>
@@ -222,7 +222,8 @@ watchEffect(() => {
                     <template v-if="depositProfile?.length > 0">
                         <Column
                             field="name"
-                            style="min-width: 12rem"
+                            style="min-width: 8rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -235,7 +236,8 @@ watchEffect(() => {
 
                         <Column
                             field="type"
-                            style="min-width: 12rem"
+                            style="min-width: 8rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -251,7 +253,8 @@ watchEffect(() => {
 
                         <Column
                             field="asset"
-                            style="min-width: 12rem"
+                            style="min-width: 8rem"
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.asset') }}</span>
@@ -264,12 +267,48 @@ watchEffect(() => {
                         <Column
                             field="account_number"
                             style="min-width: 12rem"
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.account_number') }}</span>
                             </template>
                             <template #body="{ data }">
                                 {{ data.account_number }}
+                            </template>
+                        </Column>
+
+                        <!-- mobile view -->
+                        <Column field="mobile" class="table-cell md:hidden">
+                            <template #body="{ data }">
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="font-medium max-w-[180px] truncate">
+                                            {{ data.name }}
+                                        </div>
+                                        <Tag
+                                            :severity="data.type === 'crypto' ? 'info' : 'secondary'"
+                                            :value="$t(`public.${data.type}`)"
+                                        />
+                                    </div>
+
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            <span 
+                                                :class="data.showFullAccountNumber ? '' : 'max-w-[120px] truncate block'"
+                                            >
+                                                {{ data.account_number }}
+                                            </span>
+                                        </div>
+                                        <div v-if="data.account_number.length > 12" class="mt-1 flex justify-end w-full">
+                                            <button 
+                                                @click="data.showFullAccountNumber = !data.showFullAccountNumber"
+                                                class="text-blue-500 text-xs underline"
+                                            >
+                                                {{ data.showFullAccountNumber ? $t('public.see_less') : $t('public.see_more') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                         </Column>
 

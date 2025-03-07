@@ -471,6 +471,7 @@ watchEffect(() => {
 
                         <!-- mobile view -->
                         <Column
+                            field="mobile"
                             class="table-cell md:hidden"
                         >
                             <template #body="{data}">

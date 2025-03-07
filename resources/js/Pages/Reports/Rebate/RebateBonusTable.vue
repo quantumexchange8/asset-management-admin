@@ -294,6 +294,8 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
+                            style="min-width: 9rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -304,6 +306,8 @@ watchEffect(() => {
                         <Column
                             field="name"
                             :header="$t('public.name')"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
@@ -316,6 +320,8 @@ watchEffect(() => {
                         <Column
                             field="client"
                             :header="$t('public.client')"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
@@ -328,6 +334,8 @@ watchEffect(() => {
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
+                            style="min-width: 9rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -343,6 +351,7 @@ watchEffect(() => {
                         <Column
                             field="symbol"
                             :header="$t('public.symbol')"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -353,6 +362,7 @@ watchEffect(() => {
                         <Column
                             field="volume"
                             :header="$t('public.volume')"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -363,10 +373,41 @@ watchEffect(() => {
                         <Column
                             field="rebate"
                             :header="$t('public.rebate')"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
                                 ${{ formatAmount(data.rebate, 4) }}
+                            </template>
+                        </Column>
+
+                        <!-- mobile view -->
+                        <Column 
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
+                                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            <span>{{ data.user.email }}</span>
+                                            <span>|</span>
+                                            <span>{{ data.volume }}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-base font-semibold">
+                                        ${{ formatAmount(data.rebate, 4) }}
+                                    </div>
+                                </div>
                             </template>
                         </Column>
                     </template>

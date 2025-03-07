@@ -366,5 +366,7 @@ return [
 
     "directs" => "直系",
     "networks" => "团队",
-    "no_files_submitted" => "尚未上传文件"
+    "no_files_submitted" => "尚未上传文件",
+    "see_more" => "查看更多",
+    "see_less" => "查看更少",
 ];

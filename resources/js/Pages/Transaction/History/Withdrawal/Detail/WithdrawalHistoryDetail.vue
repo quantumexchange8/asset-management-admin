@@ -53,7 +53,7 @@ function copyToClipboard(text) {
         <div class="flex flex-col gap-3 items-start w-full pt-4">
             <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.request_date') }}
+                    {{ $t('public.date') }}
                 </div>
                 <div class="text-surface-950 dark:text-white text-sm font-medium">
                     {{ dayjs(withdrawalHistory.created_at).format('DD/MM/YYYY HH:mm:ss') }}
@@ -71,19 +71,35 @@ function copyToClipboard(text) {
 
             <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.wallet') }}
+                    {{ $t('public.to') }}
                 </div>
                 <div class="text-surface-950 dark:text-white text-sm font-medium">
-                    {{ withdrawalHistory.from_wallet?.type ? $t(`public.${withdrawalHistory.from_wallet.type}`) : '-' }}
+                    {{ withdrawalHistory.to_payment_account_name }}
+                </div>
+                <div class="text-surface-950 dark:text-white text-sm font-medium">
+                    <Tag
+                        :value="withdrawalHistory.to_payment_platform"
+                        severity="info"
+                    />
                 </div>
             </div>
 
             <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.to') }}
+                    {{ $t('public.account_number') }}
                 </div>
-                <div class="text-surface-950 dark:text-white text-sm font-medium">
-                    {{ withdrawalHistory.to_payment_account_name }}
+                <div class="flex flex-col items-start gap-1 self-stretch relative">
+                    <Tag
+                        v-if="tooltipText === 'copied'"
+                        class="absolute -top-1 right-[90px] md:-top-6 md:right-8 !bg-surface-950 !text-white"
+                        :value="$t(`public.${tooltipText}`)"
+                    ></Tag>
+                    <div
+                        class="break-words text-surface-950 dark:text-white text-sm font-medium hover:cursor-pointer select-none"
+                        @click="copyToClipboard(withdrawalHistory.to_payment_account_no)"
+                    >
+                        {{ withdrawalHistory.to_payment_account_no }}
+                    </div>
                 </div>
             </div>
 
@@ -96,62 +112,13 @@ function copyToClipboard(text) {
                 </div>
             </div>
 
+            
             <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                 <div class="w-[140px] text-surface-500 text-xs font-medium">
                     {{ $t('public.receive') }}
                 </div>
                 <div class="text-surface-950 dark:text-white text-sm font-medium">
                     $ {{ formatAmount(withdrawalHistory.transaction_amount ?? 0) }}
-                </div>
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.upline') }}
-                </div>
-                <div class="text-surface-950 dark:text-white text-sm font-medium">
-                    {{ withdrawalHistory.user.upline?.name || '-' }}
-                    <span class="text-surface-500">
-                        {{ withdrawalHistory.user.upline?.email }}
-                    </span>
-                </div>
-            </div>
-
-            <div
-                v-if="withdrawalHistory.to_payment_platform === 'crypto'"
-                class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
-            >
-                <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.token_address') }}
-                </div>
-                <div class="flex gap-1 items-center text-surface-950 dark:text-white text-sm font-medium">
-                    <span class="break-words">{{ withdrawalHistory.to_payment_account_no }}</span>
-                    <Tag
-                        severity="info"
-                        :value="withdrawalHistory.to_payment_platform_name"
-                    />
-                </div>
-            </div>
-
-            <div
-                v-if="withdrawalHistory.to_payment_platform === 'crypto'"
-                class="flex flex-col md:flex-row md:items-center gap-1 self-stretch"
-            >
-                <div class="w-[140px] text-surface-500 text-xs font-medium">
-                    {{ $t('public.txn_hash') }}
-                </div>
-                <div class="flex flex-col items-start gap-1 self-stretch relative">
-                    <Tag
-                        v-if="tooltipText === 'copied'"
-                        class="absolute -top-1 right-[90px] md:-top-6 md:right-8 !bg-surface-950 !text-white"
-                        :value="$t(`public.${tooltipText}`)"
-                    ></Tag>
-                    <div
-                        class="break-words text-surface-950 dark:text-white text-sm font-medium hover:cursor-pointer select-none"
-                        @click="copyToClipboard(withdrawalHistory.txn_hash)"
-                    >
-                        {{ withdrawalHistory.txn_hash }}
-                    </div>
                 </div>
             </div>
         </div>

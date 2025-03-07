@@ -297,8 +297,9 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
-                            sortable
                             style="min-width: 7rem"
+                            class="hidden md:table-cell"
+                            sortable
                         >
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
@@ -308,6 +309,7 @@ watchEffect(() => {
                         <Column
                             field="user.name"
                             :header="$t('public.name')"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
@@ -320,6 +322,7 @@ watchEffect(() => {
                         <Column
                             field="subject_user.name"
                             :header="$t('public.client')"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex flex-col">
@@ -333,6 +336,7 @@ watchEffect(() => {
                             field="broker"
                             :header="$t('public.broker')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
@@ -349,6 +353,7 @@ watchEffect(() => {
                             field="bonus_type"
                             :header="$t('public.description')"
                             :class="locale === 'cn' ? 'min-w-24' : 'min-w-40'"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <Tag
@@ -361,7 +366,7 @@ watchEffect(() => {
                         <Column
                             field="close_time"
                             :header="$t('public.close_time')"
-                            class="min-w-32"
+                            class="hidden md:table-cell min-w-32"
                         >
                             <template #body="{data}">
                                 <div class="flex flex-col">
@@ -375,6 +380,7 @@ watchEffect(() => {
                             field="symbol"
                             :header="$t('public.symbol')"
                             style="min-width: 7rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 <span class="font-medium">{{ data.symbol }}</span>
@@ -385,6 +391,7 @@ watchEffect(() => {
                             field="net_profit"
                             :header="`${$t('public.net_profit')} ($)`"
                             :class="locale === 'cn' ? 'min-w-24' : 'min-w-36'"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.net_profit) }}
@@ -396,6 +403,7 @@ watchEffect(() => {
                             :header="`${$t('public.distribute_amount')} ($)`"
                             sortable
                             :class="locale === 'cn' ? 'min-w-36' : 'min-w-44'"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.distribute_amount, 4) }}
@@ -407,6 +415,7 @@ watchEffect(() => {
                             :header="`${$t('public.allocated')} (%)`"
                             sortable
                             :class="locale === 'cn' ? 'min-w-40' : 'min-w-44'"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 {{ formatAmount(data.remaining_percentage) }}
@@ -420,9 +429,36 @@ watchEffect(() => {
                             frozen
                             align-frozen="right"
                             :class="locale === 'cn' ? 'min-w-36' : 'min-w-40'"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <span class="font-semibold">{{ formatAmount(data.bonus_amount, 4) }}</span>
+                            </template>
+                        </Column>
+
+                        <!-- mobile view -->
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body="{data}">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col items-start">
+                                        <div class="font-semibold">
+                                            {{ $t(`public.${data.bonus_type}`) }}
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            <span>|</span>
+                                            <span>${{ formatAmount(data.net_profit) }}</span>
+                                            <span>|</span>
+                                            <span>{{ data.remaining_percentage }}%</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-base font-semibold">
+                                        ${{ formatAmount(data.bonus_amount, 4) }}
+                                    </div>
+                                </div>
                             </template>
                         </Column>
                     </template>

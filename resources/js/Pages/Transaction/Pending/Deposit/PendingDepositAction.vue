@@ -58,7 +58,6 @@ function copyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-
 const submitForm = (action) => {
     form.action = action;
     form.put(route('transaction.pending.pendingDepositApproval'), {

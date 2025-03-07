@@ -11,6 +11,7 @@ import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 import { generalFormat } from '@/Composables/format';
 import {trans} from "laravel-vue-i18n";
+import Tag from 'primevue/tag';
 
 const props = defineProps({
     pending: Object,
@@ -29,6 +30,31 @@ const form = useForm({
     action: '',
     remarks: '',
 });
+
+const tooltipText = ref('copy')
+
+function copyToClipboard(text) {
+    const textToCopy = text;
+
+    const textArea = document.createElement('textarea');
+    document.body.appendChild(textArea);
+
+    textArea.value = textToCopy;
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+
+        tooltipText.value = 'copied';
+        setTimeout(() => {
+            tooltipText.value = 'copy';
+        }, 1500);
+    } catch (err) {
+        console.error('Copy to clipboard failed:', err);
+    }
+
+    document.body.removeChild(textArea);
+}
 
 const submitForm = (action) => {
     form.action = action;
@@ -88,7 +114,7 @@ const closeDialog = () => {
                         {{ $t('public.request_date') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ dayjs(pending.approval_at).format('DD/MM/YYYY HH:mm:ss') }}
+                        {{ dayjs(pending.created_at).format('DD/MM/YYYY HH:mm:ss') }}
                     </div>
                 </div>
 
@@ -103,19 +129,35 @@ const closeDialog = () => {
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.wallet') }}
+                        {{ $t('public.to') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ pending.from_wallet?.type ? $t(`public.${pending.from_wallet.type}`) : '-' }}
+                        {{ pending.to_payment_account_name }}
+                    </div>
+                    <div class="text-surface-950 dark:text-white text-sm font-medium">
+                        <Tag
+                            :value="pending.to_payment_platform"
+                            severity="info"
+                        />
                     </div>
                 </div>
 
                 <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
                     <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.to') }}
+                        {{ $t('public.account_number') }}
                     </div>
-                    <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ pending.to_payment_account_name }}
+                    <div class="flex flex-col items-start gap-1 self-stretch relative">
+                        <Tag
+                            v-if="tooltipText === 'copied'"
+                            class="absolute -top-1 right-[90px] md:-top-6 md:right-8 !bg-surface-950 !text-white"
+                            :value="$t(`public.${tooltipText}`)"
+                        ></Tag>
+                        <div
+                            class="break-words text-surface-950 dark:text-white text-sm font-medium hover:cursor-pointer select-none"
+                            @click="copyToClipboard(pending.to_payment_account_no)"
+                        >
+                            {{ pending.to_payment_account_no }}
+                        </div>
                     </div>
                 </div>
 
@@ -136,18 +178,6 @@ const closeDialog = () => {
                         $ {{ formatAmount(pending.transaction_amount ?? 0) }}
                     </div>
                 </div>
-
-                <div class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
-                    <div class="w-[140px] text-surface-500 text-xs font-medium">
-                        {{ $t('public.upline') }}
-                    </div>
-                    <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        {{ props.pending.user.upline?.name || '-' }}
-                        <span class="text-surface-500">
-                            {{ props.pending.user.upline?.email }}
-                        </span>
-                    </div>
-                </div>
             </div>
 
             <div class="flex flex-col items-start gap-1 self-stretch pt-4">
@@ -166,7 +196,7 @@ const closeDialog = () => {
                 <InputError :message="form.errors.remarks" />
             </div>
 
-            <div class="flex gap-3 justify-between self-stretch pt-2 w-full">
+            <div class="flex gap-3 justify-between self-stretch pt-5 w-full">
                 <Button
                     type="button"
                     severity="danger"
