@@ -104,7 +104,7 @@ const closeDialog = () => {
                     <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
                 </div>
                 <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
-                    $ {{ formatAmount(pending.amount) }}
+                    $ {{ formatAmount(pending.amount, 4) }}
                 </div>
             </div>
 
@@ -136,8 +136,8 @@ const closeDialog = () => {
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
                         <Tag
-                            :value="pending.to_payment_platform"
-                            severity="info"
+                            :severity="pending.to_payment_platform === 'bank' ? 'info' : 'secondary'"
+                            :value="pending.to_currency"
                         />
                     </div>
                 </div>
@@ -203,7 +203,7 @@ const closeDialog = () => {
                     class="w-full"
                     :disabled="form.processing"
                     @click="submitForm('reject')"
-                    :label="$t('public.reject_transaction')"
+                    :label="$t('public.reject')"
                 />
                 <Button
                     type="submit"
@@ -211,7 +211,7 @@ const closeDialog = () => {
                     class="w-full"
                     :disabled="form.processing"
                     @click.prevent="submitForm('approve')"
-                    :label="$t('public.approve_transaction')"
+                    :label="$t('public.approve')"
                 />
             </div>
         </div>

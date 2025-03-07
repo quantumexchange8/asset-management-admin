@@ -108,6 +108,7 @@ class DashboardController extends Controller
             'pendingKycCount' => (new SidebarService())->getPendingKycCount(),
             'pendingDepositCounts' => (new SidebarService())->getPendingDepositCount(),
             'getPendingAccountCount' => (new SidebarService())->getPendingAccountCount(),
+            'pendingWithdrawalCounts' => (new SidebarService())->pendingWithdrawalCounts(),
         ]);
     }
 

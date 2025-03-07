@@ -28,6 +28,7 @@ const page = usePage();
 const pendingKycCount = ref(page.props.getPendingKycCount);
 const pendingDepositCounts = ref(page.props.getPendingDepositCount);
 const pendingAccountCounts = ref(page.props.getPendingAccountCount);
+const pendingWithdrawalCounts = ref(page.props.pendingWithdrawalCounts);
 const { hasRole, hasPermission } = usePermission();
 
 // Update pending counts
@@ -37,6 +38,7 @@ const getPendingCounts = async () => {
         pendingKycCount.value = response.data.pendingKycCount;
         pendingDepositCounts.value = response.data.pendingDepositCounts;
         pendingAccountCounts.value = response.data.getPendingAccountCount;
+        pendingWithdrawalCounts.value = response.data.pendingWithdrawalCounts;
     } catch (error) {
         console.error('Error pending counts:', error);
     }
@@ -181,7 +183,7 @@ watchEffect(() => {
         <SidebarCollapsible
             title="pending"
             :active="route().current('transaction.pending.*')"
-            :pending-counts="pendingDepositCounts"
+            :pending-counts="pendingDepositCounts || pendingWithdrawalCounts"
             v-if="hasPermission('access_pending_deposit') || hasPermission('access_pending_withdrawal')"
         >
             <template #icon>
@@ -199,6 +201,7 @@ watchEffect(() => {
                 title="withdrawal"
                 :href="route('transaction.pending.getPendingWithdrawal')"
                 :active="route().current('transaction.pending.getPendingWithdrawal')"
+                :pendingCounts="pendingWithdrawalCounts"
                 v-if="hasPermission('access_pending_withdrawal')"
             />
         </SidebarCollapsible>

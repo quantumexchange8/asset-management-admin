@@ -361,7 +361,6 @@ return [
     "directs" => "Directs",
     "networks" => "Networks",
     "no_files_submitted" => "No Files Submitted",
-    "referral_loading_caption" => "Loading referral data. Please wait.",
     "required_broker_login_import" => "Login field is required",
     "exists_broker_login_import" => "Broker Login does not exist",
     "required_joined_date_import" => "Date is required",
@@ -369,4 +368,6 @@ return [
     "numeric_amount_import" => "Amount must be numeric",
     "see_more" => "See More",
     "see_less" => "See Less",
+    "payment_account" => "Payment Account",
+    "approve" => "Approve",
 ];

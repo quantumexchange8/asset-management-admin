@@ -6,9 +6,10 @@ import ScrollPanel from 'primevue/scrollpanel';
 import Tag from 'primevue/tag';
 import { generalFormat } from '@/Composables/format';
 import dayjs from 'dayjs';
-import { onMounted, ref } from 'vue';
+import {onMounted, ref, watchEffect} from 'vue';
 import { IconBellDollar, IconClockDollar } from '@tabler/icons-vue';
 import EmptyData from '@/Components/EmptyData.vue';
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     totalPendingAmount: Number,
@@ -47,6 +48,11 @@ const getSeverity = (status) => {
     }
 };
 
+watchEffect(() => {
+    if (usePage().props.toast !== null) {
+        getRecentApproval();
+    }
+});
 </script>
 
 <template>
@@ -55,19 +61,19 @@ const getSeverity = (status) => {
             <Card>
                 <template #content>
                     <div class="flex justify-between items-center">
-                        <div class="flex flex-col items-start gap-3">
+                        <div class="flex flex-col items-start gap-1">
                             <div class="font-medium text-surface-500">
                                 {{ $t("public.total_pending_withdrawal") }}
                             </div>
-                            <div class="text-xl lowercase">
+                            <div class="text-2xl lowercase">
                                 <div v-if="isLoading">
                                     <Skeleton width="5rem" height="2rem"></Skeleton>
                                 </div>
-    
+
                                 <div v-else>
                                     {{ props.pendingWithdrawalCounts }} {{ $t('public.withdrawal') }}
                                 </div>
-    
+
                             </div>
                         </div>
                         <div class="flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 w-[72px] h-[72px]">
@@ -78,11 +84,11 @@ const getSeverity = (status) => {
                     </div>
                 </template>
             </Card>
-            
+
             <Card>
                 <template #content>
                     <div class="flex justify-between items-center">
-                        <div class="flex flex-col items-start gap-3">
+                        <div class="flex flex-col items-start gap-1">
                             <div class="font-medium text-surface-500">
                                 {{ $t("public.total_pending_amount") }}
                             </div>
@@ -91,8 +97,8 @@ const getSeverity = (status) => {
                                 <Skeleton width="5rem" height="2rem"></Skeleton>
                             </div>
 
-                            <div v-else class="text-xl">
-                                $ {{ formatAmount(props.totalPendingAmount ?? 0) }}
+                            <div v-else class="text-2xl">
+                                ${{ formatAmount(props.totalPendingAmount ?? 0, 4) }}
                             </div>
                         </div>
 
@@ -109,23 +115,23 @@ const getSeverity = (status) => {
             <template #content>
                 <div class="flex flex-col items-start gap-3 md:gap-5">
                     <span class="text-surface-700 dark:text-surface-300 font-semibold text-sm">{{ $t('public.recent_approval') }}</span>
-                    <ScrollPanel style="width: 100%; height: 150px">
+                    <ScrollPanel style="width: 100%; height: 180px">
                         <div v-if="recentApprovals.length <= 0">
-                            <EmptyData 
+                            <EmptyData
                                 :title="$t('public.no_data')"
                                 :message="$t('public.no_recent_transaction')"
                             />
                         </div>
                         <Timeline :value="recentApprovals">
                             <template #opposite="slotProps">
-                                <div class="flex flex-col"> 
+                                <div class="flex flex-col">
                                     <small class="text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).format('YYYY/MM/DD') }}</small>
                                     <small class="text-xs text-surface-500 dark:text-surface-400">{{ dayjs(slotProps.item.approval_at).add(8, 'hour').format('hh:mm:ss A') }}</small>
                                 </div>
                             </template>
                             <template #content="slotProps">
                                 <div class="flex gap-2 items-center">
-                                    <div class="flex flex-col"> 
+                                    <div class="flex flex-col">
                                         <span class="text-surface-950 dark:text-white">{{ slotProps.item.transaction_number }}</span>
                                         <span class="text-xs text-surface-500">{{ $t('public.approved_by') }}: {{ slotProps.item.approval_by.name }}</span>
                                     </div>

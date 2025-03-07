@@ -42,6 +42,7 @@ class HandleInertiaRequests extends Middleware
             'getPendingKycCount' => $sidebarService->getPendingKycCount(),
             'getPendingDepositCount' => $sidebarService->getPendingDepositCount(),
             'getPendingAccountCount' => $sidebarService->getPendingAccountCount(),
+            'pendingWithdrawalCounts' => $sidebarService->pendingWithdrawalCounts(),
         ];
     }
 }

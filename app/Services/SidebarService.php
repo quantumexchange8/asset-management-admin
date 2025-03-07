@@ -37,4 +37,15 @@ class SidebarService
 
         return $query->count();
     }
+
+    public function pendingWithdrawalCounts(): int
+    {
+        $query = Transaction::query()
+            ->where([
+                'status' => 'processing',
+                'transaction_type' => 'withdrawal'
+            ]);
+
+        return $query->count();
+    }
 }

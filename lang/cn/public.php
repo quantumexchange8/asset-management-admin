@@ -363,10 +363,11 @@ return [
     "required_joined_date_import" => "日期为必填项。",
     "required_amount_import" => "金额为必填项。",
     "numeric_amount_import" => "金额必须是数字。",
-
     "directs" => "直系",
     "networks" => "团队",
     "no_files_submitted" => "尚未上传文件",
     "see_more" => "查看更多",
     "see_less" => "查看更少",
+    "payment_account" => "支付账号",
+    "approve" => "批准",
 ];
