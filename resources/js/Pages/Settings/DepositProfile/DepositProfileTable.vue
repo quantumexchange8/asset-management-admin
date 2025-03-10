@@ -180,7 +180,7 @@ watchEffect(() => {
                                     <!-- Clear filter button -->
                                     <div
                                         v-if="filters['global'].value"
-                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
                                         @click="clearFilterGlobal"
                                     >
                                         <IconXboxX aria-hidden="true" :size="15" />
@@ -215,7 +215,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.deposit_profile_loading_caption') }}</span>
+                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.deposit_profile_loading_caption') }}</span>
                         </div>
                     </template>
 
@@ -291,21 +291,9 @@ watchEffect(() => {
                                         />
                                     </div>
 
-                                    <div class="flex flex-col items-start">
-                                        <div class="flex items-center gap-1 justify-end w-full">
-                                            <span 
-                                                :class="data.showFullAccountNumber ? '' : 'max-w-[120px] truncate block'"
-                                            >
-                                                {{ data.account_number }}
-                                            </span>
-                                        </div>
-                                        <div v-if="data.account_number.length > 12" class="mt-1 flex justify-end w-full">
-                                            <button 
-                                                @click="data.showFullAccountNumber = !data.showFullAccountNumber"
-                                                class="text-blue-500 text-xs underline"
-                                            >
-                                                {{ data.showFullAccountNumber ? $t('public.see_less') : $t('public.see_more') }}
-                                            </button>
+                                    <div class="flex flex-col items-start pr-2">
+                                        <div class="flex justify-end text-base w-full">
+                                            <span class="break-words max-w-40 text-surface-950 dark:text-white">{{ data.account_number }}</span>
                                         </div>
                                     </div>
                                 </div>

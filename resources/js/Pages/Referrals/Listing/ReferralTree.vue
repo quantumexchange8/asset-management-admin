@@ -113,7 +113,7 @@ watchEffect(() => {
                                 type="text" class="block w-full pl-10 pr-10" />
                             <!-- Clear filter button -->
                             <div v-if="filters['global'].value"
-                                class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                                class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
                                 @click="clearFilterGlobal">
                                 <IconXboxX aria-hidden="true" :size="15" />
                             </div>
@@ -123,14 +123,14 @@ watchEffect(() => {
 
                 <div v-if="isLoading" class="flex flex-col gap-2 items-center justify-center">
                     <ProgressSpinner />
-                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.referral_loading_caption') }}</span>
+                    <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.referral_loading_caption') }}</span>
                 </div>
 
                 <div v-else class="flex flex-col gap-1 self-stretch relative pt-4 overflow-x-auto">
                     <div class="flex flex-col gap-4">
                         <template v-for="user in referrals" :key="user.id">
                             <div :class="[
-                                'p-4 rounded-lg bg-gray-100 dark:bg-surface-800 flex items-center',
+                                'p-4 rounded-lg bg-surface-100 dark:bg-surface-800 flex items-center',
                                 locale === 'en' ? 'max-w-[1190px] min-w-[1190px]' : 'max-w-[950px] min-w-[950px]',
                             ]">
                                 <div class="flex items-center w-full relative gap-6">
@@ -204,7 +204,7 @@ watchEffect(() => {
                                 leave-to-class="opacity-0 translate-y-2 scale-y-95"
                             >
                                 <!-- Show downlines only when expanded -->
-                                <div v-if="expandedUsers[user.id]" class="pl-8 border-l border-gray-300 -mt-4">
+                                <div v-if="expandedUsers[user.id]" class="pl-8 border-l border-surface-300 -mt-4">
                                     <ReferralDownline 
                                         :downlines="user.children" 
                                         :expandedUsers="expandedUsers" 

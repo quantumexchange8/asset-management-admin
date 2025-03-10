@@ -121,7 +121,7 @@ const submitForm = () => {
 <template>
     <form @submit.prevent="submitForm" class="flex flex-col gap-6 items-center self-stretch">
         <div class="flex flex-col gap-3 items-center self-stretch">
-            <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t('public.basics') }}</span>
+            <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t('public.basics') }}</span>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
                 <div class="flex flex-col gap-1 items-start self-stretch">
                     <InputLabel :value="$t('public.type')" for="type"/>
@@ -176,7 +176,7 @@ const submitForm = () => {
         </div>
 
         <div class="flex flex-col gap-3 items-center self-stretch">
-            <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t(`public.${selectedType}_details`) }}</span>
+            <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t(`public.${selectedType}_details`) }}</span>
 
             <!-- bank -->
             <div v-if="selectedType === 'bank'" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">

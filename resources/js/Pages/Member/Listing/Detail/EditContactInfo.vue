@@ -224,7 +224,7 @@ const submitForm = () => {
                                             height="12"
                                         />
                                         <div>{{ slotProps.option.phone_code }}</div>
-                                        <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.iso2 }})</div>
+                                        <div class="max-w-[200px] truncate text-surface-500">({{ slotProps.option.iso2 }})</div>
                                     </div>
                                 </template>
                             </Select>

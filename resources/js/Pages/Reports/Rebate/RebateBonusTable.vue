@@ -286,7 +286,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.rebate_bonus_loading_caption') }}</span>
+                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.rebate_bonus_loading_caption') }}</span>
                         </div>
                     </template>
 

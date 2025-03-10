@@ -251,7 +251,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.account_loading_caption') }}</span>
+                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.account_loading_caption') }}</span>
                         </div>
                     </template>
 
@@ -265,7 +265,7 @@ watchEffect(() => {
                         >
                             <template #body="{ data }">
                                 {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                                <div class="text-xs text-gray-500 mt-1">
+                                <div class="text-xs text-surface-500 mt-1">
                                     {{ dayjs(data.created_at).add(8, 'hour').format('hh:mm:ss A') }}
                                 </div>
                             </template>
@@ -329,13 +329,13 @@ watchEffect(() => {
                                     <IconEye
                                         v-if="!showPassword[data.id]"
                                         size="20" stroke-width="1.5"
-                                        class="cursor-pointer text-gray-500"
+                                        class="cursor-pointer text-surface-500"
                                         @click="togglePassword(data.id)"
                                     />
                                     <IconEyeOff
                                         v-else
                                         size="20" stroke-width="1.5"
-                                        class="cursor-pointer text-gray-500"
+                                        class="cursor-pointer text-surface-500"
                                         @click="togglePassword(data.id)"
                                     />
                                 </div>
@@ -406,13 +406,13 @@ watchEffect(() => {
                                                 <IconEye
                                                     v-if="!showPassword[data.id]"
                                                     size="20" stroke-width="1.5"
-                                                    class="cursor-pointer text-gray-500"
+                                                    class="cursor-pointer text-surface-500"
                                                     @click="togglePassword(data.id)"
                                                 />
                                                 <IconEyeOff
                                                     v-else
                                                     size="20" stroke-width="1.5"
-                                                    class="cursor-pointer text-gray-500"
+                                                    class="cursor-pointer text-surface-500"
                                                     @click="togglePassword(data.id)"
                                                 />
                                             </div>

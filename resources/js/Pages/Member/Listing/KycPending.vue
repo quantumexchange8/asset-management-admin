@@ -260,7 +260,7 @@ watchEffect(() => {
                                 <ProgressSpinner
                                     strokeWidth="4"
                                 />
-                                <span class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.pending_kyc_loading_caption') }}</span>
+                                <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.pending_kyc_loading_caption') }}</span>
                             </div>
                         </template>
 
@@ -274,7 +274,7 @@ watchEffect(() => {
                             >
                                 <template #body="{ data }">
                                     {{ dayjs(data.kyc_requested_at).format('YYYY-MM-DD') }}
-                                    <div class="text-xs text-gray-500 mt-1">
+                                    <div class="text-xs text-surface-500 mt-1">
                                         {{ dayjs(data.kyc_requested_at).add(8, 'hour').format('hh:mm:ss A') }}
                                     </div>
                                 </template>
@@ -444,7 +444,7 @@ watchEffect(() => {
                         />
                         <div
                             v-if="selectedDate && selectedDate.length > 0"
-                            class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
+                            class="absolute top-2/4 -mt-2 right-2 text-surface-400 select-none cursor-pointer bg-transparent"
                             @click="clearDate"
                         >
                             <IconX :size="15" strokeWidth="1.5"/>

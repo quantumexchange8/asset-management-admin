@@ -132,7 +132,7 @@ function calculatePercentage(fund) {
                                     {{ topUsers[index - 1]?.user.name || '------' }}
                                 </span>
                             </div>
-                            <div class="w-full max-w-[52px] xs:max-w-sm sm:max-w-md md:max-w-full h-1 bg-gray-100 dark:bg-surface-700 rounded-full relative">
+                            <div class="w-full max-w-[52px] xs:max-w-sm sm:max-w-md md:max-w-full h-1 bg-surface-100 dark:bg-surface-700 rounded-full relative">
                                 <div
                                     class="absolute top-0 left-0 h-full rounded-full bg-primary-500 transition-all duration-700 ease-in-out"
                                     :style="{ width: `${calculatePercentage(topUsers[index - 1]?.total_deposit)}%` }"

@@ -39,7 +39,7 @@ const levelColor = computed(() => getUniqueColor(props.level));
         <div 
             v-if="downline?.id" 
             :class="[
-               'p-4 rounded-lg bg-gray-200 dark:bg-surface-700 flex justify-between items-center overflow-x-auto mt-4',
+               'p-4 rounded-lg bg-surface-200 dark:bg-surface-700 flex justify-between items-center overflow-x-auto mt-4',
                locale === 'en' ? 'max-w-[1200px] min-w-[1200px]' : 'max-w-[950px] min-w-[950px]',
             ]"
         >
@@ -118,7 +118,7 @@ const levelColor = computed(() => getUniqueColor(props.level));
             leave-from-class="opacity-100 translate-y-0 scale-y-100"
             leave-to-class="opacity-0 translate-y-2 scale-y-95"
         >
-            <div v-if="expandedUsers?.[downline?.id]" class="mt-3 pl-8 border-l border-gray-300">
+            <div v-if="expandedUsers?.[downline?.id]" class="mt-3 pl-8 border-l border-surface-300">
                 <ReferralDownline
                     v-if="downline?.children?.length"
                     :downlines="downline.children"

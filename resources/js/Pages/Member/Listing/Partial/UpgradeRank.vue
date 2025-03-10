@@ -92,7 +92,7 @@ const submitForm = () => {
                     <div class="text-sm font-medium">
                         {{ member.name }}
                     </div>
-                    <div class="text-gray-500 text-xs">
+                    <div class="text-surface-500 text-xs">
                         @{{ member.username }}
                     </div>
                 </div>

@@ -123,7 +123,7 @@ const closeDialog = () => {
     <Dialog v-model:visible="visible" modal :header="$t('public.add_member')" class="dialog-xs md:dialog-md">
         <form @submit.prevent="submitForm" class="flex flex-col gap-6 items-center self-stretch">
             <div class="flex flex-col gap-3 items-center self-stretch">
-                <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t('public.basics') }}</span>
+                <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t('public.basics') }}</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel :value="$t('public.name')" for="name" />
@@ -165,10 +165,16 @@ const closeDialog = () => {
                                 <IconUsersPlus :size="20" stroke-width="1.5"/>
                             </template>
                             <Select v-model="selectedUpline" :options="users" :loading="loadingUsers" optionLabel="name" :placeholder="$t('public.select_upline')" class="pl-7 block w-full" :invalid="!!form.errors.upline" filter>
+                                <template #value="slotProps">
+                                    <div v-if="slotProps.value" class="flex items-center">
+                                        <div>{{ slotProps.value.name }}</div>
+                                    </div>
+                                    <span v-else class="text-surface-400 dark:text-surface-500">{{ slotProps.placeholder }}</span>
+                                </template>
                                 <template #option="slotProps">
                                     <div class="flex items-center gap-1 max-w-[220px] truncate">
                                         <span>{{ slotProps.option.name }}</span>
-                                        <span class="text-xs text-gray-500">@{{ slotProps.option.username }}</span>
+                                        <span class="text-xs text-surface-500">@{{ slotProps.option.username }}</span>
                                     </div>
                                 </template>
                             </Select>
@@ -246,7 +252,7 @@ const closeDialog = () => {
                                         height="12"
                                     />
                                     <div>{{ slotProps.option.phone_code }}</div>
-                                    <div class="max-w-[200px] truncate text-gray-500">({{ slotProps.option.iso2 }})</div>
+                                    <div class="max-w-[200px] truncate text-surface-500">({{ slotProps.option.iso2 }})</div>
                                 </div>
                             </template>
                             </Select>
@@ -275,7 +281,7 @@ const closeDialog = () => {
             </div>
 
             <div class="flex flex-col gap-3 items-center self-stretch">
-                <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t('public.credentials') }}</span>
+                <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t('public.credentials') }}</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 w-full">
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel :value="$t('public.password')" for="password"/>

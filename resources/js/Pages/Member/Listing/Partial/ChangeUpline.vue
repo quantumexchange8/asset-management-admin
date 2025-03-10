@@ -123,7 +123,7 @@ const submitForm = () => {
                     <div class="text-sm font-medium">
                         {{ member.name }}
                     </div>
-                    <div class="text-gray-500 text-xs">
+                    <div class="text-surface-500 text-xs">
                         @{{ member.username }}
                     </div>
                 </div>
@@ -162,7 +162,7 @@ const submitForm = () => {
                             <template #option="slotProps">
                                 <div class="flex items-center gap-1 max-w-[220px] truncate">
                                     <span>{{ slotProps.option.name }}</span>
-                                    <span class="text-xs text-gray-500">@{{ slotProps.option.email }}</span>
+                                    <span class="text-xs text-surface-500">@{{ slotProps.option.email }}</span>
                                 </div>
                             </template>
                         </Select>

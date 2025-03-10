@@ -267,7 +267,7 @@ watchEffect(() => {
                                     <!-- Clear filter button -->
                                     <div
                                         v-if="filters['global'].value"
-                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
                                         @click="clearFilterGlobal"
                                     >
                                         <IconXboxX aria-hidden="true" :size="15" />
@@ -314,8 +314,8 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span v-if="exportTable === 'no'" class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.withdrawal_loading_caption') }}</span>
-                            <span v-else class="text-sm text-gray-700 dark:text-gray-300">{{ $t('public.export_withdrawal_caption') }}</span>
+                            <span v-if="exportTable === 'no'" class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.withdrawal_loading_caption') }}</span>
+                            <span v-else class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.export_withdrawal_caption') }}</span>
                         </div>
                     </template>
 
@@ -332,7 +332,7 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 {{ dayjs(data.approval_at).format('YYYY-MM-DD') }}
-                                <div class="text-xs text-gray-500 mt-1">
+                                <div class="text-xs text-surface-500 mt-1">
                                     {{ dayjs(data.approval_at).add(8, 'hour').format('hh:mm:ss A') }}
                                 </div>
                             </template>
@@ -349,7 +349,7 @@ watchEffect(() => {
                             </template>
                             <template #body="{ data }">
                                 {{ data.user.name }}
-                                <div class="text-xs text-gray-500 mt-1">
+                                <div class="text-xs text-surface-500 mt-1">
                                     {{ data.user.email }}
                                 </div>
                             </template>
@@ -483,7 +483,7 @@ watchEffect(() => {
                     />
                     <div
                         v-if="selectedDate && selectedDate.length > 0"
-                        class="absolute top-2/4 -mt-2 right-2 text-gray-400 select-none cursor-pointer bg-transparent"
+                        class="absolute top-2/4 -mt-2 right-2 text-surface-400 select-none cursor-pointer bg-transparent"
                         @click="clearDate"
                     >
                         <IconX :size="15" strokeWidth="1.5"/>
