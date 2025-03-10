@@ -78,8 +78,8 @@ function copyToClipboard(text) {
                 </div>
                 <div class="text-surface-950 dark:text-white text-sm font-medium">
                     <Tag
-                        :value="withdrawalHistory.to_payment_platform"
-                        severity="info"
+                        :severity="withdrawalHistory.to_payment_platform === 'bank' ? 'info' : 'secondary'"
+                        :value="withdrawalHistory.to_currency"
                     />
                 </div>
             </div>

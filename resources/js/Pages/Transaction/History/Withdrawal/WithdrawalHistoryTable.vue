@@ -339,20 +339,6 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="transaction_number"
-                            style="min-width: 15rem"
-                            class="hidden md:table-cell"
-                            sortable
-                        >
-                            <template #header>
-                                <span class="block">{{ $t('public.transaction_number') }}</span>
-                            </template>
-                            <template #body="{ data }">
-                                {{ data.transaction_number }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="user_id"
                             style="min-width: 11rem"
                             class="hidden md:table-cell"
@@ -370,24 +356,16 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="user.upline"
-                            style="min-width: 11rem"
+                            field="transaction_number"
+                            style="min-width: 15rem"
                             class="hidden md:table-cell"
+                            sortable
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.upline') }}</span>
+                                <span class="block">{{ $t('public.transaction_number') }}</span>
                             </template>
                             <template #body="{ data }">
-                                <div
-                                    v-if="data.user.upline_id"
-                                    class="flex flex-col"
-                                >
-                                    <span class="text-surface-950 dark:text-white">{{ data.user.upline.name }}</span>
-                                    <span class="text-surface-500">{{ data.user.upline.email }}</span>
-                                </div>
-                                <div v-else>
-                                    -
-                                </div>
+                                {{ data.transaction_number }}
                             </template>
                         </Column>
 
@@ -398,10 +376,16 @@ watchEffect(() => {
                             sortable
                         >
                             <template #header>
-                                <span class="block">{{ $t('public.to') }}</span>
+                                <span class="block">{{ $t('public.payment_account') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.to_payment_platform_name}}
+                                <div class="flex gap-1 items-center">
+                                    <span class="break-words max-w-40 text-surface-950 dark:text-white">{{ data.to_payment_account_no }}</span>
+                                    <Tag
+                                        :severity="data.to_payment_platform === 'bank' ? 'info' : 'secondary'"
+                                        :value="$t(`public.${data.to_payment_platform}`)"
+                                    />
+                                </div>
                             </template>
                         </Column>
 
@@ -416,7 +400,7 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.amount') }}</span>
                             </template>
                             <template #body="{ data }">
-                                $ {{ formatAmount(data.amount ?? 0) }}
+                                <span class="font-medium">${{ formatAmount(data.amount ?? 0, 4) }}</span>
                             </template>
                         </Column>
  
@@ -441,34 +425,23 @@ watchEffect(() => {
                             <template #body="{data}">
                                 <div class="flex items-center gap-3 justify-between w-full">
                                     <div class="flex flex-col items-start">
-                                        <div class="flex items-center gap-1">
+                                        <span class="text-xs text-white truncate">
+                                            {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
+                                        </span>
+                                        
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
                                             <div class="font-medium max-w-[180px] truncate">
                                                 {{ data.user.name }}
                                             </div>
-                                            <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
-                                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
-                                            </span>
-                                            <span>
-                                                <Tag 
-                                                    :value="$t(`public.${data.status}`)" 
-                                                    :severity="getSeverity(data.status)" 
-                                                />
-                                            </span>
-                                        </div>
-                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
-                                            {{ data.user.email }}
                                             <span>|</span>
                                             <span class="font-bold dark:text-white/60">{{ data.transaction_number }}</span>
                                         </div>
                                     </div>
 
-                                    <div class="flex flex-col items-start">
-                                        <div class="flex items-center gap-1 justify-end w-full">
-                                            {{ data.to_payment_platform_name}}
-                                        </div>
-
-                                        <div class="flex justify-end w-full">
-                                            ${{ formatAmount(data.amount) }}
+                                    <div class="flex flex-col items-start pr-2">
+                                        <div class="flex justify-end text-base w-full">
+                                            ${{ formatAmount(data.amount, 4) }}
                                         </div>
                                     </div>
                                 </div>

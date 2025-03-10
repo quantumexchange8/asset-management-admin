@@ -163,9 +163,6 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
-                    'user.upline:id,name,email',
-                    'from_wallet:id,type,address,currency_symbol',
-                    'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'withdrawal')
                 ->whereNot('status', 'processing');
@@ -394,9 +391,6 @@ class TransactionController extends Controller
             $query = Transaction::query()
                 ->with([
                     'user:id,name,email,upline_id',
-                    'user.upline:id,name,email',
-                    'from_wallet:id,type,address,currency_symbol',
-                    'to_wallet:id,type,address,currency_symbol',
                 ])
                 ->where('transaction_type', 'withdrawal')
                 ->where('status', 'processing');;
