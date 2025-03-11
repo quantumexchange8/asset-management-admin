@@ -121,6 +121,15 @@ function copyToClipboard(text) {
                     $ {{ formatAmount(withdrawalHistory.transaction_amount ?? 0) }}
                 </div>
             </div>
+
+            <div v-if="withdrawalHistory.status === 'rejected'" class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                <div class="w-[140px] text-surface-500 text-xs font-medium">
+                    {{ $t('public.remarks') }}
+                </div>
+                <div class="text-surface-950 dark:text-white text-sm font-medium">
+                    {{ withdrawalHistory.remarks }}
+                </div>
+            </div>
         </div>
     </div>
 </template>
