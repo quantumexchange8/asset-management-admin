@@ -20,6 +20,7 @@ import { usePage } from '@inertiajs/vue3';
 import Import from './Import.vue';
 import EmptyData from '@/Components/EmptyData.vue';
 import DepositHistoryAction from './DepositHistoryAction.vue';
+import { generalFormat } from '@/Composables/format';
 
 const isLoading = ref(false);
 const dt = ref(null);
@@ -29,6 +30,7 @@ const totalRecords = ref(0);
 const depositHistoryCounts = ref();
 const successAmount = ref();
 const rejectAmount = ref();
+const {formatAmount} = generalFormat();
 
 //filteration type and methods
 const filters = ref({
@@ -320,6 +322,7 @@ watchEffect(() => {
                         <Column
                             field="approval_at"
                             style="min-width: 11rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -336,6 +339,7 @@ watchEffect(() => {
                         <Column
                             field="user_id"
                             style="min-width: 13rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -352,6 +356,7 @@ watchEffect(() => {
                         <Column
                             field="user.upline"
                             style="min-width: 12rem"
+                            class="hidden md:table-cell"
                         >
                             <template #header>
                                 <span class="block">{{ $t('public.upline') }}</span>
@@ -373,6 +378,7 @@ watchEffect(() => {
                         <Column
                             field="transaction_number"
                             style="min-width: 16rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -387,6 +393,7 @@ watchEffect(() => {
                             field="to_wallet_id"
                             :header="$t('public.wallet')"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
@@ -396,6 +403,7 @@ watchEffect(() => {
                         <Column
                             field="amount"
                             style="min-width: 9rem"
+                            class="hidden md:table-cell"
                             dataType="numeric"
                             sortable
                         >
@@ -403,13 +411,14 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.amount') }}</span>
                             </template>
                             <template #body="{ data }">
-                                {{ data.amount }}
+                                ${{ formatAmount(data.amount) }}
                             </template>
                         </Column>
 
                         <Column
                             field="status"
                             style="min-width: 8rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #header>
@@ -420,10 +429,47 @@ watchEffect(() => {
                             </template>
                         </Column>
 
+                        <!-- mobile view -->
+                        <Column
+                            field="mobile"
+                            class="table-cell md:hidden"
+                        >
+                            <template #body={data}>
+                                <div class="flex items-center gap-3 justify-between w-full">
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
+                                                <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
+                                            </span>
+                                        </div>
+                                        <div class="flex gap-1 items-center text-surface-500 text-xs">
+                                            <span>{{ dayjs(data.created_at).format('YYYY-MM-DD') }}</span>
+                                            <span>|</span>
+                                            <span class="font-bold dark:text-white/60">{{ data.transaction_number }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center gap-1 justify-end w-full">
+                                            {{ $t(`public.${data.to_wallet?.type}`) || '-'}}
+                                        </div>
+
+                                        <div class="flex justify-end w-full">
+                                            ${{ formatAmount(data.amount) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </Column>
+
                         <Column
                             field="action"
                             alignFrozen="right"
                             frozen
+                            style="width: 5%;"
                         >
                             <template #body="{ data }">
                                 <DepositHistoryAction 

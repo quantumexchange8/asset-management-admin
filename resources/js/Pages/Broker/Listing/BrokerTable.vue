@@ -258,11 +258,11 @@ watchEffect(() => {
                             <!-- Details Section -->
                             <div class="flex items-end justify-between self-stretch">
                                 <div class="flex flex-col items-center gap-1 self-stretch w-full">
-                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
+                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-surface-500">
                                         <IconUserDollar size="20" stroke-width="1.5" />
                                         <Skeleton width="5rem"></Skeleton>
                                     </div>
-                                    <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
+                                    <div class="py-1 flex items-center gap-3 self-stretch text-surface-500">
                                         <IconPremiumRights size="20" stroke-width="1.5" />
                                         <Skeleton width="5rem"></Skeleton>
                                     </div>
@@ -304,7 +304,7 @@ watchEffect(() => {
                                     <IconCircleLetterB size="28" stroke-width="1.5" />
                                 </div>
                                 <div class="flex flex-col items-start w-full">
-                                    <div class="self-stretch truncate text-gray-950 dark:text-white font-bold">
+                                    <div class="self-stretch truncate text-surface-950 dark:text-white font-bold">
                                         {{ broker.name }}
                                     </div>
                                     <a
@@ -334,15 +334,15 @@ watchEffect(() => {
                             <!-- Details Section -->
                             <div class="flex items-end justify-between self-stretch">
                                 <div class="flex flex-col items-center gap-1 self-stretch w-full">
-                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-gray-500">
+                                    <div class="py-1 flex items-center gap-3 self-stretch w-full text-surface-500">
                                         <IconUserDollar size="20" stroke-width="1.5" />
-                                        <div class="text-gray-950 dark:text-white text-sm font-medium">
+                                        <div class="text-surface-950 dark:text-white text-sm font-medium">
                                             {{ formatAmount(broker.connections_count, 0) }} {{ $t('public.connections') }}
                                         </div>
                                     </div>
-                                    <div class="py-1 flex items-center gap-3 self-stretch text-gray-500">
+                                    <div class="py-1 flex items-center gap-3 self-stretch text-surface-500">
                                         <IconPremiumRights size="20" stroke-width="1.5" />
-                                        <div class="text-gray-950 dark:text-white text-sm font-medium">
+                                        <div class="text-surface-950 dark:text-white text-sm font-medium">
                                             <span class="text-primary-500">$ {{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.capital_fund') }}
                                         </div>
                                     </div>

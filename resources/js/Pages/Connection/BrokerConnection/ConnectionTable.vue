@@ -416,8 +416,6 @@ watchEffect(() => {
                                                     </div>
 
                                                     <div class="flex gap-1 text-surface-400 dark:text-surface-500 text-xs max-w-[220px] truncate">
-                                                        <span>{{ data.broker.name }}</span>
-                                                        <span>|</span>
                                                         <span>{{ data.broker_login }}</span>
                                                         <span>|</span>
                                                         <span class="font-bold dark:text-white/60">{{ data.connection_number }}</span>

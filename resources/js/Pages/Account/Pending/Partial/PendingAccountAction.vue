@@ -113,7 +113,7 @@ const closeDialog = () => {
             </div>
 
             <div v-if="accounts.media.length > 0" class="flex flex-col md:flex-row md:items-start gap-1 self-stretch pt-5">
-                <div class="w-[140px] text-gray-500 text-xs font-medium">
+                <div class="w-[140px] text-surface-500 text-xs font-medium">
                     {{ $t('public.account_proof') }}
                 </div>
                 <div class="flex gap-2 col-span-2 items-center self-stretch w-full">

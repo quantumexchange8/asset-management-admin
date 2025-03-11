@@ -77,7 +77,7 @@ const submitForm = () => {
     <form @submit.prevent="submitForm" class="w-full">
         <div class="flex flex-col gap-6 items-center self-stretch">
             <div class="flex flex-col gap-3 items-center self-stretch">
-                <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t('public.admin_credentials') }}</span>
+                <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t('public.admin_credentials') }}</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel
@@ -158,7 +158,7 @@ const submitForm = () => {
 
             <!-- Permissions -->
             <div class="flex flex-col gap-3 items-center self-stretch">
-                <span class="font-bold text-sm text-gray-950 dark:text-white w-full text-left">{{ $t('public.manage_permissions') }}</span>
+                <span class="font-bold text-sm text-surface-950 dark:text-white w-full text-left">{{ $t('public.manage_permissions') }}</span>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-center self-stretch">
                     <div

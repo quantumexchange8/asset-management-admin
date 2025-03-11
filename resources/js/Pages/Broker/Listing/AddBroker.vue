@@ -182,7 +182,7 @@ const handleLogoUpload = (event) => {
 
                     <!-- Description -->
                     <div class="flex flex-col gap-3 items-start self-stretch md:col-span-2 ">
-                        <span class="font-bold text-gray-950 dark:text-white w-full text-left">{{ $t('public.descriptions') }}</span>
+                        <span class="font-bold text-surface-950 dark:text-white w-full text-left">{{ $t('public.descriptions') }}</span>
                         <div class="flex flex-col md:flex-row gap-5 self-stretch w-full">
                             <!-- Checkbox for selecting locales -->
                             <div class="flex flex-col gap-1 items-start self-stretch min-w-40">
@@ -236,7 +236,7 @@ const handleLogoUpload = (event) => {
 
                     <!-- Actions -->
                     <div class="flex flex-col gap-3 items-start self-stretch md:col-span-2 ">
-                        <span class="font-bold text-gray-950 dark:text-white w-full text-left">{{ $t('public.authorization') }}</span>
+                        <span class="font-bold text-surface-950 dark:text-white w-full text-left">{{ $t('public.authorization') }}</span>
                         <div class="flex flex-col md:flex-row gap-5 self-stretch w-full">
                             <!-- Checkbox for selecting locales -->
                             <div class="flex flex-col gap-1 items-start self-stretch min-w-40">

@@ -102,6 +102,15 @@ function copyToClipboard(text) {
                     </div>
                 </div>
             </div>
+
+            <div v-if="depositHistory.status === 'rejected'" class="flex flex-col md:flex-row md:items-center gap-1 self-stretch">
+                <div class="w-[140px] text-surface-500 text-xs font-medium">
+                    {{ $t('public.remarks') }}
+                </div>
+                <div class="text-surface-950 dark:text-white text-sm font-medium">
+                    {{ depositHistory.remarks }}
+                </div>
+            </div>
         </div>
 
         <div v-if="depositHistory.transaction_type === 'deposit' && depositHistory.media.length > 0" class="flex flex-col md:flex-row md:items-start gap-1 self-stretch pt-5">

@@ -404,8 +404,6 @@ watchEffect(() => {
                                             </span>
                                         </div>
                                         <div class="flex gap-1 items-center text-surface-500 text-xs">
-                                            {{ data.user.email }}
-                                            <span>|</span>
                                             <span class="font-bold dark:text-white/60">{{ data.transaction_number }}</span>
                                         </div>
                                     </div>
@@ -420,8 +418,6 @@ watchEffect(() => {
                                         </div>
                                     </div>
                                 </div>
-
-                              
                             </template>
                         </Column>
 
