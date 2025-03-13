@@ -69,7 +69,14 @@ const submitForm = () => {
 </script>
 
 <template>
-    <Button @click="visible = true" type="button">
+    <Button 
+        size="small"
+        rounded
+        class="!p-2"
+        severity="secondary"
+        @click="visible = true" 
+        type="button"
+    >
         <IconCreditCard size="20" stroke-width="1.5" />
     </Button>
 

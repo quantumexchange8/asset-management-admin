@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link } from '@inertiajs/vue3';
 import Breadcrumb from 'primevue/breadcrumb';
-import { ref, h } from 'vue';
+import { ref, h, onMounted } from 'vue';
 import MemberInfo from './MemberInfo.vue';
 import Tabs from 'primevue/tabs';
 import Tab from 'primevue/tab';
@@ -20,20 +20,9 @@ const props = defineProps({
     upline_profile_photo: String,
 });
 
-const home = ref({
-    label: 'member_listing',
-    route: route('member.getMemberList')
-
-});
-
-const items = ref([
-    { label: props.user.name },
-]);
-
 const tabs = ref([
     {
         title: 'finance',
-        content: 'Tab 1 Content',
         component: h(FinanceInfo, {
             user: props.user,
         }),
@@ -41,15 +30,26 @@ const tabs = ref([
     },
     {
         title: 'investment',
-        content: 'Tab 2 Content',
         value: '1'
     },
     {
         title: 'history',
-        content: 'Tab 3 Content',
         value: '2'
     },
 ]);
+
+const selectedType = ref('finance');
+const activeIndex = ref('0');
+
+onMounted(() => {
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    if(params.tab === 'investment'){
+        selectedType.value = 'investment';
+        activeIndex.value = '2';
+    }
+});
 </script>
 
 <template>
@@ -71,13 +71,13 @@ const tabs = ref([
             </div>
 
             <!-- Tabs -->
-            <div class="card">
-                <Tabs value="0">
+            <div class="flex flex-col">
+                <Tabs v-model:value="activeIndex">
                     <TabList>
                         <Tab v-for="tab in tabs" :key="tab.title" :value="tab.value">{{ $t(`public.${tab.title}`) }}</Tab>
                     </TabList>
                     <TabPanels>
-                        <TabPanel v-for="tab in tabs" :key="tab.content" :value="tab.value">
+                        <TabPanel v-for="tab in tabs" :key="tab.value" :value="tab.value">
                             <component :is="tab.component" />
                         </TabPanel>
                     </TabPanels>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccumulatedAmountLogs;
+use App\Models\BonusHistory;
 use App\Models\BrokerConnection;
 use App\Models\Transaction;
 use App\Services\SidebarService;
@@ -102,6 +104,65 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function getPayouts(Request $request)
+    {
+        $year = (int) $request->input('year', date('Y'));
+
+        // Apply all filters before executing the query
+        $query = AccumulatedAmountLogs::query()
+            ->whereRaw('WEEKDAY(created_at) = 5') // 5 = Saturday
+            ->whereRaw('YEAR(created_at) = ?', [$year]) // Filter by year
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SUM(amount) as total_amount')
+            )
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get(); // Execute the query here
+
+        // Generate Labels
+        $labels = collect(range(1, 12))->map(function ($month) {
+            return Carbon::createFromDate(null, $month, 1)->format('F');
+        })->toArray();
+
+        // Define 12 distinct colors for each month
+        $colors = [
+            1 => ['border' => '#FF5733', 'background' => 'rgba(255, 87, 51, 0.3)'],
+            2 => ['border' => '#33FF57', 'background' => 'rgba(51, 255, 87, 0.3)'],
+            3 => ['border' => '#3357FF', 'background' => 'rgba(51, 87, 255, 0.3)'],
+            4 => ['border' => '#FF33A8', 'background' => 'rgba(255, 51, 168, 0.3)'],
+            5 => ['border' => '#33FFF5', 'background' => 'rgba(51, 255, 245, 0.3)'],
+            6 => ['border' => '#F5FF33', 'background' => 'rgba(245, 255, 51, 0.3)'],
+            7 => ['border' => '#A833FF', 'background' => 'rgba(168, 51, 255, 0.3)'],
+            8 => ['border' => '#FF8C33', 'background' => 'rgba(255, 140, 51, 0.3)'],
+            9 => ['border' => '#33FFA8', 'background' => 'rgba(51, 255, 168, 0.3)'],
+            10 => ['border' => '#8C33FF', 'background' => 'rgba(140, 51, 255, 0.3)'],
+            11 => ['border' => '#FF338C', 'background' => 'rgba(255, 51, 140, 0.3)'],
+            12 => ['border' => '#33A8FF', 'background' => 'rgba(51, 168, 255, 0.3)'],
+        ];
+
+        $chartData = [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Total Amount',
+                    'data' => array_map(function ($month) use ($query) {
+                        return $query->firstWhere('month', $month)?->total_amount ?? 0;
+                    }, range(1, 12)),
+                    'backgroundColor' => array_map(fn($month) => $colors[$month]['background'], range(1, 12)),
+                    'borderColor' => array_map(fn($month) => $colors[$month]['border'], range(1, 12)),
+                    'borderWidth' => 2,
+                    'fill' => true,
+                    'tension' => 0.4,
+                ],
+            ],
+        ];
+ 
+        return response()->json([
+            'chartData' => $chartData,
+        ]);
+    }
+
     public function getPendingCounts()
     {
         return response()->json([
@@ -111,6 +172,4 @@ class DashboardController extends Controller
             'pendingWithdrawalCounts' => (new SidebarService())->pendingWithdrawalCounts(),
         ]);
     }
-
-
 }

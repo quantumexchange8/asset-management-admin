@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccumulatedAmountLogs;
 use App\Models\Country;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Policies\UserPolicy;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +18,7 @@ use Inertia\Inertia;
 use App\Services\RunningNumberService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -320,12 +321,19 @@ class MemberController extends Controller
                 'upline:id,name,email,upline_id',
                 'rank:id,rank_name',
             ])
-            ->withCount('wallets')
+            ->withCount([
+                'wallets' => function ($query) {
+                    $query->where('type', '!=', 'cash_wallet'); // Exclude cash_wallet
+                }
+            ])
             ->withCount('children')
             ->addSelect([
                 DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_network")
             ])
             ->first();
+
+        // $accumulate = DB::table('accumulated_amount_logs')
+        //         ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id');
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
         $upline_profile_photo = $user->upline ? $user->upline->getFirstMediaUrl('profile_photo') : null;

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return Redirect::route('login');
@@ -44,6 +45,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
     Route::prefix('dashboard')->middleware('role_and_permission:admin,access_dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/get_total_deposit_by_days', [DashboardController::class, 'getTotalDepositByDays'])->name('dashboard.getTotalDepositByDays');
+        Route::get('get_payouts', [DashboardController::class, 'getPayouts'])->name('dashboard.getPayouts');
         Route::get('/getPendingCounts', [DashboardController::class, 'getPendingCounts'])->name('dashboard.getPendingCounts');
     });
 

@@ -2,24 +2,21 @@
 import { onMounted, ref, watch } from 'vue';
 import Chart from 'chart.js/auto';
 import ProgressSpinner from 'primevue/progressspinner';
-import {useDark} from "@vueuse/core";
+import { useDark } from "@vueuse/core";
+import { IconAlertSmall } from '@tabler/icons-vue';
 
 const props = defineProps({
-    selectedMonth: Number,
     selectedYear: Number,
-    selectedDays: Number,
 });
+
+const isLoading = ref(false);
+const year = ref(props.selectedYear);
+const isDarkMode = useDark();
 
 const chartData = ref({
     labels: [],
     datasets: [],
 });
-
-const isLoading = ref(false);
-const days = ref(props.selectedDays);
-const month = ref(props.selectedMonth);
-const year = ref(props.selectedYear);
-const isDarkMode = useDark();
 
 let chartInstance = null;
 
@@ -28,12 +25,13 @@ const fetchData = async () => {
         if (chartInstance) {
             chartInstance.destroy();
         }
-        
-        const ctx = document.getElementById('dashboardOverviewChart');
+
+        const ctx = document.getElementById('dashboardPayoutsChart');
 
         isLoading.value = true;
 
-        const response = await axios.get('/dashboard/get_total_deposit_by_days', { params: { days: days.value, month: month.value, year: year.value } });
+        const response = await axios.get('/dashboard/get_payouts', { params: { year: year.value } })
+
         const { labels, datasets } = response.data.chartData;
 
         chartData.value.labels = labels;
@@ -42,7 +40,7 @@ const fetchData = async () => {
         isLoading.value = false
 
         chartInstance = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: chartData.value,
             options: {
                 interaction: {
@@ -55,6 +53,7 @@ const fetchData = async () => {
                     y: {
                         ticks: {
                             callback: function (value) {
+                                const roundedValue = parseFloat(value.toFixed(2));
                                 const ranges = [
                                     { divider: 1e6, suffix: 'M' },
                                     { divider: 1e3, suffix: 'k' }
@@ -67,7 +66,8 @@ const fetchData = async () => {
                                     }
                                     return n;
                                 }
-                                return formatNumber(value);
+                                const formattedValue = formatNumber(roundedValue);
+                                return roundedValue === 0 ? '0' : formattedValue;
                             },
                             color: isDarkMode.value ? "#71717a" : "#a1a1aa",
                             font: {
@@ -87,7 +87,7 @@ const fetchData = async () => {
                     },
                     x: {
                         ticks: {
-                            color: isDarkMode.value ? "#71717a" : "#a1a1aa",
+                            color: isDarkMode.value ? "#71717a" : "a1a1aa",
                             font: {
                                 family: "Inter, sans-serif",
                                 size: 14,
@@ -108,9 +108,8 @@ const fetchData = async () => {
             }
         });
 
-
     } catch (error) {
-        const ctx = document.getElementById('dashboardOverviewChart');
+        const ctx = document.getElementById('dashboardPayoutsChart');
 
         isLoading.value = false
         console.error('Error fetching chart data:', error);
@@ -118,20 +117,17 @@ const fetchData = async () => {
 }
 
 onMounted(async () => {
-    await fetchData(); // Fetch data on mount
+    await fetchData();
 
     watch(
-        [() => props.selectedDays, () => props.selectedMonth, () => props.selectedYear, isDarkMode], // Array of expressions to watch
-        ([newDay, newMonth, newYear, newTheme]) => {
+        [() => props.selectedYear, isDarkMode], // Array of expressions to watch
+        ([newYear, newTheme]) => {
             // This callback will be called when selectedMonth or selectedYear changes.
-            days.value = newDay;
-            month.value = newMonth;
             year.value = newYear;
             fetchData();
         }
     );
-
-});
+})
 </script>
 
 <template>
@@ -139,6 +135,6 @@ onMounted(async () => {
         <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center">
             <ProgressSpinner />
         </div>
-        <canvas id="dashboardOverviewChart" height="350" v-show="!isLoading"></canvas>
+        <canvas id="dashboardPayoutsChart" height="350" v-show="!isLoading"></canvas>
     </div>
 </template>
