@@ -5,26 +5,29 @@ import FinanceWallet from './FinanceWallet.vue';
 
 const props = defineProps({
     user: Object,
-    required: true,
 });
 
 </script>
 
 <template>
-   <div class="flex flex-col xl:flex-row items-start gap-5 self-stretch">
+    <div class="flex flex-col xl:flex-row items-start gap-5 self-stretch">
         <!-- Left Side (Total Cards + Wallet Cards) -->
         <div class="flex flex-col gap-5 w-full xl:max-w-[640px]">
 
             <!-- Total Cards -->
-            <FinanceOverview />
+            <FinanceOverview 
+               :user="user"
+            />
 
             <!-- Wallet Cards -->
             <FinanceWallet 
-                :user="user"
+                :user="user" 
             />
         </div>
 
         <!-- (Accumulated Amount Table) -->
-       <FinanceTable />
+        <FinanceTable 
+            :user="user"
+        />
     </div>
 </template>

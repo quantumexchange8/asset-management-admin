@@ -80,6 +80,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
             //Finance
             Route::get('/{id_number}/getWalletData', [MemberController::class, 'getWalletData'])->name('member.detail.getWalletData');
             Route::post('walletAdjustment', [MemberController::class, 'walletAdjustment'])->name('member.detail.walletAdjustment');
+            Route::get('/{id_number}/financeDetail', [MemberController::class, 'financeDetail'])->name('member.detail.financeDetail');
         });
     });
 

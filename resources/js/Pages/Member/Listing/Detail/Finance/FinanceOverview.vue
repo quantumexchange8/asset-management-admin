@@ -1,9 +1,35 @@
 <script setup>
+import { generalFormat } from '@/Composables/format';
 import { IconCashBanknoteOff, IconDatabaseDollar } from '@tabler/icons-vue';
 import Card from 'primevue/card';
 import Skeleton from 'primevue/skeleton';
+import { onMounted, ref } from 'vue';
 
+const props = defineProps({
+    user: Object,
+});
 
+const totalBonus = ref();
+const totalWithdrawal = ref();
+const isLoading = ref(false);
+const {formatAmount} = generalFormat();
+
+const getFinanceData = async () => {
+    isLoading.value = true;
+    try {
+        const response = await axios.get(`/member/detail/${props.user.id_number}/financeDetail`);
+        totalBonus.value = response.data.totalBonus;
+        totalWithdrawal.value = response.data.totalWithdrawal;
+    } catch(error) {
+        console.error('Error fetching finance detail:', error);
+    } finally {
+        isLoading.value = false;
+    }
+}
+
+onMounted(() => {
+    getFinanceData();
+})
 </script>
 
 <template>
@@ -20,7 +46,7 @@ import Skeleton from 'primevue/skeleton';
                                 <Skeleton width="5rem" height="2rem"></Skeleton>
                             </div>
                             <div v-else>
-                                1000
+                                {{ formatAmount(totalBonus, 4) ?? 0 }}
                             </div>
                         </div>
                     </div>
@@ -45,7 +71,7 @@ import Skeleton from 'primevue/skeleton';
                                 <Skeleton width="5rem" height="2rem"></Skeleton>
                             </div>
                             <div v-else>
-                               1000
+                                {{ totalWithdrawal }}
                             </div>
                         </div>
                     </div>

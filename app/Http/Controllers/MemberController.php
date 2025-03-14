@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use PDO;
 
 class MemberController extends Controller
 {
@@ -332,8 +333,6 @@ class MemberController extends Controller
             ])
             ->first();
 
-        // $accumulate = DB::table('accumulated_amount_logs')
-        //         ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id');
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
         $upline_profile_photo = $user->upline ? $user->upline->getFirstMediaUrl('profile_photo') : null;
@@ -547,5 +546,33 @@ class MemberController extends Controller
 
         $redirectUrl = $url . "?" . http_build_query($params);
         return Inertia::location($redirectUrl);
+    }
+
+    public function financeDetail($id_number)
+    {
+        $user = User::where('id_number', $id_number)->first();
+
+        $accumulate = DB::table('accumulated_amount_logs')
+            ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
+            ->where('accumulated_amount_logs.user_id', $user->id)
+            ->where('transactions.transaction_type', 'withdrawal')
+            ->where('transactions.category', 'bonus_wallet')
+            ->select('transactions.*', 'accumulated_amount_logs.*')
+            ->paginate(5);
+
+        $totalWithdrawal = Transaction::where('user_id', $user->id)
+            ->where('transaction_type', 'withdrawal')
+            ->where('status', 'success')
+            ->where('category', 'bonus_wallet')
+            ->count();
+
+        $totalBonus = AccumulatedAmountLogs::where('user_id', $user->id)
+            ->sum('amount');
+
+        return response()->json([
+            'accumulate' => $accumulate,
+            'totalWithdrawal' => $totalWithdrawal,
+            'totalBonus' => $totalBonus,
+        ]);
     }
 }
