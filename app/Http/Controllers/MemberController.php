@@ -552,13 +552,13 @@ class MemberController extends Controller
     {
         $user = User::where('id_number', $id_number)->first();
 
-        $accumulate = DB::table('accumulated_amount_logs')
-            ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
-            ->where('accumulated_amount_logs.user_id', $user->id)
-            ->where('transactions.transaction_type', 'withdrawal')
-            ->where('transactions.category', 'bonus_wallet')
-            ->select('transactions.*', 'accumulated_amount_logs.*')
-            ->paginate(5);
+        // $accumulate = DB::table('accumulated_amount_logs')
+        //     ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
+        //     ->where('accumulated_amount_logs.user_id', $user->id)
+        //     ->where('transactions.transaction_type', 'withdrawal')
+        //     ->where('transactions.category', 'bonus_wallet')
+        //     ->select('transactions.*', 'accumulated_amount_logs.*')
+        //     ->paginate(5);
 
         $totalWithdrawal = Transaction::where('user_id', $user->id)
             ->where('transaction_type', 'withdrawal')
@@ -570,7 +570,7 @@ class MemberController extends Controller
             ->sum('amount');
 
         return response()->json([
-            'accumulate' => $accumulate,
+            //'accumulate' => $accumulate,
             'totalWithdrawal' => $totalWithdrawal,
             'totalBonus' => $totalBonus,
         ]);
