@@ -153,7 +153,8 @@ class ReferralController extends Controller
 
         // Calculate capital funds
         $activeConnections = BrokerConnection::with('broker')
-            ->where('status', 'active');
+            ->where('status', 'success')
+            ->whereNot('connection_type', 'withdrawal');
 
         $total_personal_fund = (clone $activeConnections)
             ->where('user_id', $currentUser['id'])

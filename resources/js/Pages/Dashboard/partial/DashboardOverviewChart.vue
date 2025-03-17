@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import Chart from 'chart.js/auto';
 import ProgressSpinner from 'primevue/progressspinner';
-import {useDark} from "@vueuse/core";
+import { useDark } from "@vueuse/core";
 
 const props = defineProps({
     selectedMonth: Number,
@@ -28,7 +28,7 @@ const fetchData = async () => {
         if (chartInstance) {
             chartInstance.destroy();
         }
-        
+
         const ctx = document.getElementById('dashboardOverviewChart');
 
         isLoading.value = true;
@@ -60,9 +60,10 @@ const fetchData = async () => {
                                     { divider: 1e3, suffix: 'k' }
                                 ];
                                 function formatNumber(n) {
+                                    const absValue = Math.abs(n);
                                     for (let i = 0; i < ranges.length; i++) {
-                                        if (n >= ranges[i].divider) {
-                                            return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                                        if (absValue >= ranges[i].divider) {
+                                            return (n < 0 ? '-' : '') + (absValue / ranges[i].divider).toString() + ranges[i].suffix;
                                         }
                                     }
                                     return n;

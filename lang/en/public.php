@@ -78,7 +78,7 @@ return [
     "overview" => "Overview",
     "overview_caption" => "View all of your Total Deposits and Withdrawals across all Brokers",
     "payouts" => "Payouts",
-    "payouts_caption" => "View your Total Payouts Yearly",
+    "payouts_caption" => "View your Total Payouts Yearly, payout update on Saturday",
     "no_members_founded" => "No Members Found",
     "add_members_to_proceed" => "Add Members to Proceed",
     "no_deposit_founded" => "No Deposits Found",

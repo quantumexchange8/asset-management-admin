@@ -169,7 +169,7 @@ class ConnectionController extends Controller
         $connections = BrokerConnection::find($request->connection_id);
 
         if ($request->action == 'approve') {
-            $connections->status = 'active';
+            $connections->status = 'success';
             $connections->joined_at = now();
         } else {
             if (!$request->remarks) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccumulatedAmountLogs;
+use App\Models\BrokerAccount;
 use App\Models\Country;
 use App\Models\Transaction;
 use App\Models\User;
@@ -333,6 +334,7 @@ class MemberController extends Controller
             ])
             ->first();
 
+        $accountsCount = BrokerAccount::where('user_id', $user->id)->count();
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
         $upline_profile_photo = $user->upline ? $user->upline->getFirstMediaUrl('profile_photo') : null;
@@ -345,6 +347,7 @@ class MemberController extends Controller
             'back_identity_image' => $back_identity_image,
             'profile_photo' => $profile_photo,
             'upline_profile_photo' => $upline_profile_photo,
+            'accountsCount' => $accountsCount,
         ]);
     }
 
@@ -552,13 +555,13 @@ class MemberController extends Controller
     {
         $user = User::where('id_number', $id_number)->first();
 
-        // $accumulate = DB::table('accumulated_amount_logs')
-        //     ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
-        //     ->where('accumulated_amount_logs.user_id', $user->id)
-        //     ->where('transactions.transaction_type', 'withdrawal')
-        //     ->where('transactions.category', 'bonus_wallet')
-        //     ->select('transactions.*', 'accumulated_amount_logs.*')
-        //     ->paginate(5);
+        $accumulate = DB::table('accumulated_amount_logs')
+            ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
+            ->where('accumulated_amount_logs.user_id', $user->id)
+            ->where('transactions.transaction_type', 'withdrawal')
+            ->where('transactions.category', 'bonus_wallet')
+            ->select('transactions.*', 'accumulated_amount_logs.*')
+            ->paginate(5);
 
         $totalWithdrawal = Transaction::where('user_id', $user->id)
             ->where('transaction_type', 'withdrawal')
@@ -570,9 +573,24 @@ class MemberController extends Controller
             ->sum('amount');
 
         return response()->json([
-            //'accumulate' => $accumulate,
+            'accumulate' => $accumulate,
             'totalWithdrawal' => $totalWithdrawal,
             'totalBonus' => $totalBonus,
+        ]);
+    }
+
+    public function getBrokerAccounts($id_number)
+    {
+        $user = User::where('id_number', $id_number)->first();
+
+        $broker_accounts = BrokerAccount::with([
+            'broker',
+            'broker.media',
+        ])
+            ->where('user_id', $user->id)->get();
+
+        return response()->json([
+            'brokerAccounts' => $broker_accounts,
         ]);
     }
 }

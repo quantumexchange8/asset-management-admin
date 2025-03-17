@@ -124,7 +124,7 @@ const {locale} = useLangObserver();
                                     />
                                     <Avatar
                                         v-else
-                                        :label="formatNameLabel(user.name)"
+                                        :label="formatNameLabel(user.upline?.name)"
                                         shape="circle"
                                         class="w-full h-full flex items-center justify-center text-sm md:text-xs font-bold text-white bg-primary-500"
                                     />

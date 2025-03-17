@@ -198,6 +198,9 @@ const getSeverity = (status) => {
 
         case 'top_up':
             return 'info';
+        
+        case 'deposit':
+            return 'info';
     }
 }
 

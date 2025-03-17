@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         $total_active_fund = BrokerConnection::where([
-            'status' => 'active'
+            'status' => 'success',
         ])->sum('capital_fund');
 
         return Inertia::render('Dashboard/Dashboard', [
@@ -27,41 +27,69 @@ class DashboardController extends Controller
 
     public function getTotalDepositByDays(Request $request)
     {
-        $query = BrokerConnection::query()
-            ->whereIn('status', ['active', 'removed']);
 
-        // Get the selected month/year (default: current month/year)
+        $query = BrokerConnection::query()
+            ->where('status', 'success');
+
         $month = (int) $request->input('month', date('m'));
         $year = (int) $request->input('year', date('Y'));
         $days = (int) $request->input('days', cal_days_in_month(CAL_GREGORIAN, $month, $year));
 
-        if ($days <= 14) {
-            // Last X days from today
-            $endDate = Carbon::now()->endOfDay();
-            $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+        $currentMonth = (int) date('m');
+        $currentYear = (int) date('Y');
+        $currentDay = (int) date('d');
+
+        if ($year === $currentYear && $month === $currentMonth) {
+            if ($days <= 14) {
+                $endDate = Carbon::now()->endOfDay();
+                $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+            } else {
+                $startDate = Carbon::create($year, $month, 1)->startOfDay();
+                $endDate = Carbon::create($year, $month, $currentDay)->endOfDay();
+            }
         } else {
             $startDate = Carbon::create($year, $month, 1)->startOfDay();
-            $endDate = Carbon::create($year, $month, date('d'))->endOfDay();
+            $endDate = Carbon::create($year, $month, min($days, cal_days_in_month(CAL_GREGORIAN, $month, $year)))->endOfDay();
         }
 
-        $filteredQuery = $query->whereBetween('joined_at', [$startDate, $endDate]);
+        // Fetch deposits (joined_at only)
+        $depositData = (clone $query)
+            ->where('connection_type', 'deposit')
+            ->whereNotNull('joined_at') // Ensure joined_at exists
+            ->whereBetween('joined_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('DATE(joined_at) as date'),
+                DB::raw('SUM(capital_fund) as amount'),
+                DB::raw("'deposit' as connection_type")
+            )
+            ->groupBy('date');
 
-        $chartResults = $filteredQuery->select(
-            DB::raw('DATE(joined_at) as date'),
-            'status',
-            DB::raw('SUM(capital_fund) as amount')
-        )->groupBy('date', 'status')->get();
+        // Fetch withdrawals (removed_at only)
+        $withdrawalData = (clone $query)
+            ->where('connection_type', 'withdrawal')
+            ->whereNotNull('removed_at') // Ensure removed_at exists
+            ->whereBetween('removed_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('DATE(removed_at) as date'),
+                DB::raw('SUM(capital_fund) as amount'),
+                DB::raw("'withdrawal' as connection_type")
+            )
+            ->groupBy('date');
 
-        $connectionsStatus = $chartResults->pluck('status')->unique();
+        // Combine both datasets
+        $chartResults = $depositData->union($withdrawalData)->get();
 
-        // Generate Labels:
-        if ($days === 7) {
-            // Latest 7 weekdays (e.g., Sun, Mon, Tue)
-            $labels = collect(range(0, 6))->map(fn($i) => Carbon::now()->subDays(6 - $i)->format('D'))->toArray();
-        } elseif ($days === 14) {
-            $labels = collect(range(0, 13))->map(fn($i) => Carbon::now()->subDays(13 - $i)->format('j'))->toArray();
+        // Generate labels
+        if ($year === $currentYear && $month === $currentMonth) {
+            if ($days === 7) {
+                $labels = collect(range(0, 6))->map(fn($i) => Carbon::now()->subDays(6 - $i)->format('D'))->toArray();
+            } elseif ($days === 14) {
+                $labels = collect(range(0, 13))->map(fn($i) => Carbon::now()->subDays(13 - $i)->format('j'))->toArray();
+            } else {
+                $labels = collect(range($startDate->day, $currentDay))->toArray();
+            }
         } else {
-            $labels = collect(range(1, date('d')))->toArray();
+            $labels = collect(range(1, min($days, cal_days_in_month(CAL_GREGORIAN, $month, $year))))->toArray();
         }
 
         $chartData = [
@@ -71,16 +99,15 @@ class DashboardController extends Controller
 
         // Color mapping
         $colors = [
-            'active' => ['border' => '#12B76A', 'background' => 'rgba(18, 183, 106, 0.3)'],
-            'removed' => ['border' => '#FF2D55', 'background' => 'rgba(255, 45, 85, 0.3)']
+            'deposit' => ['border' => '#12B76A', 'background' => 'rgba(18, 183, 106, 0.3)'],
+            'withdrawal' => ['border' => '#FF2D55', 'background' => 'rgba(255, 45, 85, 0.3)']
         ];
 
-        // Loop through each unique status and create a dataset
-        foreach ($connectionsStatus as $status) {
-            $data = $chartResults->where('status', $status);
+        foreach (['deposit', 'withdrawal'] as $connectionType) {
+            $data = $chartResults->where('connection_type', $connectionType);
 
             $dataset = [
-                'label' => $status == 'active' ? trans('public.deposit') : trans('public.withdrawal'),
+                'label' => trans("public.$connectionType"),
                 'data' => array_map(function ($label) use ($month, $year, $chartData, $data, $days) {
                     $date = ($days <= 14)
                         ? Carbon::now()->subDays($days - 1 - array_search($label, $chartData['labels']))->toDateString()
@@ -88,8 +115,8 @@ class DashboardController extends Controller
 
                     return $data->firstWhere('date', $date)->amount ?? 0;
                 }, $chartData['labels']),
-                'borderColor' => $colors[$status]['border'],
-                'backgroundColor' => $colors[$status]['background'],
+                'borderColor' => $colors[$connectionType]['border'],
+                'backgroundColor' => $colors[$connectionType]['background'],
                 'borderWidth' => 2,
                 'pointStyle' => false,
                 'fill' => true,
@@ -157,7 +184,7 @@ class DashboardController extends Controller
                 ],
             ],
         ];
- 
+
         return response()->json([
             'chartData' => $chartData,
         ]);

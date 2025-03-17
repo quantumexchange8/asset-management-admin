@@ -78,7 +78,7 @@ return [
     "overview" => "概览",
     "overview_caption" => "查看您在所有经纪商的总存款和提款",
     "payouts" => "支出",
-    "payouts_caption" => "查看您每年的总支出",
+    "payouts_caption" => "查看年度总支出，周六支出更新",
     "no_members_founded" => "未找到会员",
     "add_members_to_proceed" => "请添加会员以继续",
     "no_deposit_founded" => "未找到存款",

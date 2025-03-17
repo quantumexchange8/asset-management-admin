@@ -11,6 +11,7 @@ import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 import FinanceInfo from './Finance/FinanceInfo.vue';
 import KycProfile from './KycProfile.vue';
+import InvestmentInfo from './Investment/InvestmentInfo.vue';
 
 const props = defineProps({
     user: Object,
@@ -18,6 +19,7 @@ const props = defineProps({
     back_identity_image: String,
     profile_photo: String,
     upline_profile_photo: String,
+    accountsCount: Number,
 });
 
 const tabs = ref([
@@ -30,6 +32,10 @@ const tabs = ref([
     },
     {
         title: 'investment',
+        component: h(InvestmentInfo, {
+            user: props.user,
+            accountsCount: props.accountsCount,
+        }),
         value: '1'
     },
     {
@@ -45,9 +51,15 @@ onMounted(() => {
     const params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
     });
-    if(params.tab === 'investment'){
-        selectedType.value = 'investment';
+    if(params.tab === 'history'){
+        selectedType.value = 'history';
         activeIndex.value = '2';
+    } else if(params.tab === 'investment'){
+        selectedType.value = 'investment';
+        activeIndex.value = '1';
+    } else {
+        selectedType.value = 'finance';
+        activeIndex.value = '0';
     }
 });
 </script>
