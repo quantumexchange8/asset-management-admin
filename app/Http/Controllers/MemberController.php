@@ -555,12 +555,45 @@ class MemberController extends Controller
     {
         $user = User::where('id_number', $id_number)->first();
 
-        $accumulate = DB::table('accumulated_amount_logs')
-            ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
-            ->where('accumulated_amount_logs.user_id', $user->id)
-            ->where('transactions.transaction_type', 'withdrawal')
-            ->where('transactions.category', 'bonus_wallet')
-            ->select('transactions.*', 'accumulated_amount_logs.*')
+        // $accumulate = DB::table('accumulated_amount_logs')
+        //     ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
+        //     ->where('accumulated_amount_logs.user_id', $user->id)
+        //     ->where('transactions.transaction_type', 'withdrawal')
+        //     ->where('transactions.category', 'bonus_wallet')
+        //     ->where('transactions.status', 'success')
+        //     ->select('transactions.*', 'accumulated_amount_logs.*')
+        //     ->paginate(5);
+
+        $accumulate = AccumulatedAmountLogs::where('user_id', $user->id)
+            ->whereDate('created_at', '>=', now()->subDays(7))
+            ->select(
+                'user_id',
+                DB::raw("NULL AS transaction_type"),
+                'amount AS amount',
+                DB::raw("NULL AS transaction_number"),
+                DB::raw("NULL AS status"),
+                'purpose',
+                'created_at'
+            );
+
+        $withdrawal = Transaction::where('user_id', $user->id)
+            ->where('transaction_type', 'withdrawal')
+            ->where('category', 'bonus_wallet')
+            ->where('status', 'success')
+            //->whereDate('created_at', '>=', now()->subDays(7))
+            ->select(
+                'user_id',
+                'transaction_type',
+                'amount AS amount',
+                'transaction_number',
+                'status',
+                DB::raw("NULL AS purpose"),
+                'created_at'
+            );
+
+        // Union both queries and paginate
+        $joinQuery = $accumulate->union($withdrawal)
+            ->orderBy('created_at', 'desc')
             ->paginate(5);
 
         $totalWithdrawal = Transaction::where('user_id', $user->id)
@@ -573,7 +606,7 @@ class MemberController extends Controller
             ->sum('amount');
 
         return response()->json([
-            'accumulate' => $accumulate,
+            'accumulate' => $joinQuery,
             'totalWithdrawal' => $totalWithdrawal,
             'totalBonus' => $totalBonus,
         ]);

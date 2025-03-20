@@ -384,13 +384,13 @@ watchEffect(() => {
                                         <div class="flex gap-1 items-center text-surface-500 text-xs">
                                             {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
                                             <span>|</span>
-                                            <span>${{ formatAmount(data.net_profit) }}</span>
+                                            <span>{{ formatAmount(data.net_profit) }}</span>
                                             <span>|</span>
                                             <span>{{ data.remaining_percentage }}%</span>
                                         </div>
                                     </div>
                                     <div class="text-base font-semibold">
-                                        ${{ formatAmount(data.bonus_amount, 4) }}
+                                        {{ formatAmount(data.bonus_amount, 4) }}
                                     </div>
                                 </div>
                             </template>

@@ -31,7 +31,7 @@ const {formatAmount} = generalFormat();
                                 </div>
 
                                 <div v-else>
-                                    ${{ formatAmount(totalBrokerCapital) }}
+                                    {{ formatAmount(totalBrokerCapital) }}
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@ const {formatAmount} = generalFormat();
                                 </div>
 
                                 <div v-else>
-                                    {{ formatAmount(accountCounts, 0) }}
+                                    {{ accountCounts }}
                                 </div>
                             </div>
                         </div>

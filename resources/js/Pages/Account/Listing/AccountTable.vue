@@ -421,7 +421,7 @@ watchEffect(() => {
                                         </div>
 
                                         <div class="flex justify-end w-full">
-                                            <div class="text-xs">${{ data.broker_capital }}</div>
+                                            <div class="text-xs">{{ formatAmount(data.broker_capital)}}</div>
                                         </div>
                                     </div>
 

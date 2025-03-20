@@ -1,6 +1,7 @@
 <script setup>
 import EmptyData from '@/Components/EmptyData.vue';
 import { generalFormat } from '@/Composables/format';
+import dayjs from 'dayjs';
 import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import Skeleton from 'primevue/skeleton';
@@ -22,8 +23,7 @@ const getFinanceData = async (page = 1) => {
     isLoading.value = true;
     try {
         const response = await axios.get(`/member/detail/${props.user.id_number}/financeDetail?page=${page}`);
-        
-        accumulate.value = response.data.accumulate.data; // Extract paginated data
+        accumulate.value = response.data.accumulate.data;
         totalRecords.value = response.data.accumulate.total;
         console.log(response.data.accumulate.data)
     } catch (error) {
@@ -45,26 +45,37 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- <Card class="w-full">
+    <Card class="w-full">
         <template #content>
             <div class="w-full">
-                <div v-if="isLoading" class="flex flex-col p-6">
-                    <div v-for="index in rows" :key="index" class="flex flex-col sm:flex-row sm:items-center p-6 gap-4 border-t border-surface-200 dark:border-surface-700">
-                        <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
-                            <div class="flex flex-row md:flex-col justify-between items-start gap-2">
-                                <div>
-                                    <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">
-                                        <Skeleton width="5rem" height="2rem"></Skeleton>
-                                    </span>
-                                    <div class="text-lg font-medium mt-2">
-                                        <Skeleton width="5rem" height="2rem"></Skeleton>
+                <div v-if="isLoading" class="flex flex-col">
+                    <div v-for="index in rows" :key="index">
+                        <div class="flex flex-col sm:flex-row sm:items-center p-4 gap-4"
+                            :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
+                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                    <div>
+                                        <span>
+                                            <Skeleton width="5rem" height="1rem"></Skeleton>
+                                        </span>
+                                        <div class="mt-2">
+                                            <Skeleton width="5rem" height="1rem"></Skeleton>
+                                        </div>
+                                    </div>
+                                    <div class="" style="border-radius: 30px">
+                                        <div class="flex items-center gap-2 justify-center">
+                                            <span><Skeleton width="5rem" height="1rem"></Skeleton></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="flex flex-col md:items-end gap-8">
-                                <span class="text-xl font-semibold">
-                                    <Skeleton width="5rem" height="2rem"></Skeleton>
-                                </span>
+                                <div class="flex flex-col md:items-end gap-8">
+                                    <span>
+                                        <Skeleton width="5rem" height="1rem"></Skeleton>
+                                    </span>
+                                    <span>
+                                        <Skeleton width="5rem" height="1rem"></Skeleton>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,25 +101,36 @@ onMounted(() => {
                     <template #list="slotProps">
                         <div class="flex flex-col">
                             <div v-for="(item, index) in slotProps.items" :key="index">
-                                <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
+                                <div class="flex flex-col sm:flex-row sm:items-center p-4 gap-4"
                                     :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
-                                    <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                    <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 ">
                                         <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                                             <div>
                                                 <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">
-                                                    {{ $t(`public.${item.purpose}`) }}
+                                                    {{ $t(`public.${item.purpose !== null ? item.purpose : item.transaction_type}`) }}
                                                 </span>
-                                                <div class="text-lg font-medium mt-2">{{ $t(`public.${item.transaction_type}`) }}</div>
+                                                <div v-if="item.transaction_number != null" class="text-md font-medium mt-2">
+                                                    {{ item.transaction_number }}
+                                                </div>
                                             </div>
-                                            <div class="" style="border-radius: 30px">
+                                            <div>
                                                 <div class="flex items-center gap-2 justify-center">
-                                                    <span class="font-medium text-sm">{{ item.created_at }}</span>
+                                                    <span class="font-medium text-sm">
+                                                        {{ dayjs(item.created_at).format('YYYY-MM-DD')}}
+                                                        <div class="text-xs text-surface-500 mt-1">
+                                                            {{ dayjs(item.created_at).add(8, 'hour').format('hh:mm:ss A') }}
+                                                        </div>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="flex flex-col md:items-end gap-8">
-                                            <span class="text-xl font-semibold">${{ formatAmount(item.amount, 4) ?? 0 }}</span>
-                                            <span class="text-xl font-semibold">{{ item.transaction_number}}</span>
+                                            <span 
+                                                class="text-xl font-semibold"
+                                                :class="{ 'text-red-500': item.transaction_type === 'withdrawal' }"
+                                            >
+                                                {{ item.transaction_type === 'withdrawal' ? '-' : '' }}{{ formatAmount(item.amount, 4) ?? 0 }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -118,5 +140,5 @@ onMounted(() => {
                 </DataView>
             </div>
         </template>
-    </Card> -->
+    </Card>
 </template>

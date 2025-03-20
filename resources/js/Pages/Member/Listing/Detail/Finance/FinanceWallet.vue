@@ -76,7 +76,7 @@ const refreshWallet = () => {
                     <div class="w-full bg-surface-100 dark:bg-surface-800 p-3 flex flex-col gap-3 rounded-[12px]">
                         <span class="text-surface-700 dark:text-surface-100 text-xs font-medium">{{ $t('public.balance') }}</span>
                         <div class="md:text-lg text-primary-500 font-semibold">
-                            <span>{{ wallet.currency_symbol }}{{ formatAmount(wallet.balance) }}</span>
+                            <span>{{ formatAmount(wallet.balance) }}</span>
                         </div>
                     </div>
                 </div>

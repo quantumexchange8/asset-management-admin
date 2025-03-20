@@ -142,7 +142,7 @@ class ReferralController extends Controller
             }
         }
 
-        // Direct downline count (immediate children)
+        // Direct downline count
         $directDownlineCount = count($children);
 
         // Total downline count (direct + all downlines)

@@ -16,7 +16,7 @@ const {formatAmount} = generalFormat();
     <AuthenticatedLayout title="dashboard">
         <div class="flex flex-col gap-5 items-center self-stretch">
             <div class="flex flex-col gap-1 w-full">
-                <span class="text-5xl text-surface-950 dark:text-white font-semibold">${{ formatAmount(totalActiveFund) }}</span>
+                <span class="text-5xl text-surface-950 dark:text-white font-semibold">{{ formatAmount(totalActiveFund) }}</span>
                 <span class="text-sm text-surface-500">{{ $t('public.total_active_fund_from_broker') }}</span>
             </div>
 

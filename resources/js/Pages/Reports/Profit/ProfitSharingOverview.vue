@@ -33,7 +33,7 @@ const {formatAmount} = generalFormat();
                                 </div>
 
                                 <div v-else>
-                                    ${{ formatAmount(totalBonusAmount, 4) }}
+                                    {{ formatAmount(totalBonusAmount, 4) }}
                                 </div>
                             </div>
                         </div>
@@ -62,7 +62,7 @@ const {formatAmount} = generalFormat();
                                 </div>
 
                                 <div v-else>
-                                    ${{ formatAmount(maxBonusAmount, 4) }}
+                                    {{ formatAmount(maxBonusAmount, 4) }}
                                 </div>
                             </div>
                         </div>

@@ -17,12 +17,16 @@ export function generalFormat() {
         }
     }
 
-    function formatAmount(amount, decimalPlaces = 2) {
-        const formattedAmount = parseFloat(amount).toFixed(decimalPlaces);
-        const integerPart = formattedAmount.split('.')[0];
-        const decimalPart = formattedAmount.split('.')[1];
+    function formatAmount(amount, decimalPlaces = 2, currencySymbol = '$') {
+        const isNegative = amount < 0; // Check if the amount is negative
+        const absoluteAmount = Math.abs(amount).toFixed(decimalPlaces); // Format absolute value
+
+        const [integerPart, decimalPart] = absoluteAmount.split('.');
         const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        return decimalPlaces > 0 ? `${integerWithCommas}.${decimalPart}` : integerWithCommas;
+
+        const formattedAmount = decimalPlaces > 0 ? `${integerWithCommas}.${decimalPart}` : integerWithCommas;
+
+        return isNegative ? `-${currencySymbol}${formattedAmount}` : `${currencySymbol}${formattedAmount}`;
     }
 
     const formatRgbaColor = (hex, opacity) => {

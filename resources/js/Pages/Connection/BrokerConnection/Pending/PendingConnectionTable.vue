@@ -307,7 +307,7 @@ watchEffect(() => {
                             sortable
                         >
                             <template #body="{ data }">
-                                ${{ formatAmount(data.capital_fund) }}
+                                {{ formatAmount(data.capital_fund) }}
                             </template>
                         </Column>
 

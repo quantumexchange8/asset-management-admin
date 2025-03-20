@@ -411,7 +411,7 @@ watchEffect(() => {
                                 <span class="block">{{ $t('public.amount') }}</span>
                             </template>
                             <template #body="{ data }">
-                                ${{ formatAmount(data.amount) }}
+                                {{ formatAmount(data.amount) }}
                             </template>
                         </Column>
 
@@ -458,7 +458,7 @@ watchEffect(() => {
                                         </div>
 
                                         <div class="flex justify-end w-full">
-                                            ${{ formatAmount(data.amount) }}
+                                            {{ formatAmount(data.amount) }}
                                         </div>
                                     </div>
                                 </div>

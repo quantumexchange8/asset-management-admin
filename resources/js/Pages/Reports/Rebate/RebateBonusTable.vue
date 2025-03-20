@@ -377,7 +377,7 @@ watchEffect(() => {
                             sortable
                         >
                             <template #body="{ data }">
-                                ${{ formatAmount(data.rebate, 4) }}
+                                {{ formatAmount(data.rebate, 4) }}
                             </template>
                         </Column>
 
@@ -405,7 +405,7 @@ watchEffect(() => {
                                         </div>
                                     </div>
                                     <div class="text-base font-semibold">
-                                        ${{ formatAmount(data.rebate, 4) }}
+                                        {{ formatAmount(data.rebate, 4) }}
                                     </div>
                                 </div>
                             </template>

@@ -98,7 +98,7 @@ watchEffect(() => {
                             </div>
 
                             <div v-else class="text-2xl">
-                                ${{ formatAmount(props.totalPendingAmount ?? 0, 4) }}
+                                {{ formatAmount(props.totalPendingAmount ?? 0, 4) }}
                             </div>
                         </div>
 
