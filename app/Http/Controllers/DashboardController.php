@@ -147,6 +147,7 @@ class DashboardController extends Controller
         // Apply all filters before executing the query
         $query = AccumulatedAmountLogs::query()
             ->whereRaw('YEAR(created_at) = ?', [$year]) // Filter by year
+            ->whereDate('created_at', '<=', $currentDate)
             ->select(
                 DB::raw('MONTH(created_at) as month'),
                 DB::raw('SUM(amount) as total_amount')
