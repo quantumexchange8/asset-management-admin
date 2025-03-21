@@ -5,6 +5,7 @@ import FinanceWallet from './FinanceWallet.vue';
 
 const props = defineProps({
     user: Object,
+    financeTableCount: Number,
 });
 
 </script>
@@ -28,6 +29,7 @@ const props = defineProps({
         <!-- (Accumulated Amount Table) -->
         <FinanceTable 
             :user="user"
+            :financeTableCount="financeTableCount"
         />
     </div>
 </template>

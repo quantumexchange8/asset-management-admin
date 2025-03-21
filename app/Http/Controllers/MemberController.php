@@ -334,7 +334,19 @@ class MemberController extends Controller
             ])
             ->first();
 
+        // investment
         $accountsCount = BrokerAccount::where('user_id', $user->id)->count();
+
+        // finance
+        $accumulateCount = AccumulatedAmountLogs::where('user_id', $user->id)->count();
+
+        $withdrawalCount = Transaction::where('user_id', $user->id)
+            ->where('transaction_type', 'withdrawal')
+            ->where('category', 'bonus_wallet')
+            ->where('status', 'success')
+            ->count();
+        
+        $financeTableCount = $accumulateCount + $withdrawalCount;
 
         $profile_photo = $user->getFirstMediaUrl('profile_photo');
         $upline_profile_photo = $user->upline ? $user->upline->getFirstMediaUrl('profile_photo') : null;
@@ -348,6 +360,7 @@ class MemberController extends Controller
             'profile_photo' => $profile_photo,
             'upline_profile_photo' => $upline_profile_photo,
             'accountsCount' => $accountsCount,
+            'financeTableCount' => $financeTableCount,
         ]);
     }
 
@@ -555,22 +568,11 @@ class MemberController extends Controller
     {
         $user = User::where('id_number', $id_number)->first();
 
-        // $accumulate = DB::table('accumulated_amount_logs')
-        //     ->join('transactions', 'accumulated_amount_logs.user_id', '=', 'transactions.user_id')
-        //     ->where('accumulated_amount_logs.user_id', $user->id)
-        //     ->where('transactions.transaction_type', 'withdrawal')
-        //     ->where('transactions.category', 'bonus_wallet')
-        //     ->where('transactions.status', 'success')
-        //     ->select('transactions.*', 'accumulated_amount_logs.*')
-        //     ->paginate(5);
-
         $accumulate = AccumulatedAmountLogs::where('user_id', $user->id)
-            ->whereDate('created_at', '>=', now()->subDays(7))
             ->select(
                 'user_id',
                 DB::raw("NULL AS transaction_type"),
                 'amount AS amount',
-                DB::raw("NULL AS transaction_number"),
                 DB::raw("NULL AS status"),
                 'purpose',
                 'created_at'
@@ -580,12 +582,10 @@ class MemberController extends Controller
             ->where('transaction_type', 'withdrawal')
             ->where('category', 'bonus_wallet')
             ->where('status', 'success')
-            //->whereDate('created_at', '>=', now()->subDays(7))
             ->select(
                 'user_id',
                 'transaction_type',
                 'amount AS amount',
-                'transaction_number',
                 'status',
                 DB::raw("NULL AS purpose"),
                 'created_at'

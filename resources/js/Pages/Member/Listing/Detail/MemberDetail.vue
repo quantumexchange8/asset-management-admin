@@ -20,6 +20,7 @@ const props = defineProps({
     profile_photo: String,
     upline_profile_photo: String,
     accountsCount: Number,
+    financeTableCount: Number,
 });
 
 const tabs = ref([
@@ -27,6 +28,7 @@ const tabs = ref([
         title: 'finance',
         component: h(FinanceInfo, {
             user: props.user,
+            financeTableCount: props.financeTableCount,
         }),
         value: '0'
     },
