@@ -93,7 +93,7 @@ class DashboardController extends Controller
         }
 
         $chartData = [
-            'labels' => $labels,
+            'labels' => array_map(fn($label) => trans("public.$label"), $labels),
             'datasets' => [],
         ];
 
@@ -183,10 +183,11 @@ class DashboardController extends Controller
         })->toArray();
 
         $chartData = [
-            'labels' => $labels,
+            'labels' => array_map(fn($label) => trans("public.$label"), $labels),
+
             'datasets' => [
                 [
-                    'label' => 'Total Amount',
+                    'label' => trans('public.total_amount'),
                     'data' => array_map(function ($month) use ($query) {
                         return $query->firstWhere('month', $month)?->total_amount ?? 0;
                     }, range(1, 12)),
