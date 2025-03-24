@@ -93,7 +93,7 @@ class DashboardController extends Controller
         }
 
         $chartData = [
-            'labels' => array_map(fn($label) => trans("public.$label"), $labels),
+            'labels' => array_map(fn($label) => is_numeric($label) ? $label : trans("public.$label"), $labels),
             'datasets' => [],
         ];
 
