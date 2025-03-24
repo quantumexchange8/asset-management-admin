@@ -390,4 +390,6 @@ return [
     "Fri" => "Fri",
     "Sat" => "Sat",
     "Sun" => "Sun",
+
+    "no_record" => "No Record"
 ];

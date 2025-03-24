@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import Tag from 'primevue/tag';
+import ProgressSpinner from 'primevue/progressspinner';
 import Skeleton from 'primevue/skeleton';
 import { onMounted, ref } from 'vue';
 
@@ -50,6 +51,13 @@ onMounted(() => {
         <template #content>
             <div class="w-full">
                 <div v-if="isLoading" class="flex flex-col">
+                    <div v-if="financeTableCount === 0">
+                        <div class="flex flex-col gap-2 items-center justify-center">
+                            <ProgressSpinner
+                                strokeWidth="4"
+                            />
+                        </div>
+                    </div>
                     <div v-for="index in financeTableCount" :key="index">
                         <div class="flex flex-col p-3"
                             :class="{ 'border-b border-surface-200 dark:border-surface-700': index < financeTableCount }">

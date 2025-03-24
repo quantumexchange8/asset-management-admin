@@ -131,10 +131,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getPayouts(Request $request) //last saturday record
+    public function getPayouts(Request $request)
     {
         $year = (int) $request->input('year', date('Y'));
-        $currentDate = Carbon::now(); // Hardcoded date for testing
+        $currentDate = Carbon::now();
         $currentMonth = $currentDate->month;
 
         $firstOfMonth = Carbon::create($year, $currentMonth, 1)->startOfDay();
@@ -146,7 +146,7 @@ class DashboardController extends Controller
 
         // Apply all filters before executing the query
         $query = AccumulatedAmountLogs::query()
-            ->whereRaw('YEAR(created_at) = ?', [$year]) // Filter by year
+            ->whereYear('created_at', $year)
             ->whereDate('created_at', '<=', $currentDate)
             ->select(
                 DB::raw('MONTH(created_at) as month'),
@@ -154,7 +154,7 @@ class DashboardController extends Controller
             )
             ->groupBy('month')
             ->orderBy('month')
-            ->get(); // Execute the query here
+            ->get();
 
         $currentMonthData = AccumulatedAmountLogs::query()
             ->whereYear('created_at', $year)
@@ -185,7 +185,6 @@ class DashboardController extends Controller
 
         $chartData = [
             'labels' => array_map(fn($label) => trans("public.$label"), $labels),
-
             'datasets' => [
                 [
                     'label' => trans('public.total_amount'),
