@@ -60,7 +60,7 @@ const {formatAmount} = generalFormat();
                                 </div>
 
                                 <div v-else>
-                                    {{ formatAmount(pendingAccountCounts, 0) }}
+                                    {{ pendingAccountCounts }}
                                 </div>
                             </div>
                         </div>

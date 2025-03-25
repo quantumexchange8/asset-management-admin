@@ -106,7 +106,7 @@ const closeDialog = () => {
                     <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
                 </div>
                 <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
-                    $ {{ formatAmount(pending.amount) }}
+                    {{ formatAmount(pending.amount) }}
                 </div>
             </div>
 

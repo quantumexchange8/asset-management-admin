@@ -46,7 +46,7 @@ function copyToClipboard(text) {
                 <span class="text-surface-500 text-sm">{{ withdrawalHistory.user.email }}</span>
             </div>
             <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
-                $ {{ formatAmount(withdrawalHistory.amount) }}
+                {{ formatAmount(withdrawalHistory.amount) }}
             </div>
         </div>
 
@@ -118,7 +118,7 @@ function copyToClipboard(text) {
                     {{ $t('public.receive') }}
                 </div>
                 <div class="text-surface-950 dark:text-white text-sm font-medium">
-                    $ {{ formatAmount(withdrawalHistory.transaction_amount ?? 0) }}
+                    {{ formatAmount(withdrawalHistory.transaction_amount ?? 0) }}
                 </div>
             </div>
 

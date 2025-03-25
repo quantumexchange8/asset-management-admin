@@ -104,7 +104,7 @@ const closeDialog = () => {
                     <span class="text-surface-500 text-sm">{{ pending.user.email }}</span>
                 </div>
                 <div class="min-w-[180px] text-surface-950 dark:text-white font-semibold text-xl md:text-right">
-                    $ {{ formatAmount(pending.amount, 4) }}
+                    {{ formatAmount(pending.amount, 4) }}
                 </div>
             </div>
 
@@ -166,7 +166,7 @@ const closeDialog = () => {
                         {{ $t('public.fee') }}
                     </div>
                     <div class="text-red-500 text-sm font-medium">
-                        $ {{ formatAmount(pending.transaction_charges ?? 0) }}
+                        {{ formatAmount(pending.transaction_charges ?? 0) }}
                     </div>
                 </div>
 
@@ -175,7 +175,7 @@ const closeDialog = () => {
                         {{ $t('public.receive') }}
                     </div>
                     <div class="text-surface-950 dark:text-white text-sm font-medium">
-                        $ {{ formatAmount(pending.transaction_amount ?? 0) }}
+                        {{ formatAmount(pending.transaction_amount ?? 0) }}
                     </div>
                 </div>
             </div>

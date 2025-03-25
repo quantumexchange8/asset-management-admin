@@ -33,7 +33,7 @@ const {formatNameLabel} = generalFormat();
                             </div>
 
                             <div v-else>
-                                $ {{ formatAmount(props.successAmount ?? 0) }}
+                                {{ formatAmount(props.successAmount ?? 0) }}
                             </div>
 
                         </div>
@@ -60,7 +60,7 @@ const {formatNameLabel} = generalFormat();
                             </div>
                             
                             <div v-else>
-                                $ {{ formatAmount(props.rejectAmount ?? 0) }}
+                                {{ formatAmount(props.rejectAmount ?? 0) }}
                             </div>
                         </div>
                     </div>

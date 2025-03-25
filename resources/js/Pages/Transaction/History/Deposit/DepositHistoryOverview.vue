@@ -66,7 +66,7 @@ function calculatePercentage(fund) {
                                 </div>
 
                                 <div v-else>
-                                    $ {{ formatAmount(props.successAmount ?? 0) }}
+                                    {{ formatAmount(props.successAmount ?? 0) }}
                                 </div>
 
                             </div>
@@ -93,7 +93,7 @@ function calculatePercentage(fund) {
                                 </div>
                                 
                                 <div v-else>
-                                    $ {{ formatAmount(props.rejectAmount ?? 0) }}
+                                    {{ formatAmount(props.rejectAmount ?? 0) }}
                                 </div>
                             </div>
                         </div>

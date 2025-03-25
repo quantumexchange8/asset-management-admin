@@ -155,7 +155,7 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-
+   
         $currentMonthData = AccumulatedAmountLogs::query()
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $currentMonth)
@@ -163,7 +163,7 @@ class DashboardController extends Controller
             ->select(
                 DB::raw('MONTH(created_at) as month'),
                 DB::raw('SUM(amount) as total_amount')
-            )
+            ) 
             ->groupBy('month')
             ->first();
 
