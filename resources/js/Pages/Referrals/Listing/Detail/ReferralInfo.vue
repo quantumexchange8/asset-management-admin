@@ -5,11 +5,14 @@ import Tag from 'primevue/tag';
 import Image from 'primevue/image';
 import Avatar from 'primevue/avatar';
 import { generalFormat } from '@/Composables/format';
+import { useLangObserver } from '@/Composables/localeObserver';
+
 const props = defineProps({
     referral: Object,
 })
 
 const {formatNameLabel} = generalFormat();
+const {locale} = useLangObserver();
 
 const getSeverity = (status) => {
     switch (status) {
@@ -33,9 +36,9 @@ const getSeverity = (status) => {
         <Card class="w-full self-stretch relative">
             <template #content>
                 <div class="flex flex-col gap-5 self-stretch">
-                    <div class="flex flex-col md:flex-row gap-3 md:gap-5 items-center self-stretch">
+                    <div class="flex gap-3 md:gap-5 items-center self-stretch">
                         <div
-                            class="w-20 md:w-28 h-20 md:h-28 grow-0 shrink-0 rounded-full overflow-hidden bg-primary-200 dark:bg-surface-800">
+                            class="w-12 md:w-14 h-12 md:h-14 grow-0 shrink-0 rounded-full overflow-hidden bg-primary-200 dark:bg-surface-800 flex items-center justify-center">
                             <div v-if="referral" class="w-full h-full flex justify-center items-center">
                                 <Avatar
                                     v-if="referral.profile_photo"
@@ -54,21 +57,20 @@ const getSeverity = (status) => {
     
                         <div class="flex flex-col gap-5 w-full">
                             <div class="flex flex-col gap-1">
-                                <div class="text-lg text-surface-950 dark:text-white">
-                                    {{ props.referral.name }}
+                                <div class="flex items-center gap-3">
+                                    <div class="text-lg text-surface-950 dark:text-white">
+                                        {{ props.referral.name }}
+                                    </div>
+                                    <Tag
+                                        :value="props.referral.rank.rank_name === 'member' ? $t(`public.${props.referral.rank.rank_name}`) : props.referral.rank.rank_name"
+                                        severity="info"
+                                    />
                                 </div>
-    
-                                <div class="flex items-center self-stretch text-sm text-surface-500 dark:text-surface-500">
+                                <div class="flex gap-1 md:gap-3 items-center self-stretch text-xs md:text-sm text-surface-400 dark:text-surface-500">
+                                    <span>@{{ props.referral.username }}</span>
+                                    <span>|</span>
                                     <span>{{ props.referral.id_number }}</span>
-                                    <Divider layout="vertical" />
-                                    <span>{{ props.referral.username }}</span>
                                 </div>
-                            </div>
-    
-                            <div class="flex gap-2 flex-wrap items-center">
-                                <Tag :value="props.referral.status" :severity="getSeverity(props.referral.status)" />
-    
-                                <Tag v-if="props.referral.role !== 'referral'" :value="props.referral.role" severity="secondary" />
                             </div>
                         </div>
                     </div>
@@ -79,8 +81,6 @@ const getSeverity = (status) => {
                             <div class="flex flex-col justify-center items-start w-full">
                                 <div class="flex gap-1 items-center w-full">
                                     <span class="text-xs text-surface-500">{{ $t('public.email') }}</span>
-                                    <Tag class="text-xxs" :value="props.referral.email_verified_at ? 'verified' : 'unverified'"
-                                        :severity="getSeverity(props.referral.email_verified_at ? 'active' : 'unverified')" />
                                 </div>
                                 <div
                                     class="truncate text-surface-950 dark:text-white text-sm font-medium max-w-36 md:max-w-full">
@@ -101,13 +101,19 @@ const getSeverity = (status) => {
     
                         <div class="flex justify-center items-center gap-5 self-stretch">
                             <!-- Country -->
-                            <div class="flex flex-col justify-center items-start gap-1 w-full">
+                            <div class="flex flex-col gap-1 items-start w-full">
                                 <div class="text-surface-500 text-xs w-full truncate">
                                     {{ $t('public.country') }}
                                 </div>
                                 <div class="flex gap-1 items-center">
-                                    <span class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                        {{props.referral.country?.name || '-' }}</span>
+                                    <img
+                                        v-if="props.referral.country?.iso2"
+                                        :src="`https://flagcdn.com/w40/${props.referral.country?.iso2.toLowerCase()}.png`"
+                                        :alt="props.referral.country?.iso2"
+                                        width="24"
+                                        height="18"
+                                    />
+                                    <div class="max-w-[200px] truncate text-sm">{{ JSON.parse(props.referral.country?.translations)[locale] || props.referral.country?.name }}</div>
                                 </div>
                             </div>
     
@@ -139,45 +145,16 @@ const getSeverity = (status) => {
                         </div>
     
                         <div class="flex justify-center items-center gap-5 self-stretch">
-                            <!-- Rank -->
-                            <div class="flex flex-col justify-center items-start gap-2 w-full">
-                                <div class="text-surface-500 text-xs w-full truncate">
-                                    {{ $t('public.rank') }}
-                                </div>
-                                <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                    {{ props.referral.rank.rank_name }}
-                                </div>
+                            <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-2 rounded-md w-full">
+                                <span class="text-md font-medium">{{ $t('public.directs') }}</span>
+                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.downlines_count}}</span>
                             </div>
-    
-                            <!-- Referer -->
-                            <div class="flex flex-col justify-center items-start gap-2 w-full">
-                                <div class="text-surface-500 text-xs w-full truncate">
-                                    {{ $t('public.referee') }}
-                                </div>
-                                <div class="truncate text-surface-950 dark:text-white text-sm font-medium w-full">
-                                    {{ props.referral.downlines_count }}
-                                </div>
+
+                            <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-2 rounded-md w-full">
+                                <span class="text-md font-medium">{{ $t('public.networks') }}</span>
+                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.total_downlines_count}}</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </template>
-        </Card>
-    
-        <Card class="w-full self-stretch relative">
-            <template #content>
-                <div class="flex flex-col items-center gap-16 p-10">
-                    <!-- Total Direct Client -->
-    
-                    <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-5 rounded-md w-full">
-                        <span class="text-lg font-medium">{{ $t('public.direct_downlines') }}</span>
-                        <span class="text-4xl font-extrabold text-primary-500">{{props.referral.downlines_count}}</span> <!-- Replace 25 with dynamic value -->
-                    </div>
-            
-                    <!-- Total Downline -->
-                    <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-5 rounded-md w-full">
-                        <span class="text-lg font-medium">{{ $t('public.total_downlines') }}</span>
-                        <span class="text-4xl font-extrabold text-primary-500">{{props.referral.total_downlines_count}}</span> <!-- Replace 100 with dynamic value -->
                     </div>
                 </div>
             </template>

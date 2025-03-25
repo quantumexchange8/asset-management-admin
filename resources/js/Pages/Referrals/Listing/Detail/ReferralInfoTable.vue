@@ -52,7 +52,7 @@ const totalTeamFunds = computed(() => {
 
                     <Column 
                         field="broker"
-                           
+                        style="min-width: 7rem"
                     >
                         <template #header>
                             <span class="block">{{ $t('public.broker') }}</span>
@@ -61,13 +61,13 @@ const totalTeamFunds = computed(() => {
                             {{ data.broker_name }}
                         </template>
                         <template #footer>
-                            <span class="font-bold">{{ $t('public.total') }}:</span>
+                            <span>{{ $t('public.total') }}:</span>
                         </template>
                     </Column>
 
                     <Column 
-                            field="current_asset_capital"
-                           
+                        field="current_asset_capital"   
+                        style="min-width: 9rem"
                     >
                         <template #header>
                             <span class="block">{{ $t('public.personal_capital_fund') }} ($)</span>
@@ -82,7 +82,6 @@ const totalTeamFunds = computed(() => {
 
                     <Column 
                         field="current_team_capital"
-                            
                     >
                         <template #header>
                             <span class="block">{{ $t('public.team_capital_fund') }} ($)</span>
@@ -94,8 +93,6 @@ const totalTeamFunds = computed(() => {
                             {{ formatAmount(totalTeamFunds) }}
                         </template>
                     </Column>
-
-                  
                 </template>
             </DataTable>
         </div>

@@ -23,7 +23,7 @@ class ReferralController extends Controller
 
             $userQuery = User::query()
                 ->with([
-                    'country:id,name,emoji',
+                    'country:id,name,emoji,iso2,translations',
                     'rank:id,rank_name',
                     'upline:id,name,email,upline_id',
                 ]);
@@ -52,7 +52,7 @@ class ReferralController extends Controller
                     // Fetch all relevant users based on hierarchy
                     $users = User::whereIn('id', $userIds)
                         ->with([
-                            'country:id,name,emoji',
+                            'country:id,name,emoji,iso2,translations',
                             'rank:id,rank_name',
                             'upline:id,name,email,upline_id',
                         ])
@@ -72,7 +72,7 @@ class ReferralController extends Controller
                 // Fetch users with a valid hierarchy
                 $users = User::whereIn('id', $hierarchyUserIds)
                     ->with([
-                        'country:id,name,emoji',
+                        'country:id,name,emoji,iso2,translations',
                         'rank:id,rank_name',
                         'upline:id,name,email,upline_id',
                     ])

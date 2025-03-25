@@ -337,13 +337,13 @@ watchEffect(() => {
                                     <div class="py-1 flex items-center gap-3 self-stretch w-full text-surface-500">
                                         <IconUserDollar size="20" stroke-width="1.5" />
                                         <div class="text-surface-950 dark:text-white text-sm font-medium">
-                                            {{ formatAmount(broker.connections_count, 0) }} {{ $t('public.connections') }}
+                                            {{ broker.connections_count }} {{ $t('public.connections') }}
                                         </div>
                                     </div>
                                     <div class="py-1 flex items-center gap-3 self-stretch text-surface-500">
                                         <IconPremiumRights size="20" stroke-width="1.5" />
                                         <div class="text-surface-950 dark:text-white text-sm font-medium">
-                                            <span class="text-primary-500">$ {{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.capital_fund') }}
+                                            <span class="text-primary-500">{{ formatAmount(Number(broker.connections_sum_capital_fund ?? 0)) }}</span> {{ $t('public.capital_fund') }}
                                         </div>
                                     </div>
                                 </div>

@@ -15,10 +15,13 @@ const visible = ref(false);
 
 <template>
     <Button
-        class="bg-transparent border-none p-0 m-0 outline-none focus:outline-none active:outline-none hover:bg-transparent"
+        size="small"
+        rounded
+        class="!p-2"
+        type="button"
         @click="visible = true"
     >
-        <IconFileDescription :size="20" stroke-width="1.5" :style="{ stroke: '#cca05a' }" />
+        <IconFileDescription size="16" stroke-width="1.5" />
     </Button>
 
     <Dialog v-model:visible="visible" modal class="dialog-xs md:dialog-lg">

@@ -187,7 +187,8 @@ export default {
                 { 'border-x border-y': context?.showGridlines },
 
                 // Spacing
-                context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
+                // context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
+                'py-2 md:p-4',
 
                 // Color
                 'border-surface-200 dark:border-surface-700',
