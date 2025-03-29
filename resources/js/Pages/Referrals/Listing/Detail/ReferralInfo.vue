@@ -1,8 +1,6 @@
 <script setup>
 import Card from 'primevue/card';
-import Divider from 'primevue/divider';
 import Tag from 'primevue/tag';
-import Image from 'primevue/image';
 import Avatar from 'primevue/avatar';
 import { generalFormat } from '@/Composables/format';
 import { useLangObserver } from '@/Composables/localeObserver';
@@ -14,21 +12,6 @@ const props = defineProps({
 const {formatNameLabel} = generalFormat();
 const {locale} = useLangObserver();
 
-const getSeverity = (status) => {
-    switch (status) {
-        case 'unverified':
-            return 'danger';
-
-        case 'verified':
-            return 'success';
-
-        case 'active':
-            return 'success';
-
-        case 'pending':
-            return 'info';
-    }
-}
 </script>
 
 <template>

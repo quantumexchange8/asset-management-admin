@@ -139,7 +139,7 @@ function calculatePercentage(fund) {
                                 />
                             </div>
                             <span class="truncate text-surface-950 dark:text-white text-right text-sm font-medium md:text-base w-full max-w-[88px] md:max-w-[110px]">
-                                $ {{ topUsers[index - 1]?.total_deposit ? formatAmount(topUsers[index - 1].total_deposit) : formatAmount(0) }}
+                                {{ topUsers[index - 1]?.total_deposit ? formatAmount(topUsers[index - 1].total_deposit) : formatAmount(0) }}
                             </span>
                         </div>
                     </div>

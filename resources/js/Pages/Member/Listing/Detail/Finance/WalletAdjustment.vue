@@ -89,7 +89,7 @@ const submitForm = () => {
                         {{ $t(`public.${wallet.type}`) }}
                     </div>
                     <div class="text-xl text-primary-500 font-semibold">
-                        <span>{{ wallet.currency_symbol }}{{ formatAmount(wallet.balance) }}</span>
+                        <span>{{ formatAmount(wallet.balance) }}</span>
                     </div>
                 </div>
 

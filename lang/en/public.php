@@ -390,6 +390,8 @@ return [
     "Fri" => "Fri",
     "Sat" => "Sat",
     "Sun" => "Sun",
-
-    "no_record" => "No Record"
+    "no_record" => "No Record",
+    "team_capital" => "Team Capital",
+    "collapse_all" => "Collapse All",
+    "level" => "Level",
 ];

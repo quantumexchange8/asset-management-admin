@@ -71,9 +71,8 @@ watchEffect(() => {
                                 </div>
 
                                 <div v-else>
-                                    {{ props.pendingDepositCounts }} {{ $t('public.deposit') }}
+                                    {{ props.pendingDepositCounts }}
                                 </div>
-
                             </div>
                         </div>
                         <div class="flex items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 w-[72px] h-[72px]">

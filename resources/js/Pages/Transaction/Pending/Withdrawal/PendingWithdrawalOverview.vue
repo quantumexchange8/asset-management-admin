@@ -71,7 +71,7 @@ watchEffect(() => {
                                 </div>
 
                                 <div v-else>
-                                    {{ props.pendingWithdrawalCounts }} {{ $t('public.withdrawal') }}
+                                    {{ props.pendingWithdrawalCounts }}
                                 </div>
 
                             </div>

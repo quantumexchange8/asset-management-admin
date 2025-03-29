@@ -1,219 +1,384 @@
 <script setup>
-import Card from 'primevue/card';
-import Button from 'primevue/button';
-import IconField from 'primevue/iconfield';
-import Tag from 'primevue/tag';
-import InputText from 'primevue/inputtext';
-import InputIcon from 'primevue/inputicon';
-import ProgressSpinner from 'primevue/progressspinner';
-import { IconXboxX, IconSearch, IconPlus, IconMinus } from '@tabler/icons-vue';
-import { onMounted, ref, watch, watchEffect } from 'vue';
-import { FilterMatchMode } from '@primevue/core/api';
-import { usePage, Link } from '@inertiajs/vue3';
+import {IconSearch, IconX, IconChevronUp, IconMinus} from "@tabler/icons-vue";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import Card from "primevue/card";
+import Skeleton from "primevue/skeleton";
+import {ref, watch} from "vue";
 import debounce from "lodash/debounce.js";
-import { generalFormat } from '@/Composables/format';
-import { useLangObserver } from '@/Composables/localeObserver';
-import ReferralDetail from './Detail/ReferralDetail.vue';
-import ReferralDownline from './Partial/ReferralDownline.vue';
+import {generalFormat} from "@/Composables/format.js";
+import InputIconWrapper from "@/Components/InputIconWrapper.vue";
+import EmptyData from "@/Components/EmptyData.vue";
 
+const emit = defineEmits();
+
+const search = ref('');
+const checked = ref(true);
+const upline = ref(null);
+const parents = ref([]);
+const upline_id = ref();
+const parent_id = ref();
+const children = ref([]);
+const selectedChildren = ref([]);
+const loading = ref(false);
+const success = ref(false);
 const { formatAmount } = generalFormat();
-const { locale } = useLangObserver();
-const isLoading = ref(false);
-const referrals = ref([]);
-const expandedUsers = ref({});
 
-// Function to toggle top-level user expansion
-const toggleExpand = (id) => {
-    expandedUsers.value = { ...expandedUsers.value, [id]: !expandedUsers.value[id] };
-};
-
-//filteration type and methods
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-});
-
-const lazyParams = ref({}); //track table parameters that need to be send to backend
-
-const loadLazyData = (event) => { // event will retrieve from the datatable attribute
-    isLoading.value = true;
-    referrals.value = [];
-    expandedUsers.value = {};
-    lazyParams.value = {
-        ...lazyParams.value,
-        first: event?.first || 0,
-        filters: filters.value
-    };
-
+const getNetwork = async (filterUplineId = upline_id.value, filterParentId = parent_id.value,  filterSearch = search.value) => {
+    loading.value = true;
     try {
-        setTimeout(async () => {
+        let url = `/referral/getDownlineData?search=` + filterSearch;
 
-            //pagination, filter, sorting detail done by user through the event are pass into the params
-            const params = { //define query parameters for API
-                include: [], //an empty array for additional query parameters
-                lazyEvent: JSON.stringify(lazyParams.value), //contain information about pagination, filtering, sorting
-            };
+        if (filterUplineId) {
+            url += `&upline_id=${filterUplineId}`;
+        }
 
-            //send sorting/filter detail to BE
-            const url = route('referral.getReferralData', params);
-            const response = await fetch(url);
+        if (filterParentId) {
+            url += `&parent_id=${filterParentId}`;
+        }
 
-            //BE send back result back to FE
-            const results = await response.json();
-            referrals.value = results?.data?.referrals || [];
-            isLoading.value = false;
-        }, 100);
-    } catch (e) {
-        referrals.value = [];
-        isLoading.value = false;
+        if (selectedChildren.value.length > 0) {
+            url += `&selected_children=${JSON.stringify(selectedChildren.value.map(child => child.id))}`;
+        }
+
+        const response = await axios.get(url);
+
+        success.value = response.data.success;
+        upline.value = response.data.upline;
+        parents.value = response.data.parents;
+        selectedChildren.value = response.data.children;
+
+        if(response.data.children ?? []){
+            children.value = selectedChildren.value;
+        }
+
+        // Check upline first
+        if (!response.data.success) {
+            console.log(response.data.message);
+        }
+
+    } catch (error) {
+        console.error('Error get network:', error);
+    } finally {
+        loading.value = false;
     }
 };
 
-//set a initial parameters when page first loaded then call loadLazyData to send initial parameters to BE
-onMounted(() => {
-    lazyParams.value = {
-        first: 0,
-        filters: filters.value
-    };
-    loadLazyData();
-});
+getNetwork();
 
-//monitor changes to global filter, debounce ensure loadLazyData tiggered 300ms after user stop typing
-watch(
-    () => filters.value['global'].value,
-    debounce(() => {
-        expandedUsers.value = {}; // Collapse all expanded users before searching
-        loadLazyData();
+watch(search,
+    debounce((newSearchValue) => {
+        getNetwork(upline_id.value, parent_id.value, newSearchValue)
     }, 300)
 );
 
+ // Store selected children
+const showChildren = (children, parentId) => {
+    parent_id.value = parentId;
+    selectedChildren.value = children;
+    search.value = '';
+    
+    getNetwork(null, parent_id.value, selectedChildren.value);
+}
 
-//clear global filter
-const clearFilterGlobal = () => {
-    filters.value['global'].value = null;
+const selectDownline = (downlineId, directs, uplineId) => {
+    upline_id.value = uplineId;
+    parent_id.value = downlineId;
+    selectedChildren.value = directs;
+    search.value = '';
+
+    getNetwork(upline_id.value, parent_id.value, selectedChildren.value);
+}
+
+const collapseAll = () => {
+    upline_id.value = null;
+    parent_id.value = null;
+    selectedChildren.value = []; // Set to empty array instead of null
+    search.value = '';
+    
+    getNetwork(); // Load only the default Parents section
 };
 
-watchEffect(() => {
-    if (usePage().props.toast !== null) {
-        loadLazyData();
+const backToUpline = (parentLevel) => {
+    if (parents.value.length === 0) return; // Ensure parents exist
+
+    if (parentLevel === 1) {
+        upline_id.value = null;
+        parent_id.value = null;
+        search.value = '';
+    } else {
+        parent_id.value = parents.value[0].upline_id ?? null;
+        upline_id.value = parents.value[0].upper_upline_id ?? null;
+        search.value = '';
     }
-});
+
+    getNetwork(upline_id.value, parent_id.value);
+};
+
+
+const clearSearch = () => {
+    search.value = '';
+}
 </script>
+
 <template>
     <Card>
         <template #content>
-            <div class="w-full">
-                <div class="flex flex-wrap justify-between items-center">
-                    <div class="flex items-center space-x-4 w-full md:w-auto">
-                        <!-- Search bar -->
-                        <IconField>
-                            <InputIcon>
-                                <IconSearch :size="16" stroke-width="1.5" />
-                            </InputIcon>
-                            <InputText v-model="filters['global'].value" :placeholder="$t('public.search_keyword')"
-                                type="text" class="block w-full pl-10 pr-10" />
-                            <!-- Clear filter button -->
-                            <div v-if="filters['global'].value"
-                                class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
-                                @click="clearFilterGlobal">
-                                <IconXboxX aria-hidden="true" :size="15" />
-                            </div>
-                        </IconField>
+            <div class="flex flex-col gap-5 items-center self-stretch">
+                <div class="flex flex-col md:flex-row gap-3 items-center self-stretch">
+                    <div class="relative w-full md:w-60">
+                        <InputIconWrapper>
+                            <template #icon>
+                                <IconSearch :size="20" stroke-width="1.5"/>
+                            </template>
+
+                            <InputText
+                                id="name"
+                                type="text"
+                                class="pl-10 block w-full md:w-60"
+                                v-model="search"
+                                :placeholder="$t('public.search_keyword')"
+                            />
+                        </InputIconWrapper>
+                        <div
+                            v-if="search"
+                            class="absolute top-2/4 -mt-2 right-4 text-gray-300 hover:text-gray-400 select-none cursor-pointer"
+                            @click="clearSearch"
+                        >
+                            <IconX size="16" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 w-full gap-3">
+                        <div class="w-full flex justify-end">
+                            <Button
+                                size="small"
+                                @click="collapseAll"
+                                class="w-full md:w-auto flex gap-1"
+                            >
+                                <IconMinus size="20" stroke-width="1.25" />
+                                {{ $t('public.collapse_all') }}
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
-                <div v-if="isLoading" class="flex flex-col gap-2 items-center justify-center">
-                    <ProgressSpinner />
-                    <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.referral_loading_caption') }}</span>
+                <!-- Loading State -->
+                <div
+                    v-if="loading"
+                    class="flex flex-col items-center gap-6 w-full"
+                >
+                    <!-- Upline Section -->
+                    <div class="flex flex-col items-center gap-6 w-full">
+                        <div class="flex items-center self-stretch gap-3">
+                            <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ 0 }}</span>
+                            <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                        </div>
+
+                        <div class="flex justify-center flex-wrap w-full">
+                            <div
+                                class="rounded flex flex-col items-center w-full md:max-w-[240px] shadow-card border-l-4 border border-surface-200 dark:border-surface-700 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800"
+                            >
+                                <div class="pt-3 pb-2 px-3 rounded-t flex flex-col w-full self-stretch">
+                                    <Skeleton width="5rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="7rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="9rem" class="my-0.5" height="1rem"></Skeleton>
+                                </div>
+                                <div class="pb-2 px-3 rounded-b flex items-center gap-3 w-full self-stretch">
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parent Section -->
+                    <div class="flex flex-col items-center gap-6 w-full">
+                        <div class="flex items-center self-stretch gap-3">
+                            <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ 1 }}</span>
+                            <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                        </div>
+
+                        <!-- loading state -->
+                        <div class="flex justify-center flex-wrap w-full">
+                            <div
+                                class="rounded flex flex-col items-center w-full md:max-w-[240px] shadow-card border-l-4 border border-surface-200 dark:border-surface-700 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800"
+                            >
+                                <div class="pt-3 pb-2 px-3 rounded-t flex flex-col w-full self-stretch">
+                                    <Skeleton width="5rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="7rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="9rem" class="my-0.5" height="1rem"></Skeleton>
+                                </div>
+                                <div class="pb-2 px-3 rounded-b flex items-center gap-3 w-full self-stretch">
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Children Section -->
+                    <div class="flex flex-col items-center gap-6 w-full">
+                        <div class="flex items-center self-stretch gap-3">
+                            <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ 2 }}</span>
+                            <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                        </div>
+
+                        <!-- loading state -->
+                        <div class="flex justify-center flex-wrap w-full">
+                            <div
+                                class="rounded flex flex-col items-center w-full md:max-w-[240px] shadow-card border-l-4 border border-surface-200 dark:border-surface-700 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800"
+                            >
+                                <div class="pt-3 pb-2 px-3 rounded-t flex flex-col w-full self-stretch">
+                                    <Skeleton width="5rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="7rem" class="my-0.5" height="1rem"></Skeleton>
+                                    <Skeleton width="9rem" class="my-0.5" height="1rem"></Skeleton>
+                                </div>
+                                <div class="pb-2 px-3 rounded-b flex items-center gap-3 w-full self-stretch">
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                    </div>
+                                    <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                        <Skeleton width="3rem" class="my-0.5" height="1rem"></Skeleton>
+                                        <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div v-else class="flex flex-col gap-1 self-stretch relative pt-4 overflow-x-auto">
-                    <div class="flex flex-col gap-4">
-                        <template v-for="user in referrals" :key="user.id">
-                            <div :class="[
-                                'p-4 rounded-lg bg-surface-100 dark:bg-surface-800 flex items-center',
-                                locale === 'en' ? 'max-w-[1190px] min-w-[1190px]' : 'max-w-[950px] min-w-[950px]',
-                            ]">
-                                <div class="flex items-center w-full relative gap-6">
-                                    <!-- Left: Expand Button -->
-                                    <Button
-                                        v-if="user.children?.length"
-                                        @click="toggleExpand(user.id)"
-                                        class="w-10 h-10 flex-shrink-0"
-                                        rounded
-                                    >
-                                        <IconPlus v-if="!expandedUsers[user.id]" size="20" stroke-width="2"/>
-                                        <IconMinus v-else size="20" stroke-width="2"/>
-                                    </Button>
-
-                                    <!-- Level Indicator -->
-                                    <div class="w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-semibold rounded-full text-sm">
-                                        1
+                <div
+                    v-else
+                    class="w-full"
+                >
+                    <div
+                        v-if="success"
+                        class="flex flex-col items-center gap-6 w-full"
+                    >
+                        <!-- Upline Section -->
+                        <div v-if="checked && upline" class="flex flex-col items-center gap-6 w-full">
+                            <div class="flex justify-center flex-wrap w-full relative">
+                                <div
+                                    class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800 w-full border-blue-500 border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-t-blue-500 hover:border-b hover:border-b-blue-500 hover:border-r hover:border-r-blue-500 transition-colors duration-200"
+                                >
+                                    <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
+                                        <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
+                                            {{ upline.username }}
+                                        </div>
+                                        <div class="w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.fund') }}: <span class="font-semibold text-primary">{{ formatAmount(upline.capital_fund_sum) }}</span>
+                                        </div>
+                                        <div class="w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.team_capital') }}: <span class="font-semibold text-primary">{{ formatAmount(upline.total_downline_capital_fund) }}</span>
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Grid for User Info & Other Details -->
-                                    <div :class="[
-                                       'gap-x-6 gap-y-2 text-sm pr-10',
-                                       locale === 'en' ? 'grid grid-cols-[1.5fr_1fr_2fr_2fr_1fr_1fr]' : 'grid grid-cols-[3fr_1.5fr_2.5fr_2.5fr_1fr_1fr]',
-                                    ]">
-                                        <!-- Name & Email -->
-                                        <div class="flex flex-col items-start">
-                                            <span class="font-medium text-surface-950 dark:text-white truncate">{{ user.name }}</span>
-                                            <span class="text-surface-500 text-sm truncate">{{ user.email }}</span>
+                                    <div class="pb-2 px-3 rounded-b grid grid-cols-2 gap-3 w-full self-stretch text-sm">
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(upline.total_directs, 0, '') }}</span>
+                                            <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
                                         </div>
-
-                                        <!-- Rank -->
-                                        <div class="flex flex-col items-start">
-                                            <span class="font-semibold">{{ $t('public.rank') }}</span>
-                                            <Tag
-                                                severity="secondary"
-                                                :value="user.rank.rank_name === 'member' ? $t(`public.${user.rank.rank_name}`) : user.rank.rank_name"
-                                            />
-                                        </div>
-
-                                        <!-- Personal Fund -->
-                                        <div class="flex flex-col items-start">
-                                            <span class="font-semibold">{{ $t('public.personal_capital_fund') }} ($)</span>
-                                            <span class="dark:text-surface-400">{{ formatAmount(user.total_personal_fund) }}</span>
-                                        </div>
-
-                                        <!-- Team Fund -->
-                                        <div class="flex flex-col items-start">
-                                            <span class="font-semibold">{{ $t('public.team_capital_fund') }} ($)</span>
-                                            <span class="dark:text-surface-400">{{ formatAmount(user.total_team_fund) }}</span>
-                                        </div>
-
-                                        <!-- Direct Downlines -->
-                                        <div class="flex flex-col items-start whitespace-nowrap">
-                                            <span class="font-semibold">{{ $t('public.direct_downlines') }}</span>
-                                            <span class="dark:text-surface-400">{{ user.downlines_count }}</span>
-                                        </div>
-
-                                        <div class="flex flex-col items-start">
-                                            <ReferralDetail :referral="user" />
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(upline.total_downlines, 0, '') }}</span>
+                                            <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <Transition
-                                enter-active-class="transition-all duration-300 ease-in-out"
-                                enter-from-class="opacity-0 translate-y-2 scale-y-95"
-                                enter-to-class="opacity-100 translate-y-0 scale-y-100"
-                                leave-active-class="transition-all duration-200 ease-in-out"
-                                leave-from-class="opacity-100 translate-y-0 scale-y-100"
-                                leave-to-class="opacity-0 translate-y-2 scale-y-95"
-                            >
-                                <!-- Show downlines only when expanded -->
-                                <div v-if="expandedUsers[user.id]" class="pl-8 border-l border-surface-300 -mt-4">
-                                    <ReferralDownline 
-                                        :downlines="user.children" 
-                                        :expandedUsers="expandedUsers" 
-                                        @update:expandedUsers="expandedUsers = $event" 
-                                        :level="2" 
-                                    />
+                        <!-- Parents Section -->
+                        <div v-if="parents.length > 0" class="flex flex-col items-center gap-6 w-full">
+                            <div class="flex justify-center flex-wrap w-full relative gap-5">
+                                <!-- Loop through each parent -->
+                                <div
+                                    v-for="(parent, index) in parents"
+                                    :key="parent.id"
+                                    @click="showChildren(parent.children, parent.id)"
+                                    class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
+                                >
+                                    <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
+                                        <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
+                                            {{ parent.username }}
+                                        </div>
+                                        <div class="w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.fund') }}:
+                                            <span class="font-semibold text-primary">{{ formatAmount(parent.capital_fund_sum) }}</span>
+                                        </div>
+                                        <div class="w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.team_capital') }}:
+                                            <span class="font-semibold text-primary">{{ formatAmount(parent.total_downline_capital_fund) }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pb-2 px-3 rounded-b grid grid-cols-2 gap-3 w-full self-stretch text-sm">
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(parent.total_directs, 0, '') }}</span>
+                                            <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                        </div>
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(parent.total_downlines, 0, '') }}</span>
+                                            <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </Transition>
-                        </template>
+                            </div>
+                        </div>
+
+                        <!-- Children Section -->
+                        <div v-if="children && children.length > 0" class="flex flex-col items-center gap-6 w-full">
+                            <div class="grid grid-cols-2 md:flex gap-3 md:gap-5 justify-center flex-wrap w-full">
+                                <div
+                                    v-for="downline in selectedChildren"
+                                    :key="downline.id"
+                                    @click="selectDownline(downline.id, downline.directs, downline.upline_id)"
+                                    class="rounded flex flex-col items-center  md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
+                                 
+                                >
+                                    <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
+                                        <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
+                                            {{ downline.username }}
+                                        </div>
+                                        <div class="flex flex-col md:flex-row w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.fund') }}: <span class="font-semibold text-primary">{{ formatAmount(downline.capital_fund_sum) }}</span>
+                                        </div>
+                                        <div class="flex flex-col md:flex-row w-full text-sm text-surface-400 truncate">
+                                            {{ $t('public.team_capital') }}: <span class="font-semibold text-primary">{{ formatAmount(downline.total_downline_capital_fund) }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="pb-2 px-3 rounded-b grid grid-cols-1 md:grid-cols-2 gap-3 w-full self-stretch text-sm">
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(downline.directs?.length, 0, '') }}</span>
+
+                                            <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                        </div>
+                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                            <span class="font-medium">{{ formatAmount(downline.total_downlines, 0, '') }}</span>
+                                            <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="flex justify-center items-center">
+                        <EmptyData
+                            :title="$t('public.no_user_found')"
+                            :message="$t('public.no_user_found_caption')"
+                        />
                     </div>
                 </div>
             </div>

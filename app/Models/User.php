@@ -101,6 +101,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Wallet::class, 'user_id', 'id');
     }
 
+    public function directs(): HasMany
+    {
+        return $this->hasMany(User::class, 'upline_id', 'id');
+    }
+
     // Activity Log
     public function getActivitylogOptions(): LogOptions
     {

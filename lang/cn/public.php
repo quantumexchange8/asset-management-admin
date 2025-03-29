@@ -390,5 +390,10 @@ return [
     "Fri" => "星期五",
     "Sat" => "星期六",
     "Sun" => "星期日",
-    "no_record" => "无记录"
+    "no_record" => "无记录",
+
+    "team_capital" => "团队资金",
+    "collapse_all" => "全部折叠",
+    "level" => "等级",
+
 ];
