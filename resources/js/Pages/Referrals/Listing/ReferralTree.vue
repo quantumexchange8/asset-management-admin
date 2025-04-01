@@ -19,7 +19,6 @@ const parents = ref([]);
 const upline_id = ref();
 const parent_id = ref();
 const children = ref([]);
-const selectedChildren = ref([]);
 const loading = ref(false);
 const success = ref(false);
 const { formatAmount } = generalFormat();
@@ -37,20 +36,17 @@ const getNetwork = async (filterUplineId = upline_id.value, filterParentId = par
             url += `&parent_id=${filterParentId}`;
         }
 
-        if (selectedChildren.value.length > 0) {
-            url += `&selected_children=${JSON.stringify(selectedChildren.value.map(child => child.id))}`;
-        }
 
         const response = await axios.get(url);
 
         success.value = response.data.success;
         upline.value = response.data.upline;
         parents.value = response.data.parents;
-        selectedChildren.value = response.data.children;
+        children.value = response.data.children;
 
-        if(response.data.children ?? []){
-            children.value = selectedChildren.value;
-        }
+        console.log('upline',response.data.upline);
+        console.log('parents',response.data.parents);
+        console.log('children',response.data.children);
 
         // Check upline first
         if (!response.data.success) {
@@ -73,27 +69,25 @@ watch(search,
 );
 
  // Store selected children
-const showChildren = (children, parentId) => {
-    parent_id.value = parentId;
-    selectedChildren.value = children;
+ const showChildren = (parentId) => {
+    parent_id.value = parentId; // Now assigns only the ID, not an object
     search.value = '';
-    
-    getNetwork(null, parent_id.value, selectedChildren.value);
+
+    getNetwork(null, parent_id.value);
 }
 
-const selectDownline = (downlineId, directs, uplineId) => {
+
+const selectDownline = (uplineId, downlineId) => {
     upline_id.value = uplineId;
     parent_id.value = downlineId;
-    selectedChildren.value = directs;
     search.value = '';
 
-    getNetwork(upline_id.value, parent_id.value, selectedChildren.value);
+    getNetwork(upline_id.value, parent_id.value);
 }
 
 const collapseAll = () => {
     upline_id.value = null;
     parent_id.value = null;
-    selectedChildren.value = []; // Set to empty array instead of null
     search.value = '';
     
     getNetwork(); // Load only the default Parents section
@@ -162,8 +156,8 @@ const clearSearch = () => {
                     </div>
                 </div>
 
-                <!-- Loading State -->
-                <div
+                                <!-- Loading State -->
+                                <div
                     v-if="loading"
                     class="flex flex-col items-center gap-6 w-full"
                 >
@@ -270,6 +264,10 @@ const clearSearch = () => {
                     >
                         <!-- Upline Section -->
                         <div v-if="checked && upline" class="flex flex-col items-center gap-6 w-full">
+                            <div class="flex items-center self-stretch gap-3">
+                                <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ upline.level ?? 0 }}</span>
+                                <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                            </div>
                             <div class="flex justify-center flex-wrap w-full relative">
                                 <div
                                     class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800 w-full border-blue-500 border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-t-blue-500 hover:border-b hover:border-b-blue-500 hover:border-r hover:border-r-blue-500 transition-colors duration-200"
@@ -301,12 +299,38 @@ const clearSearch = () => {
 
                         <!-- Parents Section -->
                         <div v-if="parents.length > 0" class="flex flex-col items-center gap-6 w-full">
+                            <div class="flex items-center self-stretch gap-3">
+                                <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ parents[0].level ?? 0 }}</span>
+                                <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                            </div>
+                            <div v-if="children.length > 0 && upline_id == null && !loading" class="absolute top-[195px]">
+                                <Button
+                                    type="button"
+                                    severity="secondary"
+                                    rounded
+                                    class="!px-2 z-10"
+                                    @click="backToUpline(parents.level)"
+                                >
+                                    <IconChevronUp size="16" stroke-width="1.5"/>
+                                </Button>
+                            </div>
+                            <div v-if="upline_id && !loading" class="absolute top-[405px]">
+                                <Button
+                                    type="button"
+                                    severity="secondary"
+                                    rounded
+                                    class="!px-2 z-10"
+                                    @click="backToUpline(parents.level)"
+                                >
+                                    <IconChevronUp size="16" stroke-width="1.5"/>
+                                </Button>
+                            </div>
                             <div class="flex justify-center flex-wrap w-full relative gap-5">
                                 <!-- Loop through each parent -->
                                 <div
-                                    v-for="(parent, index) in parents"
+                                    v-for="parent in parents"
                                     :key="parent.id"
-                                    @click="showChildren(parent.children, parent.id)"
+                                    @click="showChildren(parent.id, parent.children)"
                                     class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
                                 >
                                     <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
@@ -338,12 +362,16 @@ const clearSearch = () => {
                         </div>
 
                         <!-- Children Section -->
-                        <div v-if="children && children.length > 0" class="flex flex-col items-center gap-6 w-full">
+                        <div v-if="children.length > 0" class="flex flex-col items-center gap-6 w-full">
+                            <div class="flex items-center self-stretch gap-3">
+                                <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ children[0].level ?? 0 }}</span>
+                                <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
+                            </div>
                             <div class="grid grid-cols-2 md:flex gap-3 md:gap-5 justify-center flex-wrap w-full">
                                 <div
-                                    v-for="downline in selectedChildren"
+                                    v-for="downline in children"
                                     :key="downline.id"
-                                    @click="selectDownline(downline.id, downline.directs, downline.upline_id)"
+                                    @click="selectDownline(downline.upline_id, downline.id)"
                                     class="rounded flex flex-col items-center  md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
                                  
                                 >
@@ -360,8 +388,7 @@ const clearSearch = () => {
                                     </div>
                                     <div class="pb-2 px-3 rounded-b grid grid-cols-1 md:grid-cols-2 gap-3 w-full self-stretch text-sm">
                                         <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
-                                            <span class="font-medium">{{ formatAmount(downline.directs?.length, 0, '') }}</span>
-
+                                            <span class="font-medium">{{ formatAmount(downline.total_directs, 0, '') }}</span>
                                             <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
                                         </div>
                                         <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
