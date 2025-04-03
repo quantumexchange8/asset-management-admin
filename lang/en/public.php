@@ -394,4 +394,6 @@ return [
     "team_capital" => "Team Capital",
     "collapse_all" => "Collapse All",
     "level" => "Level",
+    "no_user_found" => "No User Found",
+    "no_user_found_caption" => "Try to search another keyword or check whether current keyword is correct",
 ];

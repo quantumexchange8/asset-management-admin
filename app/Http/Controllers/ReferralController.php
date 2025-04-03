@@ -156,7 +156,6 @@ class ReferralController extends Controller
                 ->get();
         }
 
-        // Fetch upline (if provided)
         $upline = User::select([
             'users.*',
 
@@ -199,7 +198,7 @@ class ReferralController extends Controller
             $user->only(['id', 'username', 'id_number', 'upline_id', 'role']),
             [
                 'upper_upline_id' => $upper_upline->id ?? null,
-                'level' => $this->calculateLevel($user->hierarchyList, $user->id),
+                'level' => $this->calculateLevel($user->hierarchyList),
                 'total_directs' => count($user->directs) ?? 0,
                 'total_downlines' => $user->total_downlines ?? 0,
                 'capital_fund_sum' => $user->capital_fund_sum ?? 0,
@@ -208,7 +207,7 @@ class ReferralController extends Controller
         );
     }
 
-    private function calculateLevel($hierarchyList, $userId)
+    private function calculateLevel($hierarchyList)
     {
         // If hierarchyList is null or empty, return level 0
         if (is_null($hierarchyList) || $hierarchyList === '') {

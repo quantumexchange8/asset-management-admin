@@ -44,10 +44,6 @@ const getNetwork = async (filterUplineId = upline_id.value, filterParentId = par
         parents.value = response.data.parents;
         children.value = response.data.children;
 
-        console.log('upline',response.data.upline);
-        console.log('parents',response.data.parents);
-        console.log('children',response.data.children);
-
         // Check upline first
         if (!response.data.success) {
             console.log(response.data.message);
@@ -70,7 +66,7 @@ watch(search,
 
  // Store selected children
  const showChildren = (parentId) => {
-    parent_id.value = parentId; // Now assigns only the ID, not an object
+    parent_id.value = parentId;
     search.value = '';
 
     getNetwork(null, parent_id.value);
@@ -330,8 +326,14 @@ const clearSearch = () => {
                                 <div
                                     v-for="parent in parents"
                                     :key="parent.id"
-                                    @click="showChildren(parent.id, parent.children)"
-                                    class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
+                                    @click="!upline_id && showChildren(parent.id, parent.children)"
+                                    :class="[
+                                        'rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none w-full md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 transition-all duration-200',
+                                        { 
+                                            'cursor-pointer hover:border-t hover:border-primary dark:hover:border-primary': !upline_id,
+                                            'cursor-default': upline_id
+                                        }
+                                    ]"
                                 >
                                     <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
                                         <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">

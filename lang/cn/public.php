@@ -391,9 +391,10 @@ return [
     "Sat" => "星期六",
     "Sun" => "星期日",
     "no_record" => "无记录",
-
     "team_capital" => "团队资金",
     "collapse_all" => "全部折叠",
     "level" => "等级",
+    "no_user_found" => "未找到用户",
+    "no_user_found_caption" => "尝试搜索另一个关键字或检查当前关键字是否正确",
 
 ];
