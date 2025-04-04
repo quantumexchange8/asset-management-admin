@@ -396,4 +396,11 @@ return [
     "level" => "Level",
     "no_user_found" => "No User Found",
     "no_user_found_caption" => "Try to search another keyword or check whether current keyword is correct",
+    "paginator_caption" => "Showing {first} to {last} of {totalRecords} entries",
+    "structure" => "Structure",
+    "listing" => "Listing",
+    "viewing_referral" => "Viewing Referral",
+    "view_referral_downlines" => "View Referral Downlines",
+    "no_referee_found" => "No referee found",
+    "assign_user" => "Assign user",
 ];

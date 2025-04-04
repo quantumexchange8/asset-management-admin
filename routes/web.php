@@ -89,8 +89,11 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
 
     //referrals
     Route::prefix('referral')->group(function () {
-        Route::get('/get_referral_list', [ReferralController::class, 'getReferralList'])->name('referral.getReferralList');
+        Route::get('/', [ReferralController::class, 'index'])->name('referral');
         Route::get('/getDownlineData', [ReferralController::class, 'getDownlineData'])->name('referral.getDownlineData');
+
+        Route::get('/get_referral', [ReferralController::class, 'getReferral'])->name('referral.getReferral');
+        Route::get('/get_referral_listing_data', [ReferralController::class, 'getReferralListingData'])->name('referral.getReferralListingData');
     });
 
     /**

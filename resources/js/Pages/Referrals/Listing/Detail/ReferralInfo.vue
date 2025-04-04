@@ -130,12 +130,12 @@ const {locale} = useLangObserver();
                         <div class="flex justify-center items-center gap-5 self-stretch">
                             <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-2 rounded-md w-full">
                                 <span class="text-md font-medium">{{ $t('public.directs') }}</span>
-                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.downlines_count}}</span>
+                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.directs_count}}</span>
                             </div>
 
                             <div class="flex flex-col items-center bg-surface-100 dark:bg-surface-800 p-2 rounded-md w-full">
                                 <span class="text-md font-medium">{{ $t('public.networks') }}</span>
-                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.total_downlines_count}}</span>
+                                <span class="text-xl font-extrabold text-primary-500">{{props.referral.total_downlines}}</span>
                             </div>
                         </div>
                     </div>

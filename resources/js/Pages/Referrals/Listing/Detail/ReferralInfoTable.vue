@@ -9,28 +9,23 @@ import { computed } from 'vue';
 const props = defineProps({
     referral: Object,
 });
-
+console.log(props.referral)
 const { formatAmount } = generalFormat();
 
-// Calculate total personal funds
-const totalPersonalFunds = computed(() => {
-    if (props.referral && props.referral.broker_details) {
-        return props.referral.broker_details.reduce((total, broker) => {
-            return total + (broker.personal_funds || 0);
-        }, 0);
-    }
-    return 0;
-});
+// const totalPersonalFunds = computed(() => {
+//     if (Array.isArray(props.referral)) {
+//         return props.referral.reduce((sum, user) => sum + (user.active_connections_sum_capital_fund || 0), 0);
+//     }
+//     return 0;
+// });
 
-// Calculate total team funds
-const totalTeamFunds = computed(() => {
-    if (props.referral && props.referral.broker_details) {
-        return props.referral.broker_details.reduce((total, broker) => {
-            return total + (broker.team_funds || 0);
-        }, 0);
-    }
-    return 0;
-});
+// const totalTeamFunds = computed(() => {
+//     if (Array.isArray(props.referral)) {
+//         return props.referral.reduce((sum, user) => sum + (user.total_downline_capital_fund || 0), 0);
+//     }
+//     return 0;
+// });
+
 </script>
 
 
@@ -38,8 +33,8 @@ const totalTeamFunds = computed(() => {
  <Card class="w-full">
     <template #content>
         <div class="w-full">
-            <DataTable
-                :value="props.referral.broker_details"
+            <DataTable 
+                :value="props.referral.active_connections"
             >
                 <template #empty>
                     <EmptyData
@@ -48,8 +43,7 @@ const totalTeamFunds = computed(() => {
                     />
                 </template>
 
-                <template v-if="props.referral.broker_details.length > 0">
-
+                <template v-if="props.referral.active_connections?.length">
                     <Column 
                         field="broker"
                         style="min-width: 7rem"
@@ -58,7 +52,7 @@ const totalTeamFunds = computed(() => {
                             <span class="block">{{ $t('public.broker') }}</span>
                         </template>
                         <template #body="{ data }">
-                            {{ data.broker_name }}
+                            <!-- {{ data.broker_name }} -->
                         </template>
                         <template #footer>
                             <span>{{ $t('public.total') }}:</span>
@@ -73,10 +67,10 @@ const totalTeamFunds = computed(() => {
                             <span class="block">{{ $t('public.personal_capital_fund') }} ($)</span>
                         </template>
                         <template #body="{ data }">
-                            {{ formatAmount(data.personal_funds) }}
+                            {{ formatAmount(data.capital_fund) }}
                         </template>
                         <template #footer>
-                            {{ formatAmount(totalPersonalFunds) }}
+                            <!-- {{ formatAmount(totalPersonalFunds) }} -->
                         </template>
                     </Column>
 
@@ -87,10 +81,10 @@ const totalTeamFunds = computed(() => {
                             <span class="block">{{ $t('public.team_capital_fund') }} ($)</span>
                         </template>
                         <template #body="{ data }">
-                            {{ formatAmount(data.team_funds) }}
+                            {{ formatAmount(data.total_downline_capital_fund) }}
                         </template>
                         <template #footer>
-                            {{ formatAmount(totalTeamFunds) }}
+                            <!-- {{ formatAmount(totalTeamFunds) }} -->
                         </template>
                     </Column>
                 </template>

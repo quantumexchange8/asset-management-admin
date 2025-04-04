@@ -72,7 +72,6 @@ watch(search,
     getNetwork(null, parent_id.value);
 }
 
-
 const selectDownline = (uplineId, downlineId) => {
     upline_id.value = uplineId;
     parent_id.value = downlineId;
@@ -152,8 +151,8 @@ const clearSearch = () => {
                     </div>
                 </div>
 
-                                <!-- Loading State -->
-                                <div
+                <!-- Loading State -->
+                <div
                     v-if="loading"
                     class="flex flex-col items-center gap-6 w-full"
                 >
@@ -299,7 +298,7 @@ const clearSearch = () => {
                                 <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ parents[0].level ?? 0 }}</span>
                                 <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
                             </div>
-                            <div v-if="children.length > 0 && upline_id == null && !loading" class="absolute top-[195px]">
+                            <div v-if="children.length > 0 && upline_id == null && !loading" class="absolute top-[250px]">
                                 <Button
                                     type="button"
                                     severity="secondary"
@@ -310,7 +309,7 @@ const clearSearch = () => {
                                     <IconChevronUp size="16" stroke-width="1.5"/>
                                 </Button>
                             </div>
-                            <div v-if="upline_id && !loading" class="absolute top-[405px]">
+                            <div v-if="upline_id && !loading" class="absolute top-[460px]">
                                 <Button
                                     type="button"
                                     severity="secondary"

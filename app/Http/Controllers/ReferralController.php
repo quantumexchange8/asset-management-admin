@@ -5,17 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 use Inertia\Inertia;
 
 class ReferralController extends Controller
 {
-    public function getReferralList()
+    public function index()
     {
-        return Inertia::render('Referrals/Listing/ReferralListing');
+        $parentCount = User::whereNull('upline_id') // No upline
+            ->whereHas('directs') // Must have at least one direct downline
+            ->count();
+
+        return Inertia::render('Referrals/ReferralProgramme', [
+            'parentCount' => $parentCount,
+        ]);
     }
 
     public function getDownlineData(Request $request)
@@ -45,112 +49,55 @@ class ReferralController extends Controller
         }
 
         if ($parent_id) {
-            $parents = User::with([
-                'directs' => function ($query) {
-                    $query->select([
-                        'users.*',
-                        DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                        DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                        DB::raw(
-                            "COALESCE((SELECT SUM(bc.capital_fund)
-                            FROM broker_connections AS bc
-                            JOIN users AS u ON bc.user_id = u.id
-                            WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
-                            AND u.id != users.id
-                            AND bc.deleted_at is null
-                            AND bc.connection_type != 'withdrawal'
-                            AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                        )
-                    ]);
-                }
-            ])
-                ->select([
-                    'users.*',
-                    DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                    DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                    DB::raw(
-                        "COALESCE((SELECT SUM(bc.capital_fund)
+            $parents = User::select([
+                'users.*',
+                DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
+                DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
+                DB::raw(
+                    "COALESCE((SELECT SUM(bc.capital_fund)
                         FROM broker_connections AS bc
                         JOIN users AS u ON bc.user_id = u.id
                         WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
                         AND bc.deleted_at is null
                         AND bc.connection_type != 'withdrawal'
                         AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                    )
-                ])
+                )
+            ])
                 ->where('id', $parent_id)
                 ->get();
 
-            $children = User::with([
-                'directs' => function ($query) {
-                    $query->select([
-                        'users.*',
-                        DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                        DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                        DB::raw(
-                            "COALESCE((SELECT SUM(bc.capital_fund)
-                                    FROM broker_connections AS bc
-                                    JOIN users AS u ON bc.user_id = u.id
-                                    WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
-                                    AND u.id != users.id
-                                    AND bc.deleted_at is null
-                                    AND bc.connection_type != 'withdrawal'
-                                    AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                        )
-                    ]);
-                }
-            ])
-                ->select([
-                    'users.*',
-                    DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                    DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                    DB::raw(
-                        "COALESCE((SELECT SUM(bc.capital_fund)
+            $children = User::select([
+                'users.*',
+                DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
+                DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
+                DB::raw(
+                    "COALESCE((SELECT SUM(bc.capital_fund)
                                 FROM broker_connections AS bc
                                 JOIN users AS u ON bc.user_id = u.id
                                 WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
                                 AND bc.deleted_at is null
                                 AND bc.connection_type != 'withdrawal'
                                 AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                    )
-                ])
+                )
+            ])
                 ->where('upline_id', $parent_id)
                 ->get();
         } else {
 
-            $parents = User::with([
-                'directs' => function ($query) {
-                    $query->select([
-                        'users.*',
-                        DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                        DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                        DB::raw(
-                            "COALESCE((SELECT SUM(bc.capital_fund)
-                                    FROM broker_connections AS bc
-                                    JOIN users AS u ON bc.user_id = u.id
-                                    WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
-                                    AND u.id != users.id
-                                    AND bc.deleted_at is null
-                                    AND bc.connection_type != 'withdrawal'
-                                    AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                        )
-                    ]);
-                }
-            ])
-                ->select([
-                    'users.*',
-                    DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-                    DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-                    DB::raw(
-                        "COALESCE((SELECT SUM(bc.capital_fund)
+            $parents = User::select([
+                'users.*',
+                DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
+                DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
+                DB::raw(
+                    "COALESCE((SELECT SUM(bc.capital_fund)
                                 FROM broker_connections AS bc
                                 JOIN users AS u ON bc.user_id = u.id
                                 WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
                                 AND bc.deleted_at is null
                                 AND bc.connection_type != 'withdrawal'
                                 AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                    )
-                ])
+                )
+            ])
                 ->whereNull('upline_id') // No upline
                 ->whereHas('directs') // Must have at least one direct downline
                 ->get();
@@ -158,14 +105,8 @@ class ReferralController extends Controller
 
         $upline = User::select([
             'users.*',
-
-            // Count total downlines
             DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
-
-            // Sum capital_fund from broker_connections where status is active
             DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
-
-            // Sum total capital_fund of all downlines
             DB::raw("COALESCE((SELECT SUM(bc.capital_fund)
                 FROM broker_connections AS bc
                 JOIN users AS u ON bc.user_id = u.id
@@ -213,10 +154,121 @@ class ReferralController extends Controller
         if (is_null($hierarchyList) || $hierarchyList === '') {
             return 0;
         }
-    
+
         // Remove leading/trailing hyphens and split by '-'
         $levels = array_filter(explode('-', trim($hierarchyList, '-')));
-    
+
         return count($levels);
+    }
+
+    public function getReferral()
+    {
+        $parents = User::select([
+            'users.*',
+            DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"),
+            DB::raw("COALESCE((SELECT SUM(capital_fund) FROM broker_connections WHERE broker_connections.user_id = users.id AND broker_connections.deleted_at is null AND broker_connections.connection_type != 'withdrawal' AND broker_connections.status = 'success'), 0) as capital_fund_sum"),
+            DB::raw(
+                "COALESCE((SELECT SUM(bc.capital_fund)
+                            FROM broker_connections AS bc
+                            JOIN users AS u ON bc.user_id = u.id
+                            WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
+                            AND bc.deleted_at is null
+                            AND bc.connection_type != 'withdrawal'
+                            AND bc.status = 'success'), 0) as total_downline_capital_fund"
+            )
+        ])
+            ->whereNull('upline_id') // No upline
+            ->whereHas('directs') // Must have at least one direct downline
+            ->get();
+
+        return response()->json([
+            'parents' => $parents->map(fn($parent) => $this->formatUserData($parent)),
+        ]);
+    }
+
+    public function getReferralListingData(Request $request)
+    {
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
+            $user_id = $data['filters']['id'];
+            $user = User::find($user_id);
+            $childrenIds = $user ? $user->getChildrenIds() : [];
+
+            $query = User::with([
+                'upline',
+                'active_connections',
+                'rank',
+                'country'
+            ])
+                ->whereIn('id', $childrenIds)
+                ->withCount('directs') // This counts direct referrals
+                ->withSum('active_connections', 'capital_fund')
+                ->addSelect([
+                    DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"), // This counts total downlines
+                    DB::raw(
+                        "COALESCE((SELECT SUM(bc.capital_fund)
+                                    FROM broker_connections AS bc
+                                    JOIN users AS u ON bc.user_id = u.id
+                                    WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
+                                    AND bc.deleted_at is null
+                                    AND bc.connection_type != 'withdrawal'
+                                    AND bc.status = 'success'), 0) as total_downline_capital_fund"
+                    )
+                ]);
+
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('email', 'like', '%' . $keyword . '%')
+                        ->orWhere('username', 'like', '%' . $keyword . '%')
+                        ->orWhereHas('upline', function ($q) use ($keyword) {
+                            $q->where('name', 'like', '%' . $keyword . '%')
+                                ->orWhere('username', 'like', '%' . $keyword . '%')
+                                ->orWhere('email', 'like', '%' . $keyword . '%');
+                        });
+                });
+            }
+
+            if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
+                $end_join_date = Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_join_date, $end_join_date]);
+            }
+
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
+
+            $connections = $query->paginate($data['rows']);
+
+            $connections->each(function ($user) {
+                $user->level = $this->calculateLevel($user->hierarchyList);
+
+                // Handle the profile photo URL check and fallback to null if not found
+                $user->profile_photo = $user->getFirstMediaUrl('profile_photo') ?: null;
+
+                // Handle the upline's profile photo, ensuring it's also null if no media found
+                if ($user->upline) {
+                    $user->upline_profile_photo = $user->upline->getFirstMediaUrl('profile_photo') ?: null;
+                } else {
+                    $user->upline_profile_photo = null;
+                }
+            });
+
+            $connectionCount = (clone $query)->count();
+
+            return response()->json([
+                'success' => true,
+                'data' => $connections,
+                'connectionCount' => $connectionCount,
+            ]);
+        }
+        return response()->json(['success' => false, 'data' => []]);
     }
 }

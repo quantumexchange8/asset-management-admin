@@ -396,5 +396,12 @@ return [
     "level" => "等级",
     "no_user_found" => "未找到用户",
     "no_user_found_caption" => "尝试搜索另一个关键字或检查当前关键字是否正确",
+    "paginator_caption" => "显示 {first} 至 {last} 的 {totalRecords} 条目",
+    "structure" => "构架",
+    "listing" => "列表",
+    "viewing_referral" => "查看推荐人",
+    "view_referral_downlines" => "查看推荐下线",
+    "no_referee_found" => "未找到被推荐人",
+    "assign_user" => "分配用户"
 
 ];

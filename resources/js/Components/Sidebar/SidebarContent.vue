@@ -99,8 +99,8 @@ watchEffect(() => {
         <!-- Member Referrals -->
         <SidebarLink
             title="member_referrals"
-            :href="route('referral.getReferralList')"
-            :active="route().current('referral.getReferralList')"
+            :href="route('referral')"
+            :active="route().current('referral')"
             v-if="hasPermission('access_member_referrals')"
         >
             <template #icon>

@@ -106,6 +106,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(User::class, 'upline_id', 'id');
     }
 
+    public function active_connections(): HasMany
+    {
+        return $this->hasMany(BrokerConnection::class, 'user_id', 'id')->whereNot('connection_type', 'withdrawal')->where('status', 'success');
+    }
+
     // Activity Log
     public function getActivitylogOptions(): LogOptions
     {
