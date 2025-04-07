@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrokerConnection;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -192,28 +193,21 @@ class ReferralController extends Controller
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
             $user_id = $data['filters']['id'];
             $user = User::find($user_id);
-            $childrenIds = $user ? $user->getChildrenIds() : [];
+
+            // get all downline
+            $referralUserIds = $user ? $user->getChildrenIds() : [];
 
             $query = User::with([
                 'upline',
-                'active_connections',
+                // 'active_connections',
                 'rank',
                 'country'
             ])
-                ->whereIn('id', $childrenIds)
+                ->whereIn('id', $referralUserIds)
                 ->withCount('directs') // This counts direct referrals
                 ->withSum('active_connections', 'capital_fund')
                 ->addSelect([
                     DB::raw("(SELECT COUNT(*) FROM users AS u WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')) as total_downlines"), // This counts total downlines
-                    DB::raw(
-                        "COALESCE((SELECT SUM(bc.capital_fund)
-                                    FROM broker_connections AS bc
-                                    JOIN users AS u ON bc.user_id = u.id
-                                    WHERE u.hierarchyList LIKE CONCAT('%-', users.id, '-%')
-                                    AND bc.deleted_at is null
-                                    AND bc.connection_type != 'withdrawal'
-                                    AND bc.status = 'success'), 0) as total_downline_capital_fund"
-                    )
                 ]);
 
             if ($data['filters']['global']['value']) {
@@ -248,17 +242,58 @@ class ReferralController extends Controller
             $connections = $query->paginate($data['rows']);
 
             $connections->each(function ($user) {
+                // level
                 $user->level = $this->calculateLevel($user->hierarchyList);
 
-                // Handle the profile photo URL check and fallback to null if not found
+
+                // user profile photo
                 $user->profile_photo = $user->getFirstMediaUrl('profile_photo') ?: null;
 
-                // Handle the upline's profile photo, ensuring it's also null if no media found
+                // upline profile photo
                 if ($user->upline) {
                     $user->upline_profile_photo = $user->upline->getFirstMediaUrl('profile_photo') ?: null;
                 } else {
                     $user->upline_profile_photo = null;
                 }
+
+                // referralInfoTable:
+                // downlineUserIds only get first level of downline
+                $downlineUserIds = User::where('hierarchyList', 'like', '%-' . $user->id . '-%')
+                    ->pluck('id')
+                    ->toArray();
+
+                $allUserIds = array_merge([$user->id], $downlineUserIds);
+
+                // Fetch broker connections for both personal and downline
+                $userConnections = BrokerConnection::with('broker')
+                    ->where('status', 'success')
+                    ->whereNot('connection_type', 'withdrawal')
+                    ->whereIn('user_id', $allUserIds)
+                    ->where('deleted_at', null)
+                    ->get();
+
+                // Initialize broker data
+                $brokerData = [];
+
+                foreach ($userConnections as $connection) {
+                    $brokerName = $connection->broker->name ?? 'Unknown';
+
+                    if (!isset($brokerData[$brokerName])) {
+                        $brokerData[$brokerName] = [
+                            'broker_name' => $brokerName,
+                            'personal_funds' => 0,
+                            'team_funds' => 0
+                        ];
+                    }
+
+                    if ($connection->user_id === $user->id) {
+                        $brokerData[$brokerName]['personal_funds'] += $connection->capital_fund;
+                    } else {
+                        $brokerData[$brokerName]['team_funds'] += $connection->capital_fund;
+                    }
+                }
+
+                $user->broker_details = array_values($brokerData);
             });
 
             $connectionCount = (clone $query)->count();

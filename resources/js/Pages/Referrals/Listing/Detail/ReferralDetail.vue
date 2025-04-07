@@ -39,10 +39,10 @@ const visible = ref(false);
             <ReferralInfo 
                 :referral="referral"
             />
-<!-- 
+
             <ReferralInfoTable 
                 :referral="referral"
-            /> -->
+            />
         </div>
 
     </Dialog>

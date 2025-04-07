@@ -9,22 +9,28 @@ import { computed } from 'vue';
 const props = defineProps({
     referral: Object,
 });
-console.log(props.referral)
+
 const { formatAmount } = generalFormat();
 
-// const totalPersonalFunds = computed(() => {
-//     if (Array.isArray(props.referral)) {
-//         return props.referral.reduce((sum, user) => sum + (user.active_connections_sum_capital_fund || 0), 0);
-//     }
-//     return 0;
-// });
+const totalPersonalFunds = computed(() => {
+    if (Array.isArray(props.referral?.broker_details)) {
+        return props.referral.broker_details.reduce(
+            (sum, broker) => sum + (broker.personal_funds || 0),
+            0
+        );
+    }
+    return 0;
+});
 
-// const totalTeamFunds = computed(() => {
-//     if (Array.isArray(props.referral)) {
-//         return props.referral.reduce((sum, user) => sum + (user.total_downline_capital_fund || 0), 0);
-//     }
-//     return 0;
-// });
+const totalTeamFunds = computed(() => {
+    if (Array.isArray(props.referral?.broker_details)) {
+        return props.referral.broker_details.reduce(
+            (sum, broker) => sum + (broker.team_funds || 0),
+            0
+        );
+    }
+    return 0;
+});
 
 </script>
 
@@ -34,7 +40,7 @@ const { formatAmount } = generalFormat();
     <template #content>
         <div class="w-full">
             <DataTable 
-                :value="props.referral.active_connections"
+                :value="props.referral.broker_details"
             >
                 <template #empty>
                     <EmptyData
@@ -43,7 +49,7 @@ const { formatAmount } = generalFormat();
                     />
                 </template>
 
-                <template v-if="props.referral.active_connections?.length">
+                <template v-if="props.referral.broker_details?.length">
                     <Column 
                         field="broker"
                         style="min-width: 7rem"
@@ -52,7 +58,7 @@ const { formatAmount } = generalFormat();
                             <span class="block">{{ $t('public.broker') }}</span>
                         </template>
                         <template #body="{ data }">
-                            <!-- {{ data.broker_name }} -->
+                            {{ data.broker_name }}
                         </template>
                         <template #footer>
                             <span>{{ $t('public.total') }}:</span>
@@ -67,10 +73,10 @@ const { formatAmount } = generalFormat();
                             <span class="block">{{ $t('public.personal_capital_fund') }} ($)</span>
                         </template>
                         <template #body="{ data }">
-                            {{ formatAmount(data.capital_fund) }}
+                            {{ formatAmount(data.personal_funds) }}
                         </template>
                         <template #footer>
-                            <!-- {{ formatAmount(totalPersonalFunds) }} -->
+                            {{ formatAmount(totalPersonalFunds) }}
                         </template>
                     </Column>
 
@@ -81,10 +87,10 @@ const { formatAmount } = generalFormat();
                             <span class="block">{{ $t('public.team_capital_fund') }} ($)</span>
                         </template>
                         <template #body="{ data }">
-                            {{ formatAmount(data.total_downline_capital_fund) }}
+                            {{ formatAmount(data.team_funds) }}
                         </template>
                         <template #footer>
-                            <!-- {{ formatAmount(totalTeamFunds) }} -->
+                            {{ formatAmount(totalTeamFunds) }}
                         </template>
                     </Column>
                 </template>
