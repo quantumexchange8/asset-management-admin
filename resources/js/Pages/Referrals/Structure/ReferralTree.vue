@@ -10,8 +10,6 @@ import {generalFormat} from "@/Composables/format.js";
 import InputIconWrapper from "@/Components/InputIconWrapper.vue";
 import EmptyData from "@/Components/EmptyData.vue";
 
-const emit = defineEmits();
-
 const search = ref('');
 const checked = ref(true);
 const upline = ref(null);
@@ -265,7 +263,7 @@ const clearSearch = () => {
                             </div>
                             <div class="flex justify-center flex-wrap w-full relative">
                                 <div
-                                    class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/2 bg-white dark:bg-surface-800 w-full border-blue-500 border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-t-blue-500 hover:border-b hover:border-b-blue-500 hover:border-r hover:border-r-blue-500 transition-colors duration-200"
+                                    class="rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none cursor-default md:basis-1/2 bg-white dark:bg-surface-800 w-full border-blue-500 border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-t-blue-500 hover:border-b hover:border-b-blue-500 hover:border-r hover:border-r-blue-500 transition-colors duration-200"
                                 >
                                     <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
                                         <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
@@ -293,69 +291,74 @@ const clearSearch = () => {
                         </div>
 
                         <!-- Parents Section -->
-                        <div v-if="parents.length > 0" class="flex flex-col items-center gap-6 w-full">
+                        <div  v-if="(parents.level === 0 && checked) || (parents.level !== 0 && parents)" class="flex flex-col items-center gap-6 w-full">
                             <div class="flex items-center self-stretch gap-3">
                                 <span class="text-sm font-medium text-surface-400 dark:text-surface-500 uppercase">{{ $t('public.level' ) }} {{ parents[0].level ?? 0 }}</span>
                                 <div class="h-[1px] flex-1 bg-surface-200 dark:bg-surface-700" />
                             </div>
-                            <div v-if="children.length > 0 && upline_id == null && !loading" class="absolute top-[250px]">
-                                <Button
-                                    type="button"
-                                    severity="secondary"
-                                    rounded
-                                    class="!px-2 z-10"
-                                    @click="backToUpline(parents.level)"
-                                >
-                                    <IconChevronUp size="16" stroke-width="1.5"/>
-                                </Button>
-                            </div>
-                            <div v-if="upline_id && !loading" class="absolute top-[460px]">
-                                <Button
-                                    type="button"
-                                    severity="secondary"
-                                    rounded
-                                    class="!px-2 z-10"
-                                    @click="backToUpline(parents.level)"
-                                >
-                                    <IconChevronUp size="16" stroke-width="1.5"/>
-                                </Button>
-                            </div>
-                            <div class="flex justify-center flex-wrap w-full relative gap-5">
-                                <!-- Loop through each parent -->
-                                <div
-                                    v-for="parent in parents"
-                                    :key="parent.id"
-                                    @click="!upline_id && showChildren(parent.id, parent.children)"
-                                    :class="[
-                                        'rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none w-full md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 transition-all duration-200',
-                                        { 
-                                            'cursor-pointer hover:border-t hover:border-primary dark:hover:border-primary': !upline_id,
-                                            'cursor-default': upline_id
-                                        }
-                                    ]"
-                                >
-                                    <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
-                                        <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
-                                            {{ parent.username }}
-                                        </div>
-                                        <div class="w-full text-sm text-surface-400 truncate">
-                                            {{ $t('public.fund') }}:
-                                            <span class="font-semibold text-primary">{{ formatAmount(parent.capital_fund_sum) }}</span>
-                                        </div>
-                                        <div class="w-full text-sm text-surface-400 truncate">
-                                            {{ $t('public.team_capital') }}:
-                                            <span class="font-semibold text-primary">{{ formatAmount(parent.total_downline_capital_fund) }}</span>
-                                        </div>
-                                    </div>
 
-                                    <div class="pb-2 px-3 rounded-b grid grid-cols-2 gap-3 w-full self-stretch text-sm">
-                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
-                                            <span class="font-medium">{{ formatAmount(parent.total_directs, 0, '') }}</span>
-                                            <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                            <div class="flex justify-center flex-wrap w-full relative">
+                                <div class="absolute top-[-18px]">
+                                    <Button
+                                        type="button"
+                                        severity="secondary"
+                                        rounded
+                                        class="!px-2 z-10"
+                                        v-if="children.length > 0 && upline_id == null && !loading"
+                                        @click="backToUpline(parents.level)"
+                                    >
+                                        <IconChevronUp size="16" stroke-width="1.5"/>
+                                    </Button>
+
+                                    <Button
+                                        type="button"
+                                        severity="secondary"
+                                        rounded
+                                        class="!px-2 z-10"
+                                        v-if="upline_id && !loading"
+                                        @click="backToUpline(parents.level)"
+                                    >
+                                        <IconChevronUp size="16" stroke-width="1.5"/>
+                                    </Button>
+                                </div>
+                            
+                                <div class="flex justify-center flex-wrap w-full relative gap-5">
+                                    <!-- Loop through each parent -->
+                                    <div
+                                        v-for="parent in parents"
+                                        :key="parent.id"
+                                        @click="!upline_id && !children.length && showChildren(parent.id, parent.children)"
+                                        :class="[
+                                            'rounded flex flex-col items-center md:max-w-[215px] shadow-card border-l-4 select-none w-full md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 transition-all duration-200',
+                                            { 
+                                                'cursor-pointer hover:border-t hover:border-primary dark:hover:border-primary': !upline_id && !children.length,
+                                                'cursor-default': upline_id
+                                            }
+                                        ]"
+                                    >
+                                        <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
+                                            <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">
+                                                {{ parent.username }}
+                                            </div>
+                                            <div class="w-full text-sm text-surface-400 truncate">
+                                                {{ $t('public.fund') }}:
+                                                <span class="font-semibold text-primary">{{ formatAmount(parent.capital_fund_sum) }}</span>
+                                            </div>
+                                            <div class="w-full text-sm text-surface-400 truncate">
+                                                {{ $t('public.team_capital') }}:
+                                                <span class="font-semibold text-primary">{{ formatAmount(parent.total_downline_capital_fund) }}</span>
+                                            </div>
                                         </div>
-                                        <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
-                                            <span class="font-medium">{{ formatAmount(parent.total_downlines, 0, '') }}</span>
-                                            <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+
+                                        <div class="pb-2 px-3 rounded-b grid grid-cols-2 gap-3 w-full self-stretch text-sm">
+                                            <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                                <span class="font-medium">{{ formatAmount(parent.total_directs, 0, '') }}</span>
+                                                <span class="text-xs uppercase">{{ $t('public.directs') }}</span>
+                                            </div>
+                                            <div class="flex flex-col items-center w-full bg-surface-100 dark:bg-surface-700 p-2">
+                                                <span class="font-medium">{{ formatAmount(parent.total_downlines, 0, '') }}</span>
+                                                <span class="text-xs uppercase">{{ $t('public.networks') }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -372,9 +375,8 @@ const clearSearch = () => {
                                 <div
                                     v-for="downline in children"
                                     :key="downline.id"
-                                    @click="selectDownline(downline.upline_id, downline.id)"
                                     class="rounded flex flex-col items-center  md:max-w-[215px] shadow-card border-l-4 select-none cursor-pointer md:basis-1/3 xl:basis-1/4 bg-white dark:bg-surface-800 w-full border-primary border-t border-t-surface-200 dark:border-t-surface-700 border-b border-b-surface-200 dark:border-b-surface-700 border-r border-r-surface-200 dark:border-r-surface-700 hover:border-t hover:border-primary dark:hover:border-primary transition-all duration-200"
-                                 
+                                    @click="selectDownline(downline.upline_id, downline.id)"
                                 >
                                     <div class="pt-3 pb-2 px-3 rounded-t flex flex-col items-center w-full self-stretch">
                                         <div class="w-full text-sm font-semibold text-surface-950 dark:text-white truncate">

@@ -246,7 +246,7 @@ watchEffect(() => {
                             <Column
                                 field="created_at"
                                 :header="$t('public.date')"
-                                class="hidden md:table-cell min-w-32"
+                                class="hidden md:table-cell min-w-30"
                                 sortable
                             >
                                 <template #body="{ data }">
@@ -257,7 +257,7 @@ watchEffect(() => {
                             <Column
                                 field="level"
                                 :header="$t('public.level')"
-                                class="hidden md:table-cell min-w-32"
+                                class="hidden md:table-cell min-w-30"
                             >
                                 <template #body="{ data }">
                                     <span class="text-surface-950 dark:text-white">{{ data.level ?? 0 }}</span>
