@@ -1,12 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import EmptyData from "@/Components/EmptyData.vue";
-import { IconCircleLetterB } from "@tabler/icons-vue";
 import { generalFormat } from "@/Composables/format.js";
 import Skeleton from "primevue/skeleton";
-import Tag from "primevue/tag";
 import Button from "primevue/button";
-import debounce from "lodash/debounce.js";
 
 const props = defineProps({
     parentCount: Number,

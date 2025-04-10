@@ -75,6 +75,7 @@ const handleLogOut = () => {
                         'text-primary dark:text-primary-500 bg-primary-100 dark:bg-surface-800': route().current('profile.edit'),
                     },
                 ]"
+                class="w-12 h-12"
             >
                 <Avatar
                     v-if="usePage().props.auth.profile_photo"

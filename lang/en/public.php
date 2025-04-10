@@ -1,4 +1,4 @@
-<?php
+3<?php
 return [
     "email" => "Email",
     "password" => "Password",
@@ -403,4 +403,14 @@ return [
     "view_referral_downlines" => "View Referral Downlines",
     "no_referee_found" => "No referee found",
     "assign_user" => "Assign user",
+    "profile" => "Profile",
+    "profile_information" => "Profile Information",
+    "profile_information_caption" => "Update your account's profile information",
+    "change" => "Change",
+    "remove" => "Remove",
+    "update_password" => "Update Password",
+    "update_password_caption" => "Ensure your account is using a long, random password to stay secure.",
+    "current_password" => "Current Password",
+    "new_password" => "New Password",
+
 ];

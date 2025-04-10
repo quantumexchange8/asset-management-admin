@@ -118,7 +118,7 @@ const submitForm = () => {
                             type="text"
                             class="pl-10 block w-full"
                             v-model="form.name"
-                            placeholder="Name"
+                           :placeholder="$t('public.enter_name')"
                             :invalid="!!form.errors.name"
                             autofocus
                         />
@@ -138,7 +138,7 @@ const submitForm = () => {
                             type="text"
                             class="pl-10 block w-full"
                             v-model="form.username"
-                            placeholder="Username"
+                            :placeholder="$t('public.enter_username')"
                             :invalid="!!form.errors.username"
                     />
                     </InputIconWrapper>
@@ -159,7 +159,7 @@ const submitForm = () => {
                             :options="countries"
                             :loading="loadingCountries"
                             optionLabel="name"
-                            placeholder="Select Country"
+                            :placeholder="$t('public.select_country')"
                             class="pl-7 block w-full"
                             :invalid="!!form.errors.country"
                             :filter-fields="['name', 'iso2']"
@@ -202,7 +202,7 @@ const submitForm = () => {
                                 :options="countries"
                                 :loading="loadingCountries"
                                 optionLabel="name"
-                                placeholder="Phone Code"
+                                placeholder="60"
                                 class="pl-7 w-[100px]"
                                 :invalid="!!form.errors.dial_code"
                                 filter
@@ -235,7 +235,7 @@ const submitForm = () => {
                             type="text"
                             class="block w-full"
                             v-model="form.phone"
-                            placeholder="Phone Number"
+                            placeholder="1234567"
                             :invalid="!!form.errors.phone"
                         />
                     </div>

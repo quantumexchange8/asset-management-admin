@@ -402,6 +402,16 @@ return [
     "viewing_referral" => "查看推荐人",
     "view_referral_downlines" => "查看推荐下线",
     "no_referee_found" => "未找到被推荐人",
-    "assign_user" => "分配用户"
+    "assign_user" => "分配用户",
+    "profile" => "个人资料",
+    "profile_information" => "个人资料信息",
+    "profile_information_caption" => "更新您的账户个人资料信息",
+    "change" => "更改",
+    "remove" => "移除",
+    "update_password" => "更新密码",
+    "update_password_caption" => "请确保您的账户使用的是一个较长且随机的密码以保障安全。",
+    "current_password" => "当前密码",
+    "new_password" => "新密码",
+
 
 ];

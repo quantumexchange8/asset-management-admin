@@ -1,10 +1,12 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Button from 'primevue/button';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import Password from 'primevue/password';
+import InputIconWrapper from '@/Components/InputIconWrapper.vue';
+import { IconLock } from '@tabler/icons-vue';
 
 const passwordInput = ref(null);
 const currentPasswordInput = ref(null);
@@ -22,11 +24,11 @@ const updatePassword = () => {
         onError: () => {
             if (form.errors.password) {
                 form.reset('password', 'password_confirmation');
-                passwordInput.value.focus();
+                passwordInput.value?.$el.querySelector('input')?.focus();
             }
             if (form.errors.current_password) {
                 form.reset('current_password');
-                currentPasswordInput.value.focus();
+                currentPasswordInput.value?.$el.querySelector('input')?.focus();
             }
         },
     });
@@ -34,89 +36,83 @@ const updatePassword = () => {
 </script>
 
 <template>
-    <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Update Password
-            </h2>
+    <form 
+        @submit.prevent="updatePassword" 
+        class="flex flex-col gap-5 self-stretch w-full"
+    >
+        <div class="flex flex-col gap-1 items-start self-stretch">
+            <InputLabel for="current_password" :value="$t('public.current_password')" />
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Ensure your account is using a long, random password to stay
-                secure.
-            </p>
-        </header>
-
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="current_password" value="Current Password" />
-
+            <InputIconWrapper>
+                <template #icon>
+                    <IconLock :size="20" stroke-width="1.5"/>
+                </template>
                 <Password
                     id="current_password"
                     ref="currentPasswordInput"
                     v-model="form.current_password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     autocomplete="current-password"
-                    :invalid="form.errors.current_password"
+                    :invalid="!!form.errors.current_password"
                 />
+            </InputIconWrapper>
 
-                <InputError
-                    :message="form.errors.current_password"
-                    class="mt-2"
-                />
-            </div>
+            <InputError
+                :message="form.errors.current_password"
+                class="mt-2"
+            />
+        </div>
 
-            <div>
-                <InputLabel for="password" value="New Password" />
-
+        <div class="flex flex-col gap-1 items-start self-stretch">
+            <InputLabel for="password" :value="$t('public.new_password')" />
+            <InputIconWrapper>
+                <template #icon>
+                    <IconLock :size="20" stroke-width="1.5"/>
+                </template>
                 <Password
                     id="password"
                     ref="passwordInput"
                     v-model="form.password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     autocomplete="new-password"
-                    :invalid="form.errors.password"
+                    :invalid="!!form.errors.password"
                 />
+            </InputIconWrapper>
 
-                <InputError :message="form.errors.password" class="mt-2" />
-            </div>
+            <InputError :message="form.errors.password" class="mt-2" />
+        </div>
 
-            <div>
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
+        <div class="flex flex-col gap-1 items-start self-stretch">
+            <InputLabel
+                for="password_confirmation"
+                :value="$t('public.confirm_password')"
+            />
+            <InputIconWrapper>
+                <template #icon>
+                    <IconLock :size="20" stroke-width="1.5"/>
+                </template>
                 <Password
                     id="password_confirmation"
                     v-model="form.password_confirmation"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     autocomplete="new-password"
-                    :invalid="form.errors.password_confirmation"
+                    :invalid="!!form.errors.password_confirmation"
                 />
+            </InputIconWrapper>
 
-                <InputError
-                    :message="form.errors.password_confirmation"
-                    class="mt-2"
-                />
-            </div>
+            <InputError
+                :message="form.errors.password_confirmation"
+                class="mt-2"
+            />
+        </div>
+  
 
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
-            </div>
-        </form>
-    </section>
+        <div class="flex items-center justify-end">
+            <Button
+                type="submit"
+                :label="$t('public.save')"
+                :disabled="form.processing"
+            />
+        </div>
+    </form>
 </template>
