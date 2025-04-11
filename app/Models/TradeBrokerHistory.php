@@ -26,6 +26,11 @@ class TradeBrokerHistory extends Model
         'date',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
     public function broker(): BelongsTo
     {
         return $this->belongsTo(Broker::class, 'broker_id', 'id');

@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Exports\RebateBonusExport;
 use App\Exports\StandardBonusExport;
+use App\Exports\TradeHistoryExport;
 use App\Models\BonusHistory;
+use App\Models\TradeBrokerHistory;
 use App\Models\TradeRebateSummary;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -242,6 +245,93 @@ class ReportController extends Controller
                 'totalBonusAmount' => $totalBonusAmount,
                 'maxBonusAmount' => $maxBonusAmount ?? 0,
                 'rebateBonusCounts' => $rebateBonusCounts,
+            ]);
+        }
+
+        return response()->json(['success' => false, 'data' => []]);
+    }
+
+    public function trade_history()
+    {
+
+        return Inertia::render('Reports/TradeHistory/TradeHistory');
+    }
+
+    public function getTradeHistoryData(Request $request)
+    {
+
+        if ($request->has('lazyEvent')) {
+            $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
+
+            $query = TradeBrokerHistory::with([
+                'user:id,name,email,hierarchyList',
+                'broker',
+                'broker.media',
+            ])
+                ->where('status', 'approved');
+
+            if ($data['filters']['global']['value']) {
+                $keyword = $data['filters']['global']['value'];
+
+                $query->where(function ($q) use ($keyword) {
+                    $q->whereHas('user', function ($query) use ($keyword) {
+                        $query->where(function ($q) use ($keyword) {
+                            $q->where('name', 'like', '%' . $keyword . '%')
+                                ->orWhere('email', 'like', '%' . $keyword . '%');
+                        });
+                    })->orWhere('symbol', 'like', '%' . $keyword . '%');
+                });
+            }
+
+            if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
+                $end_join_date = Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
+
+                $query->whereBetween('created_at', [$start_join_date, $end_join_date]);
+            }
+
+            if ($data['sortField'] && $data['sortOrder']) {
+                $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
+                $query->orderBy($data['sortField'], $order);
+            } else {
+                $query->orderByDesc('created_at');
+            }
+
+            // Export logic
+            if ($request->exportStatus) {
+                $dateLabel = null;
+
+                if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
+                    $start = Carbon::parse($data['filters']['start_join_date']['value'])->format('Y-m-d');
+                    $end = Carbon::parse($data['filters']['end_join_date']['value'])->format('Y-m-d');
+                    $dateLabel = trans('public.date_range_caption') . ' ' . $start . ' - ' . $end;
+                }
+
+                return Excel::download(
+                    new TradeHistoryExport($query->clone(), $dateLabel),
+                    now() . '-trade-broker-history-report.xlsx'
+                );
+            }
+
+            $totalBonusAmount = (clone $query)
+                ->sum('trade_net_profit');
+
+            $maxBonusAmount = (clone $query)
+                ->orderByDesc('trade_net_profit')
+                ->first()
+                ?->trade_net_profit;
+
+            $tradeHistoryCounts = (clone $query)
+                ->count();
+
+            $connections = $query->paginate($data['rows']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $connections,
+                'totalBonusAmount' => $totalBonusAmount,
+                'maxBonusAmount' => $maxBonusAmount ?? 0,
+                'tradeHistoryCounts' => $tradeHistoryCounts,
             ]);
         }
 

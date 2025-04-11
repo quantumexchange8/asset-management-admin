@@ -412,6 +412,15 @@ return [
     "update_password_caption" => "请确保您的账户使用的是一个较长且随机的密码以保障安全。",
     "current_password" => "当前密码",
     "new_password" => "新密码",
-
+    "toast_update_profile_success_message" => "成功更新个人资料",
+    "edit_pending_account" => "编辑待处理账户",
+    "trade_history" => "交易历史",
+    "trade_history_loading_caption" => "正在加载交易历史。请稍候。",
+    "detail" => "详情",
+    "summary" => "总结",
+    "lot_size" => "批量",
+    "profit" => "利润",
+    "access_trade_history" => "访问交易历史",
+    "date_range_caption" => "日期范围",
 
 ];

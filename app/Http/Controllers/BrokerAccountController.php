@@ -6,6 +6,7 @@ use App\Models\BrokerAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -14,11 +15,13 @@ class BrokerAccountController extends Controller
 {
     public function account_listing()
     {
+        Gate::authorize('access', BrokerAccount::class);
         return Inertia::render('Account/Listing/AccountListing');
     }
 
     public function getAccountListingData(Request $request)
     {
+        Gate::authorize('access', BrokerAccount::class);
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -89,11 +92,13 @@ class BrokerAccountController extends Controller
 
     public function pending_account()
     {
+        Gate::authorize('access-pending-account', BrokerAccount::class);
         return Inertia::render('Account/Pending/PendingAccountListing');
     }
 
     public function getPendingAccountData(Request $request)
     {
+        Gate::authorize('access-pending-account', BrokerAccount::class);
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true); //only() extract parameters in lazyEvent
 
@@ -168,6 +173,8 @@ class BrokerAccountController extends Controller
 
     public function pendingAccountApproval(Request $request)
     {
+        Gate::authorize('edit-pending-account', BrokerAccount::class);
+        
         Validator::make($request->all(), [
             'action' => ['required'],
         ])->setAttributeNames([

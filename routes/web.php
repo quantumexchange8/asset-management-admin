@@ -199,6 +199,10 @@ Route::middleware(['auth', 'role:super_admin|admin'])->group(function () {
         // Rebate Bonus
         Route::get('/rebate_bonus', [ReportController::class, 'rebate_bonus'])->name('report.rebate_bonus')->middleware('permission:access_rebate_bonus');
         Route::get('/getRebateBonusData', [ReportController::class, 'getRebateBonusData'])->name('report.getRebateBonusData')->middleware('permission:access_rebate_bonus');
+
+        // Trade History
+        Route::get('/trade_history', [ReportController::class, 'trade_history'])->name('report.trade_history')->middleware('permission:access_trade_history');
+        Route::get('/getTradeHistoryData', [ReportController::class, 'getTradeHistoryData'])->name('report.getTradeHistoryData')->middleware('permission:access_trade_history');
     });
 
     /**

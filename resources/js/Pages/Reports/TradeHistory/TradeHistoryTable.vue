@@ -4,6 +4,11 @@ import dayjs from "dayjs";
 import DataTable from "primevue/datatable";
 import InputText from "primevue/inputtext";
 import Column from "primevue/column";
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
 import {
     IconAdjustments,
     IconSearch,
@@ -19,11 +24,8 @@ import debounce from "lodash/debounce.js";
 import { FilterMatchMode } from '@primevue/core/api';
 import {generalFormat} from "@/Composables/format.js";
 import {usePage} from "@inertiajs/vue3";
-import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
-import {useLangObserver} from "@/Composables/localeObserver.js";
-import { result } from "lodash";
 import EmptyData from "@/Components/EmptyData.vue";
 
 const exportStatus = ref(false);
@@ -35,7 +37,8 @@ const totalRecords = ref(0);
 const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
-const profitSharingCounts = ref();
+const tradeHistoryCounts = ref();
+const activeTab = ref('0');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -44,7 +47,6 @@ const filters = ref({
 });
 
 const lazyParams = ref({});
-const {locale} = useLangObserver();
 
 const loadLazyData = (event) => {
     isLoading.value = true;
@@ -61,7 +63,7 @@ const loadLazyData = (event) => {
                 lazyEvent: JSON.stringify(lazyParams.value)
             };
 
-            const url = route('report.getProfitSharingData', params);
+            const url = route('report.getTradeHistoryData', params);
             const response = await fetch(url);
             const results = await response.json();
 
@@ -69,7 +71,7 @@ const loadLazyData = (event) => {
             totalRecords.value = results?.data?.total;
             totalBonusAmount.value = results?.totalBonusAmount;
             maxBonusAmount.value = results?.maxBonusAmount;
-            profitSharingCounts.value = results?.profitSharingCounts;
+            tradeHistoryCounts.value = results?.tradeHistoryCounts;
             isLoading.value = false;
 
         }, 100);
@@ -161,6 +163,37 @@ const clearFilter = () => {
     lazyParams.value.filters = filters.value ;
 };
 
+const exportTable = () => {
+    exportStatus.value = true;
+    isLoading.value = true;
+
+    lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    lazyParams.value.filters = filters.value;
+
+    if (filters.value) {
+        lazyParams.value.filters = { ...filters.value };
+    } else {
+        lazyParams.value.filters = {};
+    }
+
+    let params = {
+        include: [],
+        lazyEvent: JSON.stringify(lazyParams.value),
+        exportStatus: true,
+    };
+
+    const url = route('report.getTradeHistoryData', params);
+
+    try {
+        window.location.href = url;
+    } catch (e) {
+        console.error('Error occurred during export:', e);
+    } finally {
+        isLoading.value = false;
+        exportStatus.value = false;
+    }
+};
+
 watchEffect(() => {
     if (usePage().props.toast !== null) {
         loadLazyData();
@@ -169,6 +202,13 @@ watchEffect(() => {
 </script>
 
 <template>
+    <Tabs v-model:value="activeTab">
+        <TabList>
+            <Tab value="0">{{ $t('public.detail') }}</Tab>
+            <Tab value="1">{{ $t('public.summary') }}</Tab>
+        </TabList>
+    </Tabs>
+
     <Card class="w-full">
         <template #content>
             <div class="w-full">
@@ -190,46 +230,63 @@ watchEffect(() => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['user.name', 'user.email', 'subject_user.name', 'subject_user.email', 'broker.name']"
+                    :globalFilterFields="['user.name', 'user.email', 'subject_user.name', 'subject_user.email', 'broker.name', 'symbol']"
                 >
                     <template #header>
-                        <div class="flex flex-col md:flex-row items-center self-stretch gap-3 w-full md:w-auto">
-                            <!-- Search bar -->
-                            <IconField class="w-full md:w-auto">
-                                <InputIcon>
-                                    <IconSearch :size="16" stroke-width="1.5" />
-                                </InputIcon>
-                                <InputText
-                                    v-model="filters['global'].value"
-                                    :placeholder="$t('public.search_keyword')"
-                                    type="text"
-                                    class="block w-full pl-10 pr-10"
-                                />
-                                <!-- Clear filter button -->
-                                <div
-                                    v-if="filters['global'].value"
-                                    class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
-                                    @click="clearFilterGlobal"
-                                >
-                                    <IconXboxX aria-hidden="true" :size="15" />
-                                </div>
-                            </IconField>
+                        <div class="flex flex-wrap justify-between items-center">
+                            <div class="flex items-center space-x-4 w-full md:w-auto">
 
-                            <!-- filter button -->
-                            <Button
-                                class="w-full md:w-28 flex items-center gap-2"
-                                outlined
-                                @click="toggle"
-                                size="small"
-                            >
-                                <IconAdjustments :size="16" stroke-width="1.5" />
-                                {{ $t('public.filter') }}
-                            </Button>
+                                <!-- Search bar -->
+                                <IconField class="w-full">
+                                    <InputIcon>
+                                        <IconSearch :size="16" stroke-width="1.5" />
+                                    </InputIcon>
+                                    <InputText
+                                        v-model="filters['global'].value"
+                                        :placeholder="$t('public.search_keyword')"
+                                        type="text"
+                                        class="block w-full pl-10 pr-10"
+                                    />
+                                    <!-- Clear filter button -->
+                                    <div
+                                        v-if="filters['global'].value"
+                                        class="absolute top-1/2 -translate-y-1/2 right-4 text-surface-300 hover:text-surface-400 select-none cursor-pointer"
+                                        @click="clearFilterGlobal"
+                                    >
+                                        <IconXboxX aria-hidden="true" :size="15" />
+                                    </div>
+                                </IconField>
+
+                                <!-- filter button -->
+                                <Button
+                                    class="w-full md:w-28 flex items-center gap-2"
+                                    outlined
+                                    @click="toggle"
+                                    size="small"
+                                >
+                                    <IconAdjustments :size="16" stroke-width="1.5" />
+                                    {{ $t('public.filter') }}
+                                </Button>
+                            </div>
+
+                            <div v-if="activeTab === '1'" class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
+                                <!-- Export button -->
+                                <Button
+                                    type="button"
+                                    severity="info"
+                                    class="w-full md:w-auto"
+                                    @click="exportTable"
+                                    :disabled="exportStatus"
+                                >
+                                    <span class="pr-1">{{ $t('public.export') }}</span>
+                                    <IconDownload size="16" stroke-width="1.5"/>
+                                </Button>
+                            </div>
                         </div>
                     </template>
 
                     <template #empty>
-                        <div v-if="profitSharingCounts === 0">
+                        <div v-if="tradeHistoryCounts === 0">
                             <EmptyData
                                 :title="$t('public.no_data')"
                             />
@@ -241,7 +298,7 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.profit_sharing_loading_caption') }}</span>
+                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.trade_history_loading_caption') }}</span>
                         </div>
                     </template>
 
@@ -249,7 +306,8 @@ watchEffect(() => {
                         <Column
                             field="created_at"
                             :header="$t('public.date')"
-                            class="hidden md:table-cell min-w-32"
+                            style="min-width: 9rem"
+                            class="hidden md:table-cell"
                             sortable
                         >
                             <template #body="{ data }">
@@ -258,25 +316,30 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="client"
-                            :header="$t('public.client')"
-                            class="hidden md:table-cell min-w-32"
+                            field="name"
+                            :header="$t('public.name')"
+                            style="min-width: 10rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
-                                <span class="text-surface-950 dark:text-white">{{ data.subject_user.username }}</span>
+                                <div class="flex flex-col">
+                                    <span class="text-surface-950 dark:text-white">{{ data.user.name }}</span>
+                                    <span class="text-surface-500">{{ data.user.email }}</span>
+                                </div>
                             </template>
                         </Column>
 
                         <Column
                             field="broker"
                             :header="$t('public.broker')"
-                            class="hidden md:table-cell min-w-32"
+                            style="min-width: 9rem"
+                            class="hidden md:table-cell"
                         >
                             <template #body="{ data }">
                                 <div class="flex gap-2 items-center">
                                     <img :src="data.broker.media[0].original_url" alt="broker_image" class="w-6 h-6 grow-0 shrink-0 rounded-full object-contain border border-surface-100 dark:border-surface-800">
                                     <div class="flex flex-col">
-                                        <span class="text-surface-950 dark:text-white font-medium">{{ data.user_broker_login }}</span>
+                                        <span class="text-surface-950 dark:text-white font-medium">{{ data.broker_login }}</span>
                                         <span class="text-surface-500">{{ data.broker.name }}</span>
                                     </div>
                                 </div>
@@ -284,101 +347,78 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="bonus_type"
-                            :header="$t('public.description')"
-                            class="hidden md:table-cell"
-                            :class="locale === 'cn' ? 'min-w-24' : 'min-w-40'"
-                        >
-                            <template #body="{ data }">
-                                <Tag
-                                    severity="secondary"
-                                    :value="$t(`public.${data.bonus_type}`)"
-                                />
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="close_time"
+                            v-if="activeTab === '0'"
+                            field="trade_close_time"
                             :header="$t('public.close_time')"
                             class="min-w-32 hidden md:table-cell"
                         >
                             <template #body="{data}">
                                 <div class="flex flex-col">
-                                    <span class="text-surface-950 dark:text-white font-medium">{{ dayjs(data.close_time).format('YYYY-MM-DD') }}</span>
-                                    <span class="text-surface-500 text-xs">{{ dayjs(data.close_time).format('hh:mm:ss A') }}</span>
+                                    <span class="text-surface-950 dark:text-white font-medium">{{ dayjs(data.trade_close_time).format('YYYY-MM-DD') }}</span>
+                                    <span class="text-surface-500 text-xs">{{ dayjs(data.trade_close_time).format('hh:mm:ss A') }}</span>
                                 </div>
                             </template>
                         </Column>
 
                         <Column
+                            v-if="activeTab === '0'"
                             field="symbol"
                             :header="$t('public.symbol')"
                             class="hidden md:table-cell"
-                            style="min-width: 7rem"
+                            sortable
                         >
-                            <template #body="{data}">
+                            <template #body="{ data }">
                                 <span class="font-medium">{{ data.symbol }}</span>
                             </template>
                         </Column>
 
                         <Column
-                            field="net_profit"
+                            field="volume"
+                            :header="$t('public.volume')"
+                            class="hidden md:table-cell"
+                            sortable
+                        >
+                            <template #body="{ data }">
+                                {{ formatAmount(data.volume, 2, '') }}
+                            </template>
+                        </Column>
+
+                        <Column
+                            field="trade_net_profit"
                             :header="`${$t('public.net_profit')} ($)`"
                             class="hidden md:table-cell"
-                            :class="locale === 'cn' ? 'min-w-24' : 'min-w-36'"
-                        >
-                            <template #body="{data}">
-                                {{ formatAmount(data.net_profit) }}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="remaining_percentage"
-                            :header="`${$t('public.allocated')} (%)`"
                             sortable
-                            class="hidden md:table-cell"
-                            :class="locale === 'cn' ? 'min-w-40' : 'min-w-44'"
-                        >
-                            <template #body="{data}">
-                                {{ formatAmount(data.remaining_percentage, 2, '') }}
-                            </template>
-                        </Column>
-
-                        <Column
-                            field="bonus_amount"
-                            :header="`${$t('public.amount')} ($)`"
-                            sortable
-                            frozen
-                            align-frozen="right"
-                            class="hidden md:table-cell"
-                            :class="locale === 'cn' ? 'min-w-36' : 'min-w-40'"
                         >
                             <template #body="{ data }">
-                                <span class="font-semibold">{{ formatAmount(data.bonus_amount, 4) }}</span>
+                                {{ formatAmount(data.trade_net_profit, 4) }}
                             </template>
                         </Column>
 
-                        <!-- Mobile view -->
-                        <Column
+                        <!-- mobile view -->
+                        <Column 
                             field="mobile"
-                            class="md:hidden"
+                            class="table-cell md:hidden"
                         >
-                            <template #body="{ data }">
+                            <template #body="{data}">
                                 <div class="flex items-center justify-between">
                                     <div class="flex flex-col items-start">
-                                        <div class="font-semibold">
-                                            {{ $t(`public.${data.bonus_type}`) }}
+                                        <div class="flex items-center gap-1">
+                                            <div class="font-medium max-w-[180px] truncate">
+                                                {{ data.user.name }}
+                                            </div>
+                                            <span class="text-xs text-surface-400 dark:text-surface-500 truncate">
+                                                {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            </span>
                                         </div>
+                                        
                                         <div class="flex gap-1 items-center text-surface-500 text-xs">
-                                            {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
+                                            <span>{{ data.user.email }}</span>
                                             <span>|</span>
-                                            <span>{{ formatAmount(data.net_profit) }}</span>
-                                            <span>|</span>
-                                            <span>{{ formatAmount(data.remaining_percentage, 2, '') }}%</span>
+                                            <span>{{ formatAmount(data.volume, 2, '') }}</span>
                                         </div>
                                     </div>
                                     <div class="text-base font-semibold">
-                                        {{ formatAmount(data.bonus_amount, 4) }}
+                                        {{ formatAmount(data.trade_net_profit, 4) }}
                                     </div>
                                 </div>
                             </template>

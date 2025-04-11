@@ -17,6 +17,7 @@ import {
     IconHomeStar,
     IconUserQuestion,
     IconUsersGroup,
+    IconArrowsDiff,
 } from '@tabler/icons-vue';
 import SidebarCategoryLabel from "@/Components/Sidebar/SidebarCategoryLabel.vue";
 import ScrollPanel from 'primevue/scrollpanel';
@@ -234,7 +235,7 @@ watchEffect(() => {
         <!-- Commissions -->
         <SidebarCategoryLabel
             title="reports"
-            v-if="hasPermission('access_profit_sharing') || hasPermission('access_group_incentive') || hasPermission('access_rebate_bonus')"
+            v-if="hasPermission('access_profit_sharing') || hasPermission('access_group_incentive') || hasPermission('access_rebate_bonus') || hasPermission('access_trade_history')"
         />
 
         <SidebarLink
@@ -267,6 +268,17 @@ watchEffect(() => {
         >
             <template #icon>
                 <IconUserDollar size="20" stroke-width="1.5" />
+            </template>
+        </SidebarLink>
+
+        <SidebarLink
+            title="trade_history"
+            :href="route('report.trade_history')"
+            :active="route().current('report.trade_history')"
+            v-if="hasPermission('access_trade_history')"
+        >
+            <template #icon>
+                <IconArrowsDiff size="20" stroke-width="1.5" />
             </template>
         </SidebarLink>
 

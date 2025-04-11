@@ -22,6 +22,7 @@ import {usePage} from "@inertiajs/vue3";
 import Tag from "primevue/tag";
 import Popover from "primevue/popover";
 import DatePicker from "primevue/datepicker";
+import EmptyData from "@/Components/EmptyData.vue";
 
 const exportStatus = ref(false);
 const isLoading = ref(false);
@@ -366,7 +367,7 @@ watchEffect(() => {
                             sortable
                         >
                             <template #body="{ data }">
-                                {{ data.volume }}
+                                {{ formatAmount(data.volume, 2, '') }}
                             </template>
                         </Column>
 
@@ -401,7 +402,7 @@ watchEffect(() => {
                                         <div class="flex gap-1 items-center text-surface-500 text-xs">
                                             <span>{{ data.user.email }}</span>
                                             <span>|</span>
-                                            <span>{{ data.volume }}%</span>
+                                            <span>{{ formatAmount(data.volume, 2, '') }}</span>
                                         </div>
                                     </div>
                                     <div class="text-base font-semibold">

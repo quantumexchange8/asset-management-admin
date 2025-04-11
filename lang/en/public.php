@@ -412,5 +412,15 @@ return [
     "update_password_caption" => "Ensure your account is using a long, random password to stay secure.",
     "current_password" => "Current Password",
     "new_password" => "New Password",
+    "toast_update_profile_success_message" => "Successfully Updated Profile",
+    "edit_pending_account" => "Edit Pending Account",
+    "trade_history" => "Trade History",
+    "trade_history_loading_caption" => "Loading Trade History. Please wait.",
+    "detail" => "Detail",
+    "summary" => "Summary",
+    "lot_size" => "Lot Size",
+    "profit" => "Profit",
+    "access_trade_history" => "Access Trade History",
+    "date_range_caption" => "Date Range:",
 
 ];

@@ -64,9 +64,12 @@ class RoleAndPermissionMiddleware
             'access_profit_sharing' => 'report.profit_sharing',
             'access_group_incentive' => 'report.ib_group_incentive',
             'access_rebate_bonus' => 'report.rebate_bonus',
+            'access_trade_history' => 'report.trade_history',
             'access_admin_listing' => 'settings.admin_listing',
             'access_pending_kyc' => 'member.getPendingKyc',
             'access_member_referrals' => 'referral.getReferralList',
+            'access_account_listing' => 'broker_accounts.account_listing',
+            'access_pending_account' => 'broker_accounts.pending_account',
         ];
 
         // Find the first permission the user has and redirect to its route

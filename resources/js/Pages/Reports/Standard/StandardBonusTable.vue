@@ -399,18 +399,6 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            field="distribute_amount"
-                            :header="`${$t('public.distribute_amount')} ($)`"
-                            sortable
-                            :class="locale === 'cn' ? 'min-w-36' : 'min-w-44'"
-                            class="hidden md:table-cell"
-                        >
-                            <template #body="{data}">
-                                {{ formatAmount(data.distribute_amount, 4) }}
-                            </template>
-                        </Column>
-
-                        <Column
                             field="remaining_percentage"
                             :header="`${$t('public.allocated')} (%)`"
                             sortable
@@ -418,7 +406,7 @@ watchEffect(() => {
                             class="hidden md:table-cell"
                         >
                             <template #body="{data}">
-                                {{ formatAmount(data.remaining_percentage) }}
+                                {{ formatAmount(data.remaining_percentage, 2, '') }}
                             </template>
                         </Column>
 
@@ -452,7 +440,7 @@ watchEffect(() => {
                                             <span>|</span>
                                             <span>{{ formatAmount(data.net_profit) }}</span>
                                             <span>|</span>
-                                            <span>{{ data.remaining_percentage }}%</span>
+                                            <span>{{ formatAmount(data.remaining_percentage, 2, '') }}%</span>
                                         </div>
                                     </div>
                                     <div class="text-base font-semibold">

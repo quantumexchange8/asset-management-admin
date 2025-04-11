@@ -94,11 +94,15 @@ class ConnectionController extends Controller
 
     public function pending_connection()
     {
+        Gate::authorize('access', BrokerConnection::class);
+        
         return Inertia::render('Connection/BrokerConnection/Pending/PendingConnection');
     }
 
     public function pending_connection_data(Request $request)
     {
+        Gate::authorize('access', BrokerConnection::class);
+
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 

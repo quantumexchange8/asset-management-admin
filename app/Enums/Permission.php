@@ -26,6 +26,11 @@ enum Permission: string
     case EDIT_BROKER = 'edit_broker';
     case DELETE_BROKER = 'delete_broker';
 
+    // Broker Accounts
+    case ACCESS_ACCOUNT_LISTING = 'access_account_listing';
+    case ACCESS_PENDING_ACCOUNT = 'access_pending_account';
+    case EDIT_PENDING_ACCOUNT = 'edit_pending_account';
+
     // Connections
     case ACCESS_CONNECTIONS = 'access_connections';
     case IMPORT_CONNECTIONS = 'import_connections';
@@ -52,6 +57,9 @@ enum Permission: string
 
     // Profit Sharing
     case ACCESS_REBATE_BONUS = 'access_rebate_bonus';
+
+    // Trade History
+    case ACCESS_TRADE_HISTORY = 'access_trade_history';
 
     // Admin Listing
     case ACCESS_ADMIN_LISTING = 'access_admin_listing';
