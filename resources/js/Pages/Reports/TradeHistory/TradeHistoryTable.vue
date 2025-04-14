@@ -38,7 +38,7 @@ const first = ref(0);
 const totalBonusAmount = ref();
 const maxBonusAmount = ref();
 const tradeHistoryCounts = ref();
-const activeTab = ref('0');
+const activeTab = ref('detail');
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -60,7 +60,8 @@ const loadLazyData = (event) => {
                 sortField: event?.sortField,
                 sortOrder: event?.sortOrder,
                 include: [],
-                lazyEvent: JSON.stringify(lazyParams.value)
+                lazyEvent: JSON.stringify(lazyParams.value),
+                tab: activeTab.value,
             };
 
             const url = route('report.getTradeHistoryData', params);
@@ -81,6 +82,7 @@ const loadLazyData = (event) => {
         isLoading.value = false;
     }
 };
+
 const onPage = (event) => {
     lazyParams.value = event;
     loadLazyData(event);
@@ -93,6 +95,12 @@ const onFilter = (event) => {
     lazyParams.value.filters = filters.value ;
     loadLazyData(event);
 };
+
+// change tabs
+watch(activeTab, (newVal) => {
+    lazyParams.value.tab = newVal;
+    loadLazyData({ first: first.value,  tab: newVal });
+});
 
 const op = ref();
 const toggle = (event) => {
@@ -180,6 +188,7 @@ const exportTable = () => {
         include: [],
         lazyEvent: JSON.stringify(lazyParams.value),
         exportStatus: true,
+        tab: activeTab.value,
     };
 
     const url = route('report.getTradeHistoryData', params);
@@ -204,8 +213,8 @@ watchEffect(() => {
 <template>
     <Tabs v-model:value="activeTab">
         <TabList>
-            <Tab value="0">{{ $t('public.detail') }}</Tab>
-            <Tab value="1">{{ $t('public.summary') }}</Tab>
+            <Tab value="detail">{{ $t('public.detail') }}</Tab>
+            <Tab value="summary">{{ $t('public.summary') }}</Tab>
         </TabList>
     </Tabs>
 
@@ -269,7 +278,7 @@ watchEffect(() => {
                                 </Button>
                             </div>
 
-                            <div v-if="activeTab === '1'" class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
+                            <div v-if="activeTab === 'summary'" class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                 <!-- Export button -->
                                 <Button
                                     type="button"
@@ -348,7 +357,7 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            v-if="activeTab === '0'"
+                            v-if="activeTab === 'detail'"
                             field="trade_close_time"
                             :header="$t('public.close_time')"
                             class="min-w-32 hidden md:table-cell"
@@ -362,7 +371,7 @@ watchEffect(() => {
                         </Column>
 
                         <Column
-                            v-if="activeTab === '0'"
+                            v-if="activeTab === 'detail'"
                             field="symbol"
                             :header="$t('public.symbol')"
                             class="hidden md:table-cell"

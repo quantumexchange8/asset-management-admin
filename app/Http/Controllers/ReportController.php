@@ -10,6 +10,7 @@ use App\Models\TradeBrokerHistory;
 use App\Models\TradeRebateSummary;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -259,16 +260,35 @@ class ReportController extends Controller
 
     public function getTradeHistoryData(Request $request)
     {
-
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
 
-            $query = TradeBrokerHistory::with([
-                'user:id,name,email,hierarchyList',
-                'broker',
-                'broker.media',
-            ])
-                ->where('status', 'approved');
+            $tabs = $request->input('tab', 'detail');
+
+            if ($tabs === "summary") {
+                $query = TradeBrokerHistory::with([
+                    'user:id,name,email,hierarchyList',
+                    'broker',
+                    'broker.media',
+                ])
+                    ->select(
+                        'broker_login',
+                        DB::raw('SUM(trade_net_profit) as trade_net_profit'),
+                        'volume',
+                        'created_at',
+                        'user_id',
+                        'broker_id'
+                    )
+                    ->where('status', 'approved')
+                    ->groupBy(['broker_login', 'volume', 'created_at', 'user_id', 'broker_id']);;
+            } else {
+                $query = TradeBrokerHistory::with([
+                    'user:id,name,email,hierarchyList',
+                    'broker',
+                    'broker.media',
+                ])
+                    ->where('status', 'approved');
+            }
 
             if ($data['filters']['global']['value']) {
                 $keyword = $data['filters']['global']['value'];
