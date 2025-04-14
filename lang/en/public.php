@@ -25,6 +25,7 @@ return [
     "total_connections" => "Total Connections",
     "import" => "Import",
     "export" => "Export",
+    "export_caption" => "Exporting Data",
     "search_keyword" => "Search Keyword",
     "filter" => "Filter",
     "import_connections" => "Import Connections",
@@ -175,9 +176,7 @@ return [
     "member_loading_caption" => "Loading user data. Please wait.",
     "connection_loading_caption" => "Loading connection data. Please wait.",
     "deposit_loading_caption" => "Loading deposit data. Please wait.",
-    "export_deposit_caption" => "Exporting Deposit",
     "withdrawal_loading_caption" => "Loading withdrawal data. Please wait.",
-    "export_withdrawal_caption" => "Exporting Withdrawal",
     "real_fund" => "Real Fund",
     "demo_fund" => "Demo Fund",
     "cash_wallet" => "Cash Wallet",
@@ -422,5 +421,6 @@ return [
     "profit" => "Profit",
     "access_trade_history" => "Access Trade History",
     "date_range_caption" => "Date Range:",
+    "net_amount" => "Net Amount",
 
 ];

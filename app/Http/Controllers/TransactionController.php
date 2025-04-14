@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DepositExport;
-use App\Exports\PendingDepositExport;
 use App\Exports\WithdrawalExport;
 use App\Imports\DepositImport;
-use App\Models\BrokerConnection;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -54,6 +52,7 @@ class TransactionController extends Controller
 
                     // Filter on the 'name' column in the related 'user' table
                     $q->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('email', 'like', '%' . $keyword . '%')
                         ->orWhere('transaction_number', 'like', '%' . $keyword . '%');
                 });
             }
@@ -175,6 +174,7 @@ class TransactionController extends Controller
 
                     // Filter on the 'name' column in the related 'user' table
                     $q->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('email', 'like', '%' . $keyword . '%')
                         ->orWhere('transaction_number', 'like', '%' . $keyword . '%');
                 });
             }
@@ -186,7 +186,7 @@ class TransactionController extends Controller
 
                 $query->whereBetween('approval_at', [$start_date, $end_date]);
             }
-            
+
             //status filter
             if ($data['filters']['status']['value']) {
                 $query->where('status', $data['filters']['status']['value']);
@@ -319,11 +319,6 @@ class TransactionController extends Controller
                 $query->latest();
             }
 
-            //export logic
-            if ($request->has('exportStatus') && $request->exportStatus) {
-                return Excel::download(new PendingDepositExport($query), now() . '-pending-deposit-list.xlsx');
-            }
-
             $users = $query->paginate($data['rows']);
 
             $users->each(function ($transaction) {
@@ -423,11 +418,6 @@ class TransactionController extends Controller
                 $query->latest();
             }
 
-            //export logic
-            if ($request->has('exportStatus') && $request->exportStatus) {
-                return Excel::download(new WithdrawalExport($query), now() . '-withdrawal-history-list.xlsx');
-            }
-
             $users = $query->paginate($data['rows']);
 
             $totalPendingAmount = (clone $query)
@@ -467,7 +457,7 @@ class TransactionController extends Controller
             $wallet->real_fund += $transaction->amount;
             $wallet->save();
         } else {
-            if(!$request->remarks) {
+            if (!$request->remarks) {
                 throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
             }
             $transaction->status = 'rejected';
@@ -496,14 +486,13 @@ class TransactionController extends Controller
 
         if ($request->action == 'approve') {
             $transaction->status = 'success';
-           
         } else {
-            if(!$request->remarks) {
+            if (!$request->remarks) {
                 throw ValidationException::withMessages(['remarks' => trans('public.remarks_required_reject')]);
             }
             $transaction->status = 'rejected';
             $transaction->remarks = $request->remarks;
-            
+
             $wallet->balance += $transaction->amount;
             $wallet->save();
         }

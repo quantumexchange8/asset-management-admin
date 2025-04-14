@@ -276,7 +276,7 @@ watchEffect(() => {
                                     severity="info"
                                     class="w-full md:w-auto"
                                     @click="exportTable"
-                                    :disabled="exportStatus"
+                                    :disabled="exportStatus==='true'"
                                 >
                                     <span class="pr-1">{{ $t('public.export') }}</span>
                                     <IconDownload size="16" stroke-width="1.5"/>
@@ -298,7 +298,8 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.trade_history_loading_caption') }}</span>
+                            <span v-if="exportStatus === 'true'" class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.export_caption') }}</span>
+                            <span v-else class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.trade_history_loading_caption') }}</span>
                         </div>
                     </template>
 

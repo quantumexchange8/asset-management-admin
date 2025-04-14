@@ -31,6 +31,7 @@ const depositHistoryCounts = ref();
 const successAmount = ref();
 const rejectAmount = ref();
 const {formatAmount} = generalFormat();
+const exportStatus = ref(false);
 
 //filteration type and methods
 const filters = ref({
@@ -188,19 +189,20 @@ const getSeverity = (status) => {
 };
 
 //export button
-const exportTable = ref('no');
-
-const exportStatus = ref(false);
-const exportDeposit = () => {
+const exportTable = () => {
     exportStatus.value = true;
     isLoading.value = true;
 
     lazyParams.value = { ...lazyParams.value, first: event?.first || first.value };
+    lazyParams.value.filters = filters.value;
 
-    const params = {
-        page: JSON.stringify(event?.page + 1),
-        sortField: event?.sortField,
-        sortOrder: event?.sortOrder,
+    if (filters.value) {
+        lazyParams.value.filters = { ...filters.value };
+    } else {
+        lazyParams.value.filters = {};
+    }
+
+    let params = {
         include: [],
         lazyEvent: JSON.stringify(lazyParams.value),
         exportStatus: true,
@@ -251,10 +253,10 @@ watchEffect(() => {
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">
-                            <div class="flex gap-3 w-full md:w-auto">
+                            <div class="flex items-center space-x-4 w-full md:w-auto">
 
                                 <!-- Search bar -->
-                                <IconField>
+                                <IconField class="w-full">
                                     <InputIcon>
                                         <IconSearch :size="16" stroke-width="1.5" />
                                     </InputIcon>
@@ -276,7 +278,7 @@ watchEffect(() => {
 
                                 <!-- filter button -->
                                 <Button
-                                    class="w-full md:w-28 flex items-center gap-2"
+                                   class="w-full md:w-28 flex items-center gap-2"
                                     outlined
                                     @click="toggle"
                                     size="small"
@@ -289,9 +291,11 @@ watchEffect(() => {
                             <div class="flex items-center space-x-4 w-full md:w-auto mt-4 md:mt-0">
                                 <!-- Export button -->
                                 <Button
-                                    class="w-full md:w-auto flex justify-center items-center"
-                                    @click="exportDeposit"
-                                    :disabled="exportTable==='yes'"
+                                    type="button"
+                                    severity="info"
+                                    class="w-full md:w-auto"
+                                    @click="exportTable"
+                                    :disabled="exportStatus==='true'"
                                 >
                                     <span class="pr-1">{{ $t('public.export') }}</span>
                                     <IconDownload size="16" stroke-width="1.5"/>
@@ -313,8 +317,8 @@ watchEffect(() => {
                             <ProgressSpinner
                                 strokeWidth="4"
                             />
-                            <span v-if="exportTable === 'no'" class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.deposit_loading_caption') }}</span>
-                            <span v-else class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.export_deposit_caption') }}</span>
+                            <span v-if="exportStatus === 'true'" class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.export_caption') }}</span>
+                            <span v-else class="text-sm text-surface-700 dark:text-surface-300">{{ $t('public.deposit_loading_caption') }}</span>
                         </div>
                     </template>
 

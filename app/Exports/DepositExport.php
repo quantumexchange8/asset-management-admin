@@ -17,23 +17,22 @@ class DepositExport implements FromCollection, WithHeadings
 
     public function collection(): Collection
     {
-        $filteredData = $this->query->get();
+        $records = $this->query
+            ->orderByDesc('approval_at')
+            ->get();
 
         $result = array();
-        foreach ($filteredData as $data) {
+        foreach ($records as $record) {
             $result[] = array(
-                'name' => $data->user->name,
-                'email' => $data->user->email,
-                'transaction_number' => $data->transaction_number,
-                'amount' => $data->amount,
-                'transaction_amount' => $data->transaction_amount,
-                'transaction_charges' => $data->transaction_charges,
-                'to_payment_account_no' => $data->to_payment_account_no,
-                'transaction_type' => $data->transaction_type,
-                'fund_type' => $data->fund_type,
-                'status' => $data->status,
-                'approval_at' => $data->approval_at,
-                'remarks' => $data->remarks,
+                'name' => $record->user->name,
+                'email' => $record->user->email,
+                'transaction_number' => $record->transaction_number,
+                'transaction_amount' => $record->transaction_amount,
+                'to_payment_account_name' => $record->to_payment_account_name ?? '-',
+                'to_payment_account_no' => $record->to_payment_account_no ?? '-',
+                'status' => $record->status,
+                'approval_at' => $record->approval_at,
+                'remarks' => $record->remarks ?? '-',
             );
         }
 
@@ -43,18 +42,15 @@ class DepositExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'Name',
-            'Email',
-            'Transaction Number',
-            'Amount',
-            'Transaction Amount',
-            'Transaction Charges',
-            'To Payment Account No',
-            'Transaction Type',
-            'Fund Type',
-            'Status',
-            'Approval Date',
-            'Remarks',
+            trans('public.name'),
+            trans('public.email'),
+            trans('public.transaction_number'),
+            trans('public.net_amount') . '($)',
+            trans('public.payment_account'),
+            trans('public.account_number'),
+            trans('public.status'),
+            trans('public.approved_at'),
+            trans('public.remarks'),
         ];
     }
 }

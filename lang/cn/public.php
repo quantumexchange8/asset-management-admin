@@ -25,6 +25,7 @@ return [
     "total_connections" => "总连接数",
     "import" => "导入",
     "export" => "导出",
+    "export_caption" => "导出数据",
     "search_keyword" => "搜索关键字",
     "filter" => "筛选",
     "import_connections" => "导入连接",
@@ -175,7 +176,6 @@ return [
     "member_loading_caption" => "正在加载用户数据，请稍候。",
     "connection_loading_caption" => "正在加载连接数据，请稍候。",
     "deposit_loading_caption" => "正在加载存款数据，请稍候。",
-    "export_deposit_caption" => "正在导出存款",
     "withdrawal_loading_caption" => "正在加载提现数据，请稍候。",
     "export_withdrawal_caption" => "正在导出提现",
     "real_fund" => "真实基金",
@@ -422,5 +422,5 @@ return [
     "profit" => "利润",
     "access_trade_history" => "访问交易历史",
     "date_range_caption" => "日期范围",
-
+    "net_amount" => "净额",
 ];
