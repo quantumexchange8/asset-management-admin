@@ -280,7 +280,7 @@ class ReportController extends Controller
                         'broker_id'
                     )
                     ->where('status', 'approved')
-                    ->groupBy(['broker_login', 'volume', 'created_at', 'user_id', 'broker_id']);;
+                    ->groupBy(['broker_login', 'volume', 'created_at', 'user_id', 'broker_id']);
             } else {
                 $query = TradeBrokerHistory::with([
                     'user:id,name,email,hierarchyList',
@@ -333,8 +333,15 @@ class ReportController extends Controller
                 );
             }
 
-            $totalBonusAmount = (clone $query)
-                ->sum('trade_net_profit');
+            if ($tabs === "summary") {
+                $clone = clone $query;
+                $totalBonusAmount = DB::table(DB::raw("({$clone->toSql()}) as grouped_summary"))
+                    ->mergeBindings($clone->getQuery())
+                    ->sum('trade_net_profit');
+            } else {
+                $totalBonusAmount = (clone $query)
+                    ->sum('trade_net_profit');
+            }
 
             $maxBonusAmount = (clone $query)
                 ->orderByDesc('trade_net_profit')
