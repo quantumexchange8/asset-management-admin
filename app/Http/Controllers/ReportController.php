@@ -231,7 +231,7 @@ class ReportController extends Controller
                 ->sum('rebate');
 
             $maxBonusAmount = (clone $query)
-                ->orderByDesc('rebate')
+                ->orderByDesc('rebate') 
                 ->first()
                 ?->rebate;
 
@@ -274,13 +274,13 @@ class ReportController extends Controller
                     ->select(
                         'broker_login',
                         DB::raw('SUM(trade_net_profit) as trade_net_profit'),
-                        'volume',
+                        DB::raw('SUM(volume) as volume'),
                         'created_at',
                         'user_id',
                         'broker_id'
                     )
                     ->where('status', 'approved')
-                    ->groupBy(['broker_login', 'volume', 'created_at', 'user_id', 'broker_id']);
+                    ->groupBy(['broker_login', 'created_at', 'user_id', 'broker_id']);
             } else {
                 $query = TradeBrokerHistory::with([
                     'user:id,name,email,hierarchyList',
