@@ -239,7 +239,7 @@ watchEffect(() => {
                     @page="onPage($event)"
                     @sort="onSort($event)"
                     @filter="onFilter($event)"
-                    :globalFilterFields="['user.name', 'user.email', 'subject_user.name', 'subject_user.email', 'broker.name', 'symbol']"
+                    :globalFilterFields="['user.name', 'user.email', 'subject_user.name', 'subject_user.email', 'broker.name', 'symbol', 'broker_login']"
                 >
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center">

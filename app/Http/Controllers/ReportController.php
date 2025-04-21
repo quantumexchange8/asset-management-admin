@@ -262,68 +262,69 @@ class ReportController extends Controller
     {
         if ($request->has('lazyEvent')) {
             $data = json_decode($request->only(['lazyEvent'])['lazyEvent'], true);
-    
+
             $tabs = $request->input('tab', 'detail');
-    
+
             if ($tabs === "summary") {
                 $query = TradeBrokerHistory::with([
                     'user:id,name,email,hierarchyList',
                     'broker',
                     'broker.media',
                 ])
-                ->select(
-                    'broker_login',
-                    DB::raw('SUM(trade_net_profit) as trade_net_profit'),
-                    DB::raw('SUM(volume) as volume'),
-                    DB::raw('DATE(created_at) as created_at'), // alias to avoid raw confusion
-                    'user_id',
-                    'broker_id'
-                )
-                ->where('status', 'approved')
-                ->groupBy([
-                    'broker_login',
-                    DB::raw('DATE(created_at)'),
-                    'user_id',
-                    'broker_id'
-                ])
-                ->orderByRaw('DATE(created_at) desc');
+                    ->select(
+                        'broker_login',
+                        DB::raw('SUM(trade_net_profit) as trade_net_profit'),
+                        DB::raw('SUM(volume) as volume'),
+                        DB::raw('DATE(created_at) as created_at'), // alias to avoid raw confusion
+                        'user_id',
+                        'broker_id'
+                    )
+                    ->where('status', 'approved')
+                    ->groupBy([
+                        'broker_login',
+                        DB::raw('DATE(created_at)'),
+                        'user_id',
+                        'broker_id'
+                    ])
+                    ->orderByRaw('DATE(created_at) desc');
             } else {
                 $query = TradeBrokerHistory::with([
                     'user:id,name,email,hierarchyList',
                     'broker',
                     'broker.media',
                 ])
-                ->select([
-                    '*',
-                    DB::raw('DATE(created_at) as created_at')
-                ])
-                ->where('status', 'approved')
-                ->orderByDesc('created_at');
+                    ->select([
+                        '*',
+                        DB::raw('DATE(created_at) as created_at')
+                    ])
+                    ->where('status', 'approved')
+                    ->orderByDesc('created_at');
             }
-    
+
             if (!empty($data['filters']['global']['value'])) {
                 $keyword = $data['filters']['global']['value'];
-    
+
                 $query->where(function ($q) use ($keyword) {
                     $q->whereHas('user', function ($query) use ($keyword) {
                         $query->where(function ($q) use ($keyword) {
                             $q->where('name', 'like', '%' . $keyword . '%')
                                 ->orWhere('email', 'like', '%' . $keyword . '%');
                         });
-                    })->orWhere('symbol', 'like', '%' . $keyword . '%');
+                    })->orWhere('symbol', 'like', '%' . $keyword . '%')
+                        ->orWhere('broker_login', 'like', '%' . $keyword . '%');
                 });
             }
-    
+
             if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
                 $start_join_date = Carbon::parse($data['filters']['start_join_date']['value'])->addDay()->startOfDay();
                 $end_join_date = Carbon::parse($data['filters']['end_join_date']['value'])->addDay()->endOfDay();
-    
+
                 $query->whereBetween('created_at', [$start_join_date, $end_join_date]);
             }
-    
+
             if (!empty($data['sortField']) && isset($data['sortOrder'])) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
-    
+
                 if ($tabs === 'summary') {
                     // Map sort field to correct aliases
                     $field = match ($data['sortField']) {
@@ -335,23 +336,23 @@ class ReportController extends Controller
                     $query->orderBy($data['sortField'], $order);
                 }
             }
-    
+
             // Export logic
             if ($request->exportStatus) {
                 $dateLabel = null;
-    
+
                 if (!empty($data['filters']['start_join_date']['value']) && !empty($data['filters']['end_join_date']['value'])) {
                     $start = Carbon::parse($data['filters']['start_join_date']['value'])->format('Y-m-d');
                     $end = Carbon::parse($data['filters']['end_join_date']['value'])->format('Y-m-d');
                     $dateLabel = trans('public.date_range_caption') . ' ' . $start . ' - ' . $end;
                 }
-    
+
                 return Excel::download(
                     new TradeHistoryExport($query->clone(), $dateLabel),
                     now() . '-trade-broker-history-report.xlsx'
                 );
             }
-    
+
             if ($tabs === "summary") {
                 $clone = clone $query;
                 $totalBonusAmount = DB::table(DB::raw("({$clone->toSql()}) as grouped_summary"))
@@ -361,17 +362,17 @@ class ReportController extends Controller
                 $totalBonusAmount = (clone $query)
                     ->sum('trade_net_profit');
             }
-    
+
             $maxBonusAmount = (clone $query)
                 ->orderByDesc('trade_net_profit')
                 ->first()
                 ?->trade_net_profit;
-    
+
             $tradeHistoryCounts = (clone $query)
                 ->count();
-    
+
             $connections = $query->paginate($data['rows']);
-    
+
             return response()->json([
                 'success' => true,
                 'data' => $connections,
@@ -380,8 +381,7 @@ class ReportController extends Controller
                 'tradeHistoryCounts' => $tradeHistoryCounts,
             ]);
         }
-    
+
         return response()->json(['success' => false, 'data' => []]);
     }
-    
 }
