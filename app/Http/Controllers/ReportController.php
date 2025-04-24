@@ -285,8 +285,7 @@ class ReportController extends Controller
                         DB::raw('DATE(created_at)'),
                         'user_id',
                         'broker_id'
-                    ])
-                    ->orderByRaw('DATE(created_at) desc');
+                    ]);
             } else {
                 $query = TradeBrokerHistory::with([
                     'user:id,name,email,hierarchyList',
@@ -297,8 +296,7 @@ class ReportController extends Controller
                         '*',
                         DB::raw('DATE(created_at) as created_at')
                     ])
-                    ->where('status', 'approved')
-                    ->orderByDesc('created_at');
+                    ->where('status', 'approved');
             }
 
             if (!empty($data['filters']['global']['value'])) {
@@ -325,16 +323,17 @@ class ReportController extends Controller
             if (!empty($data['sortField']) && isset($data['sortOrder'])) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
 
-                if ($tabs === 'summary') {
-                    // Map sort field to correct aliases
-                    $field = match ($data['sortField']) {
-                        'created_at', 'created_date' => DB::raw('DATE(created_at)'),
-                        default => $data['sortField']
-                    };
-                    $query->orderBy($field, $order);
-                } else {
-                    $query->orderBy($data['sortField'], $order);
-                }
+                $field = match ($data['sortField']) {
+                    'created_at' => DB::raw('DATE(created_at)'),
+                    'volume' => DB::raw('SUM(volume)'),
+                    'trade_net_profit' => DB::raw('SUM(trade_net_profit)'),
+                    default => $data['sortField']
+                };
+
+                $query->orderBy($field, $order);
+            } else {
+                // Default sort: latest records on top using MAX(created_at)
+                $query->orderByDesc(DB::raw('DATE(created_at)'));
             }
 
             // Export logic
