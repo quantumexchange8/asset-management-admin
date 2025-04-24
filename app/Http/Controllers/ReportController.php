@@ -323,14 +323,19 @@ class ReportController extends Controller
             if (!empty($data['sortField']) && isset($data['sortOrder'])) {
                 $order = $data['sortOrder'] == 1 ? 'asc' : 'desc';
 
-                $field = match ($data['sortField']) {
-                    'created_at' => DB::raw('DATE(created_at)'),
-                    'volume' => DB::raw('SUM(volume)'),
-                    'trade_net_profit' => DB::raw('SUM(trade_net_profit)'),
-                    default => $data['sortField']
-                };
+                if ($tabs === "summary") {
+                    $field = match ($data['sortField']) {
+                        'created_at' => DB::raw('DATE(created_at)'),
+                        'volume' => DB::raw('SUM(volume)'),
+                        'trade_net_profit' => DB::raw('SUM(trade_net_profit)'),
+                        default => $data['sortField']
+                    };
 
-                $query->orderBy($field, $order);
+                    $query->orderBy($field, $order);
+                } else {
+                    $query->orderBy($data['sortField'], $order);
+                }
+                
             } else {
                 // Default sort: latest records on top using MAX(created_at)
                 $query->orderByDesc(DB::raw('DATE(created_at)'));
