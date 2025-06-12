@@ -23,7 +23,7 @@ export default {
                 // Colors
                 'text-surface-800 dark:text-surface-200',
                 'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-                { 'bg-surface-0 dark:bg-surface-ground': !props.disabled },
+                { 'bg-surface-0 dark:bg-surface-950': !props.disabled },
                 'border',
                 { 'border-surface-300 dark:border-surface-700': !props.invalid },
 
@@ -270,7 +270,7 @@ export default {
             {
                 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-white/70': context.date.today && !context.selected && !context.disabled,
                 'bg-transparent text-surface-600 dark:text-white/70': !context.selected && !context.disabled && !context.date.today,
-                'bg-primary-500 dark:bg-primary-500 text-surface-0 dark:text-surface-ground': context.selected && !context.disabled
+                'bg-primary-500 dark:bg-primary-500 text-surface-0 dark:text-surface-950': context.selected && !context.disabled
             },
 
             // States

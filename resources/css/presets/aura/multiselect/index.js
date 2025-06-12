@@ -12,7 +12,7 @@ export default {
             'rounded-md',
 
             // Color and Background
-            { 'bg-surface-0 dark:bg-surface-ground': !props.disabled },
+            { 'bg-surface-0 dark:bg-surface-950': !props.disabled },
             'border',
             { 'border-surface-300 dark:border-surface-700': !props.invalid },
 

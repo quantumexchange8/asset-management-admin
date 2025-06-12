@@ -46,7 +46,7 @@ const changeLanguage = async (langVal) => {
 <template>
     <Head :title="$t(`public.${title}`)"></Head>
 
-    <div class="flex flex-col min-h-screen bg-surface-0 dark:bg-surface-ground transition-all duration-200 w-full">
+    <div class="flex flex-col min-h-screen bg-surface-0 dark:bg-surface-950 transition-all duration-200 w-full">
         <div class="flex gap-1 py-3 px-5 md:px-10 justify-end items-center">
             <Button type="button" variant="gray-text" icon-only pill @click="() => { toggleDarkMode() }">
                 <IconSun v-if="!isDark" size="20" stroke-width="1.5" />

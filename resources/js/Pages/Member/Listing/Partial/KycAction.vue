@@ -86,7 +86,7 @@ const closeDialog = () => {
                 <div class="flex flex-col gap-1 items-start self-stretch">
                     <InputLabel for="front_identity">{{ $t('public.front_identity' )}}</InputLabel>
                     <div
-                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-950 border-surface-300 dark:border-surface-600"
                     >
                         <Image
                             role="presentation"
@@ -100,7 +100,7 @@ const closeDialog = () => {
                 <div class="flex flex-col gap-1 items-start self-stretch">
                     <InputLabel for="front_identity">{{ $t('public.back_identity' )}}</InputLabel>
                     <div
-                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                        class="flex flex-col gap-3 items-center self-stretch px-5 py-8 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-950 border-surface-300 dark:border-surface-600"
                     >
                         <Image
                             role="presentation"

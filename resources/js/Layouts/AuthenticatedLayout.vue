@@ -13,7 +13,7 @@ defineProps({
 <template>
     <Head :title="$t(`public.${title}`)"></Head>
 
-    <div class="min-h-screen bg-surface-50 dark:bg-surface-ground transition-all duration-200">
+    <div class="min-h-screen bg-surface-50 dark:bg-surface-950 transition-all duration-200">
         <!-- Sidebar -->
         <Sidebar />
 

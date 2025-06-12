@@ -445,7 +445,7 @@ watchEffect(() => {
         <div class="flex flex-col gap-6 w-60">
             <!-- Filter Date -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_date') }}
                 </div>
                 <div class="relative w-full">

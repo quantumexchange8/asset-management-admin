@@ -4,7 +4,7 @@ export default {
             // Font
             'leading-none',
             'text-sm',
-            
+
             // Spacing
             'm-0',
             'py-2 px-3',
@@ -15,7 +15,7 @@ export default {
             // Colors
             'text-surface-800 dark:text-white/80',
             'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-            { 'bg-surface-0 dark:bg-surface-ground': !context.disabled },
+            { 'bg-surface-0 dark:bg-surface-950': !context.disabled },
             'border',
             { 'border-surface-300 dark:border-surface-600': !props.invalid },
 

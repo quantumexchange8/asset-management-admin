@@ -406,7 +406,7 @@ watchEffect(() => {
                                 <span class="font-medium">{{ formatAmount(data.amount ?? 0, 4) }}</span>
                             </template>
                         </Column>
- 
+
                         <Column
                             field="status"
                             sortable
@@ -432,7 +432,7 @@ watchEffect(() => {
                                             {{ dayjs(data.created_at).format('YYYY-MM-DD') }}
                                             <Tag :value="$t(`public.${data.status}`)" :severity="getSeverity(data.status)" />
                                         </span>
-                                        
+
                                         <div class="flex gap-1 items-center text-surface-500 text-xs">
                                             <div class="font-medium max-w-[180px] truncate">
                                                 {{ data.user.name }}
@@ -458,7 +458,7 @@ watchEffect(() => {
                             style="width: 5%"
                         >
                             <template #body="{ data }">
-                                <WithdrawalHistoryAction 
+                                <WithdrawalHistoryAction
                                     :withdrawalHistory="data"
                                 />
                             </template>
@@ -473,7 +473,7 @@ watchEffect(() => {
         <div class="flex flex-col gap-6 w-60">
             <!-- Filter Date -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_date') }}
                 </div>
                 <div class="relative w-full">
@@ -496,7 +496,7 @@ watchEffect(() => {
 
             <!-- Filter status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_status') }}
                 </div>
                 <Select

@@ -108,7 +108,7 @@ onMounted(() => {
 
                     <div class="flex flex-col gap-1 pt-5 items-center">
                         <Button
-                            class="w-full text-center font-semibold dark:text-surface-ground text-white"
+                            class="w-full text-center font-semibold dark:text-surface-950 text-white"
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                             type="submit"

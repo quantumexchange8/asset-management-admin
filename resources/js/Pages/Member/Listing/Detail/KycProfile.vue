@@ -49,7 +49,7 @@ const getSeverity = (status) => {
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel for="front_identity">{{ $t('public.front_identity' )}}</InputLabel>
                         <div
-                            class="flex flex-col gap-3 items-center self-stretch px-5 py-4 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                            class="flex flex-col gap-3 items-center self-stretch px-5 py-4 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-950 border-surface-300 dark:border-surface-600"
                         >
                             <Image
                                 v-if="front_identity_image"
@@ -72,7 +72,7 @@ const getSeverity = (status) => {
                     <div class="flex flex-col gap-1 items-start self-stretch">
                         <InputLabel for="front_identity">{{ $t('public.back_identity' )}}</InputLabel>
                         <div
-                            class="flex flex-col gap-3 items-center self-stretch px-5 py-4 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-ground border-surface-300 dark:border-surface-600"
+                            class="flex flex-col gap-3 items-center self-stretch px-5 py-4 rounded-md border-2 border-dashed transition-colors duration-150 bg-surface-50 dark:bg-surface-950 border-surface-300 dark:border-surface-600"
                         >
                             <Image
                                 v-if="back_identity_image"

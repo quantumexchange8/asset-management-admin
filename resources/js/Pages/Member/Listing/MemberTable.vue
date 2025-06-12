@@ -491,7 +491,7 @@ watchEffect(() => {
                                             {{ data.email }}
                                         </div>
                                     </div>
-                                    
+
                                     <div class="flex flex-col items-start">
                                         <div class="flex items-center gap-1 justify-end w-full">
                                             <img
@@ -537,7 +537,7 @@ watchEffect(() => {
         <div class="flex flex-col gap-6 w-60">
             <!-- Filter Referrer -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_referrer') }}
                 </div>
                 <Select
@@ -565,7 +565,7 @@ watchEffect(() => {
 
             <!-- Filter Date -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_date') }}
                 </div>
                 <div class="relative w-full">
@@ -588,7 +588,7 @@ watchEffect(() => {
 
             <!-- Filter Country -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_country') }}
                 </div>
                 <Select
@@ -625,7 +625,7 @@ watchEffect(() => {
 
             <!-- Filter Rank -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_rank') }}
                 </div>
                 <Select
@@ -653,7 +653,7 @@ watchEffect(() => {
 
             <!-- Filter kyc Status -->
             <div class="flex flex-col gap-2 items-center self-stretch">
-                <div class="flex self-stretch text-sm text-surface-ground dark:text-white">
+                <div class="flex self-stretch text-sm text-surface-950 dark:text-white">
                     {{ $t('public.filter_by_status') }}
                 </div>
                 <Select
